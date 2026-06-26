@@ -297,12 +297,12 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
 <div class="topbar">
   <div class="logo">✦ GALAXSYS PM</div>
   <div class="divider"></div>
-  <div class="top-title" id="topTitle">Q3/26 Roadmap</div>
+  <div class="top-title" id="topTitle">Multihand Black Jack</div>
   <div class="undo-btn" id="undoBtn" onclick="undoDelete()">↩ Undo delete</div>
   <span id="ghStatus" style="display: inline;" class="gh-status busy">Encoding…</span>
   <button class="publish-btn" id="publishBtn" onclick="publishToGitHub(this)" disabled="">⏳ Publishing…</button>
   <button class="gh-cfg-btn" onclick="openGHModal()" title="GitHub settings">⚙</button>
-  <div class="back-btn" id="backBtn" style="display:none" onclick="goBack()">← Back</div>
+  <div class="back-btn" id="backBtn" style="display: block;" onclick="goBack()">← Back</div>
 </div>
 
 <div class="modal-overlay" id="ghModal" style="display: none;" onclick="if(event.target===this)closeGHModal()">
@@ -370,7 +370,7 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
       <span class="chevron open">▶</span>
     </div>
     <div class="nav-children open" id="navChildren">
-      <div id="navList"><div class="nav-item" id="nav-0"><div class="dot" style="background:#e74c3c"></div><span style="flex:1">🃏 Multihand Black Jack</span><span class="nav-eb" style="opacity: 0; font-size: 11px; color: rgb(167, 139, 250); margin-left: 4px; cursor: pointer;" onclick="event.stopPropagation();renameItem(0)">✎</span></div><div class="nav-item" id="nav-1"><div class="dot" style="background:#7b68ee"></div><span style="flex:1">🗼 Tower Rush 2</span><span class="nav-eb" style="opacity: 0; font-size: 11px; color: rgb(167, 139, 250); margin-left: 4px; cursor: pointer;" onclick="event.stopPropagation();renameItem(1)">✎</span></div><div class="nav-item" id="nav-2"><div class="dot" style="background:#f6a623"></div><span style="flex:1">🍓 Fruity Lines</span><span class="nav-eb" style="opacity: 0; font-size: 11px; color: rgb(167, 139, 250); margin-left: 4px; cursor: pointer;" onclick="event.stopPropagation();renameItem(2)">✎</span></div><div class="nav-item" id="nav-3"><div class="dot" style="background:#27ae60"></div><span style="flex:1">🌲 Wonder Forest</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(3)">✎</span></div><div class="nav-item" id="nav-4"><div class="dot" style="background:#0077b6"></div><span style="flex:1">🎯 Wingo</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(4)">✎</span></div><div class="nav-item" id="nav-5"><div class="dot" style="background:#16a085"></div><span style="flex:1">🐟 Ice Fish</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(5)">✎</span></div><div class="nav-item" id="nav-6"><div class="dot" style="background:#c0392b"></div><span style="flex:1">🎁 Gift Box</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(6)">✎</span></div><div class="nav-item" id="nav-7"><div class="dot" style="background:#8e44ad"></div><span style="flex:1">✅ Double Approval</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(7)">✎</span></div><div class="nav-item" id="nav-8"><div class="dot" style="background:#2980b9"></div><span style="flex:1">🔗 Related Changes</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(8)">✎</span></div></div>
+      <div id="navList"><div class="nav-item active" id="nav-0"><div class="dot" style="background:#e74c3c"></div><span style="flex:1">🃏 Multihand Black Jack</span><span class="nav-eb" style="opacity: 0; font-size: 11px; color: rgb(167, 139, 250); margin-left: 4px; cursor: pointer;" onclick="event.stopPropagation();renameItem(0)">✎</span></div><div class="nav-item" id="nav-1"><div class="dot" style="background:#7b68ee"></div><span style="flex:1">🗼 Tower Rush 2</span><span class="nav-eb" style="opacity: 0; font-size: 11px; color: rgb(167, 139, 250); margin-left: 4px; cursor: pointer;" onclick="event.stopPropagation();renameItem(1)">✎</span></div><div class="nav-item" id="nav-2"><div class="dot" style="background:#f6a623"></div><span style="flex:1">🍓 Fruity Lines</span><span class="nav-eb" style="opacity: 0; font-size: 11px; color: rgb(167, 139, 250); margin-left: 4px; cursor: pointer;" onclick="event.stopPropagation();renameItem(2)">✎</span></div><div class="nav-item" id="nav-3"><div class="dot" style="background:#27ae60"></div><span style="flex:1">🌲 Wonder Forest</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(3)">✎</span></div><div class="nav-item" id="nav-4"><div class="dot" style="background:#0077b6"></div><span style="flex:1">🎯 Wingo</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(4)">✎</span></div><div class="nav-item" id="nav-5"><div class="dot" style="background:#16a085"></div><span style="flex:1">🐟 Ice Fish</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(5)">✎</span></div><div class="nav-item" id="nav-6"><div class="dot" style="background:#c0392b"></div><span style="flex:1">🎁 Gift Box</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(6)">✎</span></div><div class="nav-item" id="nav-7"><div class="dot" style="background:#8e44ad"></div><span style="flex:1">✅ Double Approval</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(7)">✎</span></div><div class="nav-item" id="nav-8"><div class="dot" style="background:#2980b9"></div><span style="flex:1">🔗 Related Changes</span><span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(8)">✎</span></div></div>
       <div class="nav-add" onclick="openModal('roadmap')">＋ Add project</div>
     </div>
     <div class="sidebar-section" style="margin-top:10px;padding-top:10px;border-top:1px solid #ffffff15">Technical</div>
@@ -388,7 +388,7 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
 
   <div class="main">
     <!-- HOME -->
-    <div class="page active" id="page-home">
+    <div class="page" id="page-home">
       <div class="page-header">
         <div class="page-header-text">
           <div class="breadcrumb"><span id="homeBCText" style="color:#1a1a2e;font-weight:700">Q3/26 Roadmap</span></div>
@@ -541,14 +541,14 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
     </div>
 
     <!-- ITEM PAGE -->
-    <div class="page" id="page-item">
-      <div class="breadcrumb" id="itemBC"></div>
+    <div class="page active" id="page-item">
+      <div class="breadcrumb" id="itemBC"><span class="bc-link" onclick="showHome('roadmap')">Q3/26 Roadmap</span><span class="bc-sep">›</span><span style="color:#1a1a2e;font-weight:600">Multihand Black Jack</span></div>
       <div class="page-header">
         <div class="page-header-text">
-          <h1 id="itemTitle"></h1>
-          <p id="itemMeta"></p>
+          <h1 id="itemTitle">🃏 <span contenteditable="true" spellcheck="false" style="outline:none;border-bottom:2px solid transparent;transition:border-color .2s" onfocus="this.style.borderBottomColor='#a78bfa'" onblur="this.style.borderBottomColor='transparent';curItem.name=this.textContent.trim();refreshHome()">Multihand Black Jack</span></h1>
+          <p id="itemMeta">Fast Game · Committed · Size XL · <a href="https://dg-group.atlassian.net/browse/GX-13746" target="_blank" class="epic-link">🔗 GX-13746</a></p>
         </div>
-        <div id="releaseToggle" style="margin-top:8px"></div>
+        <div id="releaseToggle" style="margin-top:8px"><button class="release-btn" onclick="toggleReleased()">Mark as released</button></div>
       </div>
       <div class="tab-bar">
         <div class="tab active" id="tab-overview" onclick="switchTab('overview')">📋 Overview</div>
@@ -561,12 +561,222 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
         <div class="tab" id="tab-retro" onclick="switchTab('retro')">🔁 Retrospective</div>
       </div>
 
-      <div id="tc-overview">
-        <div class="info-grid" id="overviewGrid"></div>
-        <div class="completion-bar-wrap" id="completionBars"></div>
+      <div id="tc-overview" style="display: block;">
+        <div class="info-grid" id="overviewGrid">
+    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+    <div style="flex:1;min-width:160px;background:linear-gradient(135deg,#f0f2ff,#e8e5ff);border:1.5px solid #c5c0f5;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:12px;overflow:hidden">
+      <div style="flex-shrink:0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7b68ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><circle cx="8" cy="15" r="0.8" fill="#7b68ee"></circle><circle cx="12" cy="15" r="0.8" fill="#7b68ee"></circle><circle cx="16" cy="15" r="0.8" fill="#7b68ee"></circle><circle cx="8" cy="19" r="0.8" fill="#7b68ee"></circle><circle cx="12" cy="19" r="0.8" fill="#7b68ee"></circle></svg></div>
+      <div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:700;color:#7b68ee;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Project Start</div>
+      <input type="date" value="2026-05-13" style="font-size:16px;font-weight:800;color:#1a1a2e;border:none;background:transparent;outline:none;font-family:inherit;cursor:pointer;width:100%;min-width:0;box-sizing:border-box;display:block" onchange="if(validProjectStart(this.value,this)){if(curItem.phases[0])curItem.phases[0].startVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+    </div>
+    <div style="flex:1;min-width:160px;background:linear-gradient(135deg,#fff0f6,#ffe8f0);border:1.5px solid #f5b8d0;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:12px;overflow:hidden">
+      <div style="flex-shrink:0;font-size:24px;line-height:1">🏁</div>
+      <div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Project End</div>
+      <input type="date" value="2026-10-26" style="font-size:16px;font-weight:800;color:#1a1a2e;border:none;background:transparent;outline:none;font-family:inherit;cursor:pointer;width:100%;min-width:0;box-sizing:border-box;display:block" onchange="if(validProjectEnd(this.value,this)){const lp=curItem.phases[curItem.phases.length-1];if(lp)lp.endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+    </div>
+    <div style="flex:1;min-width:140px;background:linear-gradient(135deg,#f0fff4,#e0f5eb);border:1.5px solid #b7ebd0;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:24px">⏱</div>
+      <div><div style="font-size:10px;font-weight:700;color:#27ae60;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Duration</div>
+      <div style="font-size:18px;font-weight:800;color:#1a1a2e">23 weeks 5d</div></div>
+    </div>
+  </div>
+    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Type</div><div class="ic-val"><input class="ic-edit" value="Fast Game" onchange="curItem.type=this.value;refreshHome()"></div></div>
+    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Status</div><div class="ic-val"><input class="ic-edit" value="Committed" onchange="curItem.status=this.value;refreshHome()"></div></div>
+    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Size</div><div class="ic-val"><input class="ic-edit" value="XL" onchange="curItem.size=this.value"></div></div>
+    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Epic ID</div><div class="ic-val"><input class="ic-edit" value="GX-13746" onchange="curItem.epicId=this.value"></div></div>
+    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Release date</div><div class="ic-val"><input class="ic-edit" type="date" value="" onchange="curItem.releaseDate=this.value;renderItemHeader();renderCards()" style="font-size:13px"></div></div></div>
+        <div class="completion-bar-wrap" id="completionBars">
+  <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+    <!-- Donut chart -->
+    <div style="position:relative;width:100px;height:100px;flex-shrink:0">
+      <svg width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="38" fill="none" stroke="#f0f2ff" stroke-width="10"></circle>
+        <circle cx="50" cy="50" r="38" fill="none" stroke="#7b68ee" stroke-width="10" stroke-dasharray="238.76104167282426" stroke-dashoffset="159.96989792079225" stroke-linecap="round" transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .6s ease"></circle>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <span style="font-size:20px;font-weight:800;color:#7b68ee;line-height:1">33%</span>
+        <span style="font-size:9px;color:#aab0c6;font-weight:600;letter-spacing:.5px">DONE</span>
+      </div>
+    </div>
+    <!-- Overall label + toggle -->
+    <div style="flex:1;min-width:160px">
+      <div style="font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:4px">Overall Completion</div>
+      <div style="font-size:12px;color:#aab0c6;margin-bottom:12px">3 of 9 phases done</div>
+      <div style="height:8px;background:#f0f2ff;border-radius:20px;overflow:hidden;margin-bottom:10px">
+        <div style="height:100%;width:33%;background:linear-gradient(90deg,#7b68ee,#7b68eeaa);border-radius:20px;transition:width .6s ease"></div>
+      </div>
+      <button onclick="togglePhaseBreakdown()" id="breakdown-toggle-btn" style="display:flex;align-items:center;gap:6px;background:#f0f2ff;border:none;border-radius:20px;padding:6px 14px;font-size:11px;font-weight:700;color:#7b68ee;cursor:pointer;transition:all .2s">
+        <span>Show phase breakdown</span>
+        <span id="breakdown-arrow" style="font-size:10px;transition:transform .2s">▼</span>
+      </button>
+    </div>
+  </div>
+  <!-- Phase breakdown (collapsed by default) -->
+  <div id="phase-breakdown" style="display:none;margin-top:20px;border-top:1px solid #f0f2ff;padding-top:20px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">
+      <div style="background:#fafbff;border:1px solid #e8eaf0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(123,104,238,.1)'" onmouseout="this.style.boxShadow='none'">
+          <!-- mini donut -->
+          <div style="position:relative;width:40px;height:40px;flex-shrink:0">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#f0f2ff" stroke-width="5"></circle>
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#aab0c6" stroke-width="5" stroke-dasharray="87.96459430051421" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 20 20)"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#aab0c6">100%</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div onclick="goToPhase(0)" style="font-size:12px;font-weight:700;color:#7b68ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s" onmouseover="this.style.color='#5b21b6';this.style.textDecoration='underline'" onmouseout="this.style.color='#7b68ee';this.style.textDecoration='none'" title="Open in Phases tab">⚙️ Algorithm <span style="font-size:10px;opacity:.7">↗</span></div>
+            <div style="font-size:10px;color:#aab0c6;margin-bottom:6px">2/2 sub-tasks</div>
+            <div style="height:5px;background:#f0f2ff;border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:100%;background:#aab0c6;border-radius:10px;transition:width .5s ease"></div>
+            </div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:#f0fff4;color:#27ae60;white-space:nowrap">Done</span>
+        </div><div style="background:#fafbff;border:1px solid #e8eaf0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(123,104,238,.1)'" onmouseout="this.style.boxShadow='none'">
+          <!-- mini donut -->
+          <div style="position:relative;width:40px;height:40px;flex-shrink:0">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#f0f2ff" stroke-width="5"></circle>
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#aab0c6" stroke-width="5" stroke-dasharray="87.96459430051421" stroke-dashoffset="87.96459430051421" stroke-linecap="round" transform="rotate(-90 20 20)"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#aab0c6">0%</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div onclick="goToPhase(1)" style="font-size:12px;font-weight:700;color:#7b68ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s" onmouseover="this.style.color='#5b21b6';this.style.textDecoration='underline'" onmouseout="this.style.color='#7b68ee';this.style.textDecoration='none'" title="Open in Phases tab">🖼️ Illustrations <span style="font-size:10px;opacity:.7">↗</span></div>
+            <div style="font-size:10px;color:#aab0c6;margin-bottom:6px">0/0 sub-tasks</div>
+            <div style="height:5px;background:#f0f2ff;border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:0%;background:#aab0c6;border-radius:10px;transition:width .5s ease"></div>
+            </div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:#f0f2ff;color:#7b68ee;white-space:nowrap">Not Started</span>
+        </div><div style="background:#fafbff;border:1px solid #e8eaf0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(123,104,238,.1)'" onmouseout="this.style.boxShadow='none'">
+          <!-- mini donut -->
+          <div style="position:relative;width:40px;height:40px;flex-shrink:0">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#f0f2ff" stroke-width="5"></circle>
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#aab0c6" stroke-width="5" stroke-dasharray="87.96459430051421" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 20 20)"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#aab0c6">100%</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div onclick="goToPhase(2)" style="font-size:12px;font-weight:700;color:#7b68ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s" onmouseover="this.style.color='#5b21b6';this.style.textDecoration='underline'" onmouseout="this.style.color='#7b68ee';this.style.textDecoration='none'" title="Open in Phases tab">🎨 UI Design <span style="font-size:10px;opacity:.7">↗</span></div>
+            <div style="font-size:10px;color:#aab0c6;margin-bottom:6px">2/2 sub-tasks</div>
+            <div style="height:5px;background:#f0f2ff;border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:100%;background:#aab0c6;border-radius:10px;transition:width .5s ease"></div>
+            </div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:#f0fff4;color:#27ae60;white-space:nowrap">Done</span>
+        </div><div style="background:#fafbff;border:1px solid #e8eaf0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(123,104,238,.1)'" onmouseout="this.style.boxShadow='none'">
+          <!-- mini donut -->
+          <div style="position:relative;width:40px;height:40px;flex-shrink:0">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#f0f2ff" stroke-width="5"></circle>
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#aab0c6" stroke-width="5" stroke-dasharray="87.96459430051421" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 20 20)"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#aab0c6">100%</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div onclick="goToPhase(3)" style="font-size:12px;font-weight:700;color:#7b68ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s" onmouseover="this.style.color='#5b21b6';this.style.textDecoration='underline'" onmouseout="this.style.color='#7b68ee';this.style.textDecoration='none'" title="Open in Phases tab">✨ Animations <span style="font-size:10px;opacity:.7">↗</span></div>
+            <div style="font-size:10px;color:#aab0c6;margin-bottom:6px">2/2 sub-tasks</div>
+            <div style="height:5px;background:#f0f2ff;border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:100%;background:#aab0c6;border-radius:10px;transition:width .5s ease"></div>
+            </div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:#f0fff4;color:#27ae60;white-space:nowrap">Done</span>
+        </div><div style="background:#fafbff;border:1px solid #e8eaf0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(123,104,238,.1)'" onmouseout="this.style.boxShadow='none'">
+          <!-- mini donut -->
+          <div style="position:relative;width:40px;height:40px;flex-shrink:0">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#f0f2ff" stroke-width="5"></circle>
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#27ae60" stroke-width="5" stroke-dasharray="87.96459430051421" stroke-dashoffset="87.96459430051421" stroke-linecap="round" transform="rotate(-90 20 20)"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#27ae60">0%</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div onclick="goToPhase(4)" style="font-size:12px;font-weight:700;color:#7b68ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s" onmouseover="this.style.color='#5b21b6';this.style.textDecoration='underline'" onmouseout="this.style.color='#7b68ee';this.style.textDecoration='none'" title="Open in Phases tab">🛠️ BE Development <span style="font-size:10px;opacity:.7">↗</span></div>
+            <div style="font-size:10px;color:#aab0c6;margin-bottom:6px">0/2 sub-tasks</div>
+            <div style="height:5px;background:#f0f2ff;border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:0%;background:#27ae60;border-radius:10px;transition:width .5s ease"></div>
+            </div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fff7e6;color:#d48806;white-space:nowrap">In Progress</span>
+        </div><div style="background:#fafbff;border:1px solid #e8eaf0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(123,104,238,.1)'" onmouseout="this.style.boxShadow='none'">
+          <!-- mini donut -->
+          <div style="position:relative;width:40px;height:40px;flex-shrink:0">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#f0f2ff" stroke-width="5"></circle>
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#27ae60" stroke-width="5" stroke-dasharray="87.96459430051421" stroke-dashoffset="87.96459430051421" stroke-linecap="round" transform="rotate(-90 20 20)"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#27ae60">0%</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div onclick="goToPhase(5)" style="font-size:12px;font-weight:700;color:#7b68ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s" onmouseover="this.style.color='#5b21b6';this.style.textDecoration='underline'" onmouseout="this.style.color='#7b68ee';this.style.textDecoration='none'" title="Open in Phases tab">💻 FE Development <span style="font-size:10px;opacity:.7">↗</span></div>
+            <div style="font-size:10px;color:#aab0c6;margin-bottom:6px">0/2 sub-tasks</div>
+            <div style="height:5px;background:#f0f2ff;border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:0%;background:#27ae60;border-radius:10px;transition:width .5s ease"></div>
+            </div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fff7e6;color:#d48806;white-space:nowrap">In Progress</span>
+        </div><div style="background:#fafbff;border:1px solid #e8eaf0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(123,104,238,.1)'" onmouseout="this.style.boxShadow='none'">
+          <!-- mini donut -->
+          <div style="position:relative;width:40px;height:40px;flex-shrink:0">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#f0f2ff" stroke-width="5"></circle>
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#27ae60" stroke-width="5" stroke-dasharray="87.96459430051421" stroke-dashoffset="87.96459430051421" stroke-linecap="round" transform="rotate(-90 20 20)"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#27ae60">0%</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div onclick="goToPhase(6)" style="font-size:12px;font-weight:700;color:#7b68ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s" onmouseover="this.style.color='#5b21b6';this.style.textDecoration='underline'" onmouseout="this.style.color='#7b68ee';this.style.textDecoration='none'" title="Open in Phases tab">🔗 UI Integration <span style="font-size:10px;opacity:.7">↗</span></div>
+            <div style="font-size:10px;color:#aab0c6;margin-bottom:6px">0/1 sub-tasks</div>
+            <div style="height:5px;background:#f0f2ff;border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:0%;background:#27ae60;border-radius:10px;transition:width .5s ease"></div>
+            </div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:#f0f2ff;color:#7b68ee;white-space:nowrap">Not Started</span>
+        </div><div style="background:#fafbff;border:1px solid #e8eaf0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(123,104,238,.1)'" onmouseout="this.style.boxShadow='none'">
+          <!-- mini donut -->
+          <div style="position:relative;width:40px;height:40px;flex-shrink:0">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#f0f2ff" stroke-width="5"></circle>
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#f6a623" stroke-width="5" stroke-dasharray="87.96459430051421" stroke-dashoffset="87.96459430051421" stroke-linecap="round" transform="rotate(-90 20 20)"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#f6a623">0%</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div onclick="goToPhase(7)" style="font-size:12px;font-weight:700;color:#7b68ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s" onmouseover="this.style.color='#5b21b6';this.style.textDecoration='underline'" onmouseout="this.style.color='#7b68ee';this.style.textDecoration='none'" title="Open in Phases tab">🔍 QA <span style="font-size:10px;opacity:.7">↗</span></div>
+            <div style="font-size:10px;color:#aab0c6;margin-bottom:6px">0/2 sub-tasks</div>
+            <div style="height:5px;background:#f0f2ff;border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:0%;background:#f6a623;border-radius:10px;transition:width .5s ease"></div>
+            </div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:#f0f2ff;color:#7b68ee;white-space:nowrap">Not Started</span>
+        </div><div style="background:#fafbff;border:1px solid #e8eaf0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(123,104,238,.1)'" onmouseout="this.style.boxShadow='none'">
+          <!-- mini donut -->
+          <div style="position:relative;width:40px;height:40px;flex-shrink:0">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#f0f2ff" stroke-width="5"></circle>
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#f6a623" stroke-width="5" stroke-dasharray="87.96459430051421" stroke-dashoffset="87.96459430051421" stroke-linecap="round" transform="rotate(-90 20 20)"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#f6a623">0%</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div onclick="goToPhase(8)" style="font-size:12px;font-weight:700;color:#7b68ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s" onmouseover="this.style.color='#5b21b6';this.style.textDecoration='underline'" onmouseout="this.style.color='#7b68ee';this.style.textDecoration='none'" title="Open in Phases tab">🚀 Infosec <span style="font-size:10px;opacity:.7">↗</span></div>
+            <div style="font-size:10px;color:#aab0c6;margin-bottom:6px">0/2 sub-tasks</div>
+            <div style="height:5px;background:#f0f2ff;border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:0%;background:#f6a623;border-radius:10px;transition:width .5s ease"></div>
+            </div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:#f0f2ff;color:#7b68ee;white-space:nowrap">Not Started</span>
+        </div>
+    </div>
+  </div></div>
         <div class="panel">
           <div class="panel-title">🚀 Kick-off</div>
-          <div class="kickoff-grid" id="kickoffGrid"></div>
+          <div class="kickoff-grid" id="kickoffGrid">
+    <div class="kickoff-field"><label class="field-label">Kick-off Date</label><input class="kickoff-input" type="date" value="" onchange="curItem.kickoff.date=this.value"></div>
+    <div class="kickoff-field"><label class="field-label">Facilitator</label><input class="kickoff-input" placeholder="Who runs it?" value="" onchange="curItem.kickoff.facilitator=this.value"></div>
+    <div class="kickoff-field"><label class="field-label">Attendees</label><input class="kickoff-input" placeholder="List attendees..." value="" onchange="curItem.kickoff.attendees=this.value"></div>
+    <div class="kickoff-field"><label class="field-label">Notes</label><input class="kickoff-input" placeholder="Key decisions..." value="" onchange="curItem.kickoff.notes=this.value"></div></div>
         </div>
         <div class="panel">
           <div class="panel-title">🎯 Scope &amp; Description</div>
@@ -584,7 +794,7 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
           <input id="inp-dept" placeholder="Department">
           <button class="add-btn" onclick="addTeamMember()">+ Add</button>
         </div>
-        <div class="team-grid" id="teamGrid"></div>
+        <div class="team-grid" id="teamGrid"><div style="color:#aab0c6;font-size:13px;grid-column:1/-1;padding:16px 0">No members yet.</div></div>
       </div>
 
       <div id="tc-timeline" style="display:none">
@@ -603,14 +813,158 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
           <div class="gantt-controls">
             <button class="scroll-btn" onclick="scrollG(-4)">◀◀ 4w</button>
             <button class="scroll-btn" onclick="scrollG(-1)">◀ 1w</button>
-            <div class="gantt-window-label" id="ganttWinLabel"></div>
+            <div class="gantt-window-label" id="ganttWinLabel">4-May – 17-Aug</div>
             <button class="scroll-btn" onclick="scrollG(1)">1w ▶</button>
             <button class="scroll-btn" onclick="scrollG(4)">4w ▶▶</button>
-            <input type="range" id="ganttSlider" min="0" step="1" style="width:100px;margin-left:8px" oninput="ganttWO=+this.value;buildGantt()">
+            <input type="range" id="ganttSlider" min="0" step="1" style="width:100px;margin-left:8px" oninput="ganttWO=+this.value;buildGantt()" max="95">
             <button class="scroll-btn" onclick="resetGanttView()" style="margin-left:auto">Today</button>
             <button class="add-btn" onclick="addGanttRow()" style="padding:6px 14px;font-size:12px">＋ Add row</button>
           </div>
-          <div class="gantt-scroll-outer"><table class="gantt-table" id="ganttTable"></table></div>
+          <div class="gantt-scroll-outer"><table class="gantt-table" id="ganttTable"><tr><th class="th-label" rowspan="2">Phase</th><th colspan="6" class="th-sprint"></th><th colspan="3" class="th-sprint">Sprint 3</th><th colspan="4" class="th-sprint">Sprint 4</th><th colspan="3" class="th-sprint">Sprint 5</th></tr><tr><th class="th-week">4-May</th><th class="th-week">11-May</th><th class="th-week">18-May</th><th class="th-week">25-May</th><th class="th-week">1-Jun</th><th class="th-week">8-Jun</th><th class="th-week">15-Jun</th><th class="th-week th-today" style="border-left: 2px solid rgb(123, 104, 238); border-right: 2px solid rgb(123, 104, 238);"><div style="font-size:9px;font-weight:800">22-Jun</div><div style="font-size:8px;font-weight:800;color:#7b68ee;letter-spacing:.8px;margin-top:1px">▼ TODAY</div></th><th class="th-week">29-Jun</th><th class="th-week">6-Jul</th><th class="th-week">13-Jul</th><th class="th-week">20-Jul</th><th class="th-week">27-Jul</th><th class="th-week">3-Aug</th><th class="th-week">10-Aug</th><th class="th-week">17-Aug</th></tr><tr><td class="td-label"><div class="label-inner">
+      <div class="label-color-bar" style="background:#aab0c6"></div>
+      <div class="label-text">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <input class="lbl-name" value="Algorithm" onchange="curItem.phases[0].label=this.value;syncActions();buildPhases();buildActions()" placeholder="Phase">
+          
+          
+        </div>
+        <div class="lbl-dates">
+          <span style="font-size:9px;color:#aab0c6">Start:</span>
+          <input class="lbl-date-in" type="date" value="2026-05-13" title="Start date" onchange="if(validStart(0,this.value,this)){curItem.phases[0].startVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+          <span style="font-size:9px;color:#aab0c6">End:</span>
+          <input class="lbl-date-in" type="date" value="2026-06-05" title="Planned end" onchange="if(validEnd(0,this.value,this)){curItem.phases[0].endVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+        </div>
+      </div>
+      <div class="label-actions"><button class="la-btn" onclick="delGanttRow(0)" title="Remove">✕</button></div>
+    </div></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" title="Done" style="background: rgb(255, 183, 77);"></td><td class="td-cell" title="Done" style="background: rgb(255, 183, 77);"></td><td class="td-cell" title="Done" style="background: rgb(255, 183, 77);"></td><td class="td-cell" title="Done" style="background: rgb(255, 183, 77);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell cell-today-border" style="border-left: 2px solid rgb(123, 104, 238); border-right: 2px solid rgb(123, 104, 238); background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td></tr><tr><td class="td-label"><div class="label-inner">
+      <div class="label-color-bar" style="background:#aab0c6"></div>
+      <div class="label-text">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <input class="lbl-name" value="Illustrations" onchange="curItem.phases[1].label=this.value;syncActions();buildPhases();buildActions()" placeholder="Phase">
+          
+          
+        </div>
+        <div class="lbl-dates">
+          <span style="font-size:9px;color:#aab0c6">Start:</span>
+          <input class="lbl-date-in" type="date" value="" title="Start date" onchange="if(validStart(1,this.value,this)){curItem.phases[1].startVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+          <span style="font-size:9px;color:#aab0c6">End:</span>
+          <input class="lbl-date-in" type="date" value="" title="Planned end" onchange="if(validEnd(1,this.value,this)){curItem.phases[1].endVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+        </div>
+      </div>
+      <div class="label-actions"><button class="la-btn" onclick="delGanttRow(1)" title="Remove">✕</button></div>
+    </div></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell cell-today-border" style="border-left: 2px solid rgb(123, 104, 238); border-right: 2px solid rgb(123, 104, 238); background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td></tr><tr><td class="td-label"><div class="label-inner">
+      <div class="label-color-bar" style="background:#aab0c6"></div>
+      <div class="label-text">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <input class="lbl-name" value="UI Design" onchange="curItem.phases[2].label=this.value;syncActions();buildPhases();buildActions()" placeholder="Phase">
+          
+          
+        </div>
+        <div class="lbl-dates">
+          <span style="font-size:9px;color:#aab0c6">Start:</span>
+          <input class="lbl-date-in" type="date" value="2026-06-06" title="Start date" onchange="if(validStart(2,this.value,this)){curItem.phases[2].startVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+          <span style="font-size:9px;color:#aab0c6">End:</span>
+          <input class="lbl-date-in" type="date" value="2026-07-03" title="Planned end" onchange="if(validEnd(2,this.value,this)){curItem.phases[2].endVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+        </div>
+      </div>
+      <div class="label-actions"><button class="la-btn" onclick="delGanttRow(2)" title="Remove">✕</button></div>
+    </div></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" title="Done" style="background: rgb(255, 183, 77);"></td><td class="td-cell" title="Done" style="background: rgb(255, 183, 77);"></td><td class="td-cell" title="Done" style="background: rgb(255, 183, 77);"></td><td class="td-cell cell-today-border" title="Done" style="border-left: 2px solid rgb(123, 104, 238); border-right: 2px solid rgb(123, 104, 238); background: rgb(255, 183, 77);"></td><td class="td-cell" title="Done" style="background: rgb(255, 183, 77);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td></tr><tr><td class="td-label"><div class="label-inner">
+      <div class="label-color-bar" style="background:#aab0c6"></div>
+      <div class="label-text">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <input class="lbl-name" value="Animations" onchange="curItem.phases[3].label=this.value;syncActions();buildPhases();buildActions()" placeholder="Phase">
+          
+          
+        </div>
+        <div class="lbl-dates">
+          <span style="font-size:9px;color:#aab0c6">Start:</span>
+          <input class="lbl-date-in" type="date" value="2026-06-20" title="Start date" onchange="if(validStart(3,this.value,this)){curItem.phases[3].startVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+          <span style="font-size:9px;color:#aab0c6">End:</span>
+          <input class="lbl-date-in" type="date" value="2026-07-10" title="Planned end" onchange="if(validEnd(3,this.value,this)){curItem.phases[3].endVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+        </div>
+      </div>
+      <div class="label-actions"><button class="la-btn" onclick="delGanttRow(3)" title="Remove">✕</button></div>
+    </div></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" title="Done" style="background: rgb(255, 183, 77);"></td><td class="td-cell cell-today-border" title="Done" style="border-left: 2px solid rgb(123, 104, 238); border-right: 2px solid rgb(123, 104, 238); background: rgb(255, 183, 77);"></td><td class="td-cell" title="Done" style="background: rgb(255, 183, 77);"></td><td class="td-cell" title="Done" style="background: rgb(255, 183, 77);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td></tr><tr><td class="td-label"><div class="label-inner">
+      <div class="label-color-bar" style="background:#27ae60"></div>
+      <div class="label-text">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <input class="lbl-name" value="BE Development" onchange="curItem.phases[4].label=this.value;syncActions();buildPhases();buildActions()" placeholder="Phase">
+          
+          
+        </div>
+        <div class="lbl-dates">
+          <span style="font-size:9px;color:#aab0c6">Start:</span>
+          <input class="lbl-date-in" type="date" value="2026-07-06" title="Start date" onchange="if(validStart(4,this.value,this)){curItem.phases[4].startVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+          <span style="font-size:9px;color:#aab0c6">End:</span>
+          <input class="lbl-date-in" type="date" value="2026-08-03" title="Planned end" onchange="if(validEnd(4,this.value,this)){curItem.phases[4].endVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+        </div>
+      </div>
+      <div class="label-actions"><button class="la-btn" onclick="delGanttRow(4)" title="Remove">✕</button></div>
+    </div></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell cell-today-border" style="border-left: 2px solid rgb(123, 104, 238); border-right: 2px solid rgb(123, 104, 238); background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td></tr><tr><td class="td-label"><div class="label-inner">
+      <div class="label-color-bar" style="background:#27ae60"></div>
+      <div class="label-text">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <input class="lbl-name" value="FE Development" onchange="curItem.phases[5].label=this.value;syncActions();buildPhases();buildActions()" placeholder="Phase">
+          
+          
+        </div>
+        <div class="lbl-dates">
+          <span style="font-size:9px;color:#aab0c6">Start:</span>
+          <input class="lbl-date-in" type="date" value="2026-07-06" title="Start date" onchange="if(validStart(5,this.value,this)){curItem.phases[5].startVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+          <span style="font-size:9px;color:#aab0c6">End:</span>
+          <input class="lbl-date-in" type="date" value="2026-08-03" title="Planned end" onchange="if(validEnd(5,this.value,this)){curItem.phases[5].endVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+        </div>
+      </div>
+      <div class="label-actions"><button class="la-btn" onclick="delGanttRow(5)" title="Remove">✕</button></div>
+    </div></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell cell-today-border" style="border-left: 2px solid rgb(123, 104, 238); border-right: 2px solid rgb(123, 104, 238); background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td></tr><tr><td class="td-label"><div class="label-inner">
+      <div class="label-color-bar" style="background:#27ae60"></div>
+      <div class="label-text">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <input class="lbl-name" value="UI Integration" onchange="curItem.phases[6].label=this.value;syncActions();buildPhases();buildActions()" placeholder="Phase">
+          
+          
+        </div>
+        <div class="lbl-dates">
+          <span style="font-size:9px;color:#aab0c6">Start:</span>
+          <input class="lbl-date-in" type="date" value="2026-08-10" title="Start date" onchange="if(validStart(6,this.value,this)){curItem.phases[6].startVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+          <span style="font-size:9px;color:#aab0c6">End:</span>
+          <input class="lbl-date-in" type="date" value="2026-08-31" title="Planned end" onchange="if(validEnd(6,this.value,this)){curItem.phases[6].endVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+        </div>
+      </div>
+      <div class="label-actions"><button class="la-btn" onclick="delGanttRow(6)" title="Remove">✕</button></div>
+    </div></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell cell-today-border" style="border-left: 2px solid rgb(123, 104, 238); border-right: 2px solid rgb(123, 104, 238); background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td><td class="td-cell" style="background: rgb(76, 175, 80);"></td></tr><tr><td class="td-label"><div class="label-inner">
+      <div class="label-color-bar" style="background:#f6a623"></div>
+      <div class="label-text">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <input class="lbl-name" value="QA" onchange="curItem.phases[7].label=this.value;syncActions();buildPhases();buildActions()" placeholder="Phase">
+          
+          
+        </div>
+        <div class="lbl-dates">
+          <span style="font-size:9px;color:#aab0c6">Start:</span>
+          <input class="lbl-date-in" type="date" value="2026-09-07" title="Start date" onchange="if(validStart(7,this.value,this)){curItem.phases[7].startVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+          <span style="font-size:9px;color:#aab0c6">End:</span>
+          <input class="lbl-date-in" type="date" value="2026-10-05" title="Planned end" onchange="if(validEnd(7,this.value,this)){curItem.phases[7].endVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+        </div>
+      </div>
+      <div class="label-actions"><button class="la-btn" onclick="delGanttRow(7)" title="Remove">✕</button></div>
+    </div></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell cell-today-border" style="border-left: 2px solid rgb(123, 104, 238); border-right: 2px solid rgb(123, 104, 238); background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td></tr><tr><td class="td-label"><div class="label-inner">
+      <div class="label-color-bar" style="background:#f6a623"></div>
+      <div class="label-text">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <input class="lbl-name" value="Infosec" onchange="curItem.phases[8].label=this.value;syncActions();buildPhases();buildActions()" placeholder="Phase">
+          
+          
+        </div>
+        <div class="lbl-dates">
+          <span style="font-size:9px;color:#aab0c6">Start:</span>
+          <input class="lbl-date-in" type="date" value="2026-10-12" title="Start date" onchange="if(validStart(8,this.value,this)){curItem.phases[8].startVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+          <span style="font-size:9px;color:#aab0c6">End:</span>
+          <input class="lbl-date-in" type="date" value="2026-10-26" title="Planned end" onchange="if(validEnd(8,this.value,this)){curItem.phases[8].endVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
+        </div>
+      </div>
+      <div class="label-actions"><button class="la-btn" onclick="delGanttRow(8)" title="Remove">✕</button></div>
+    </div></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell cell-today-border" style="border-left: 2px solid rgb(123, 104, 238); border-right: 2px solid rgb(123, 104, 238); background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td><td class="td-cell" style="background: rgb(250, 251, 255);"></td></tr><tr><td colspan="17"><div class="add-row-btn" onclick="addGanttRow()">＋ Add row</div></td></tr></table></div>
         </div>
       </div>
 
@@ -621,12 +975,594 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
           <div class="ph-leg"><div class="ph-leg-dot" style="background:#27ae60"></div>Done → Gantt orange</div>
           <div class="ph-leg"><div class="ph-leg-dot" style="background:#e74c3c"></div>Blocked → Gantt red</div>
         </div>
-        <div id="phasesContainer"></div>
+        <div id="phasesContainer"><div class="phase-card s-done" id="pc-0">
+      <div class="phase-card-header" onclick="togglePhase(0)">
+        <div class="ph-num done">1</div>
+        <div class="ph-title-wrap">
+          <input class="ph-title-input" value="Algorithm" onclick="event.stopPropagation()" onchange="curItem.phases[0].label=this.value;buildGantt();syncActions();buildActions()">
+        </div>
+        <div style="text-align:right;margin-right:8px;flex-shrink:0">
+          <svg width="34" height="34" viewBox="0 0 34 34" style="display:block;margin:auto"><circle cx="17" cy="17" r="12" fill="none" stroke="#f0f2ff" stroke-width="4"></circle><circle cx="17" cy="17" r="12" fill="none" stroke="#27ae60" stroke-width="4" stroke-dasharray="75.39822368615503" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 17 17)"></circle></svg><div style="font-size:10px;font-weight:800;color:#27ae60;margin-top:2px">100%</div>
+        </div>
+        <select class="status-select ss-done" id="sel-0" onclick="event.stopPropagation()" onchange="changePhaseStatus(0,this.value)">
+          <option value="notstarted">● NOT STARTED</option>
+          <option value="inprogress">● IN PROGRESS</option>
+          <option value="done" selected="">● DONE</option>
+          <option value="blocked">● BLOCKED</option>
+        </select>
+        <button class="phase-del-btn" onclick="event.stopPropagation();delPhaseCard(0)">✕</button>
+        <span class="phase-toggle-arrow open" id="arr-0">▲</span>
+      </div>
+      <div class="phase-card-body" id="pb-0">
+        <div style="margin:14px 0 10px;padding:12px 16px;background:linear-gradient(135deg,#f8f9ff,#f0f2ff);border-radius:12px;display:flex;align-items:center;gap:16px">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#aab0c6;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px"><span>Sub-task progress</span><span style="color:#27ae60">100%</span></div>
+            <div style="height:8px;background:#e0e4ef;border-radius:20px;overflow:hidden">
+              <div style="height:100%;width:100%;background:linear-gradient(90deg,#27ae60,#6fcf97);border-radius:20px;transition:width .5s ease;box-shadow:0 2px 6px rgba(39,174,96,.3)"></div>
+            </div>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:#27ae60;min-width:44px;text-align:center">100%</div>
+          <div style="font-size:11px;color:#aab0c6;min-width:80px">2/2 done</div>
+        </div>
+        <div class="ph-dates-row">
+          <div class="ph-date-field"><label>Planned Start</label><input type="date" value="2026-05-13" onchange="if(validStart(0,this.value,this)){curItem.phases[0].startVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Planned End</label><input type="date" value="2026-06-05" onchange="if(validEnd(0,this.value,this)){curItem.phases[0].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Actual End ✓</label>
+            <input type="date" value="" onchange="if(validActualEnd(0,this.value,this)){curItem.phases[0].actualEndVal=this.value;buildGantt(true);schedSave();}" style="">
+          </div>
+        </div>
+        <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[0].comments=this.value;schedSave()">Completed.</textarea></div>
+        <div class="ph-subtasks">
+          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn" onclick="addSubtask(0)">+ Sub-task</button></div>
+          <div id="st-0"><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" checked="" onchange="toggleSubtask(0,0,this.checked)">
+    <input class="subtask-input" value="Define math model &amp; RTP" placeholder="Sub-task" onchange="updateSubtask(0,0,this.value)" style="text-decoration:line-through;color:#aab0c6">
+    <button class="subtask-del" onclick="delSubtask(0,0)">✕</button>
+  </div><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" checked="" onchange="toggleSubtask(0,1,this.checked)">
+    <input class="subtask-input" value="Algorithm spec" placeholder="Sub-task" onchange="updateSubtask(0,1,this.value)" style="text-decoration:line-through;color:#aab0c6">
+    <button class="subtask-del" onclick="delSubtask(0,1)">✕</button>
+  </div></div>
+        </div>
+      </div></div><div class="phase-card s-notstarted" id="pc-1">
+      <div class="phase-card-header" onclick="togglePhase(1)">
+        <div class="ph-num ">2</div>
+        <div class="ph-title-wrap">
+          <input class="ph-title-input" value="Illustrations" onclick="event.stopPropagation()" onchange="curItem.phases[1].label=this.value;buildGantt();syncActions();buildActions()">
+        </div>
+        <div style="text-align:right;margin-right:8px;flex-shrink:0">
+          <svg width="34" height="34" viewBox="0 0 34 34" style="display:block;margin:auto"><circle cx="17" cy="17" r="12" fill="none" stroke="#f0f2ff" stroke-width="4"></circle><circle cx="17" cy="17" r="12" fill="none" stroke="#7b68ee" stroke-width="4" stroke-dasharray="75.39822368615503" stroke-dashoffset="75.39822368615503" stroke-linecap="round" transform="rotate(-90 17 17)"></circle></svg><div style="font-size:10px;font-weight:800;color:#7b68ee;margin-top:2px">0%</div>
+        </div>
+        <select class="status-select ss-notstarted" id="sel-1" onclick="event.stopPropagation()" onchange="changePhaseStatus(1,this.value)">
+          <option value="notstarted" selected="">● NOT STARTED</option>
+          <option value="inprogress">● IN PROGRESS</option>
+          <option value="done">● DONE</option>
+          <option value="blocked">● BLOCKED</option>
+        </select>
+        <button class="phase-del-btn" onclick="event.stopPropagation();delPhaseCard(1)">✕</button>
+        <span class="phase-toggle-arrow open" id="arr-1">▲</span>
+      </div>
+      <div class="phase-card-body" id="pb-1">
+        <div style="margin:14px 0 10px;padding:12px 16px;background:linear-gradient(135deg,#f8f9ff,#f0f2ff);border-radius:12px;display:flex;align-items:center;gap:16px">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#aab0c6;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px"><span>Sub-task progress</span><span style="color:#7b68ee">0%</span></div>
+            <div style="height:8px;background:#e0e4ef;border-radius:20px;overflow:hidden">
+              <div style="height:100%;width:0%;background:linear-gradient(90deg,#7b68ee,#a78bfa);border-radius:20px;transition:width .5s ease;box-shadow:0 2px 6px rgba(123,104,238,.3)"></div>
+            </div>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:#7b68ee;min-width:44px;text-align:center">0%</div>
+          <div style="font-size:11px;color:#aab0c6;min-width:80px">0/0 done</div>
+        </div>
+        <div class="ph-dates-row">
+          <div class="ph-date-field"><label>Planned Start</label><input type="date" value="" onchange="if(validStart(1,this.value,this)){curItem.phases[1].startVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Planned End</label><input type="date" value="" onchange="if(validEnd(1,this.value,this)){curItem.phases[1].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Actual End </label>
+            <input type="date" value="" onchange="if(validActualEnd(1,this.value,this)){curItem.phases[1].actualEndVal=this.value;buildGantt(true);schedSave();}" style="">
+          </div>
+        </div>
+        <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[1].comments=this.value;schedSave()">No illustrations needed.</textarea></div>
+        <div class="ph-subtasks">
+          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn" onclick="addSubtask(1)">+ Sub-task</button></div>
+          <div id="st-1"><div style="font-size:12px;color:#ccc;padding:6px 0">No sub-tasks yet.</div></div>
+        </div>
+      </div></div><div class="phase-card s-done" id="pc-2">
+      <div class="phase-card-header" onclick="togglePhase(2)">
+        <div class="ph-num done">3</div>
+        <div class="ph-title-wrap">
+          <input class="ph-title-input" value="UI Design" onclick="event.stopPropagation()" onchange="curItem.phases[2].label=this.value;buildGantt();syncActions();buildActions()">
+        </div>
+        <div style="text-align:right;margin-right:8px;flex-shrink:0">
+          <svg width="34" height="34" viewBox="0 0 34 34" style="display:block;margin:auto"><circle cx="17" cy="17" r="12" fill="none" stroke="#f0f2ff" stroke-width="4"></circle><circle cx="17" cy="17" r="12" fill="none" stroke="#27ae60" stroke-width="4" stroke-dasharray="75.39822368615503" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 17 17)"></circle></svg><div style="font-size:10px;font-weight:800;color:#27ae60;margin-top:2px">100%</div>
+        </div>
+        <select class="status-select ss-done" id="sel-2" onclick="event.stopPropagation()" onchange="changePhaseStatus(2,this.value)">
+          <option value="notstarted">● NOT STARTED</option>
+          <option value="inprogress">● IN PROGRESS</option>
+          <option value="done" selected="">● DONE</option>
+          <option value="blocked">● BLOCKED</option>
+        </select>
+        <button class="phase-del-btn" onclick="event.stopPropagation();delPhaseCard(2)">✕</button>
+        <span class="phase-toggle-arrow open" id="arr-2">▲</span>
+      </div>
+      <div class="phase-card-body" id="pb-2">
+        <div style="margin:14px 0 10px;padding:12px 16px;background:linear-gradient(135deg,#f8f9ff,#f0f2ff);border-radius:12px;display:flex;align-items:center;gap:16px">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#aab0c6;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px"><span>Sub-task progress</span><span style="color:#27ae60">100%</span></div>
+            <div style="height:8px;background:#e0e4ef;border-radius:20px;overflow:hidden">
+              <div style="height:100%;width:100%;background:linear-gradient(90deg,#27ae60,#6fcf97);border-radius:20px;transition:width .5s ease;box-shadow:0 2px 6px rgba(39,174,96,.3)"></div>
+            </div>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:#27ae60;min-width:44px;text-align:center">100%</div>
+          <div style="font-size:11px;color:#aab0c6;min-width:80px">2/2 done</div>
+        </div>
+        <div class="ph-dates-row">
+          <div class="ph-date-field"><label>Planned Start</label><input type="date" value="2026-06-06" onchange="if(validStart(2,this.value,this)){curItem.phases[2].startVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Planned End</label><input type="date" value="2026-07-03" onchange="if(validEnd(2,this.value,this)){curItem.phases[2].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Actual End ✓</label>
+            <input type="date" value="" onchange="if(validActualEnd(2,this.value,this)){curItem.phases[2].actualEndVal=this.value;buildGantt(true);schedSave();}" style="">
+          </div>
+        </div>
+        <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[2].comments=this.value;schedSave()">Mockups signed off.</textarea></div>
+        <div class="ph-subtasks">
+          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn" onclick="addSubtask(2)">+ Sub-task</button></div>
+          <div id="st-2"><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" checked="" onchange="toggleSubtask(2,0,this.checked)">
+    <input class="subtask-input" value="Wireframes" placeholder="Sub-task" onchange="updateSubtask(2,0,this.value)" style="text-decoration:line-through;color:#aab0c6">
+    <button class="subtask-del" onclick="delSubtask(2,0)">✕</button>
+  </div><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" checked="" onchange="toggleSubtask(2,1,this.checked)">
+    <input class="subtask-input" value="Hi-fi mockups" placeholder="Sub-task" onchange="updateSubtask(2,1,this.value)" style="text-decoration:line-through;color:#aab0c6">
+    <button class="subtask-del" onclick="delSubtask(2,1)">✕</button>
+  </div></div>
+        </div>
+      </div></div><div class="phase-card s-done" id="pc-3">
+      <div class="phase-card-header" onclick="togglePhase(3)">
+        <div class="ph-num done">4</div>
+        <div class="ph-title-wrap">
+          <input class="ph-title-input" value="Animations" onclick="event.stopPropagation()" onchange="curItem.phases[3].label=this.value;buildGantt();syncActions();buildActions()">
+        </div>
+        <div style="text-align:right;margin-right:8px;flex-shrink:0">
+          <svg width="34" height="34" viewBox="0 0 34 34" style="display:block;margin:auto"><circle cx="17" cy="17" r="12" fill="none" stroke="#f0f2ff" stroke-width="4"></circle><circle cx="17" cy="17" r="12" fill="none" stroke="#27ae60" stroke-width="4" stroke-dasharray="75.39822368615503" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 17 17)"></circle></svg><div style="font-size:10px;font-weight:800;color:#27ae60;margin-top:2px">100%</div>
+        </div>
+        <select class="status-select ss-done" id="sel-3" onclick="event.stopPropagation()" onchange="changePhaseStatus(3,this.value)">
+          <option value="notstarted">● NOT STARTED</option>
+          <option value="inprogress">● IN PROGRESS</option>
+          <option value="done" selected="">● DONE</option>
+          <option value="blocked">● BLOCKED</option>
+        </select>
+        <button class="phase-del-btn" onclick="event.stopPropagation();delPhaseCard(3)">✕</button>
+        <span class="phase-toggle-arrow open" id="arr-3">▲</span>
+      </div>
+      <div class="phase-card-body" id="pb-3">
+        <div style="margin:14px 0 10px;padding:12px 16px;background:linear-gradient(135deg,#f8f9ff,#f0f2ff);border-radius:12px;display:flex;align-items:center;gap:16px">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#aab0c6;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px"><span>Sub-task progress</span><span style="color:#27ae60">100%</span></div>
+            <div style="height:8px;background:#e0e4ef;border-radius:20px;overflow:hidden">
+              <div style="height:100%;width:100%;background:linear-gradient(90deg,#27ae60,#6fcf97);border-radius:20px;transition:width .5s ease;box-shadow:0 2px 6px rgba(39,174,96,.3)"></div>
+            </div>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:#27ae60;min-width:44px;text-align:center">100%</div>
+          <div style="font-size:11px;color:#aab0c6;min-width:80px">2/2 done</div>
+        </div>
+        <div class="ph-dates-row">
+          <div class="ph-date-field"><label>Planned Start</label><input type="date" value="2026-06-20" onchange="if(validStart(3,this.value,this)){curItem.phases[3].startVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Planned End</label><input type="date" value="2026-07-10" onchange="if(validEnd(3,this.value,this)){curItem.phases[3].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Actual End ✓</label>
+            <input type="date" value="" onchange="if(validActualEnd(3,this.value,this)){curItem.phases[3].actualEndVal=this.value;buildGantt(true);schedSave();}" style="">
+          </div>
+        </div>
+        <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[3].comments=this.value;schedSave()">Delivered.</textarea></div>
+        <div class="ph-subtasks">
+          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn" onclick="addSubtask(3)">+ Sub-task</button></div>
+          <div id="st-3"><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" checked="" onchange="toggleSubtask(3,0,this.checked)">
+    <input class="subtask-input" value="Card flip" placeholder="Sub-task" onchange="updateSubtask(3,0,this.value)" style="text-decoration:line-through;color:#aab0c6">
+    <button class="subtask-del" onclick="delSubtask(3,0)">✕</button>
+  </div><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" checked="" onchange="toggleSubtask(3,1,this.checked)">
+    <input class="subtask-input" value="Win FX" placeholder="Sub-task" onchange="updateSubtask(3,1,this.value)" style="text-decoration:line-through;color:#aab0c6">
+    <button class="subtask-del" onclick="delSubtask(3,1)">✕</button>
+  </div></div>
+        </div>
+      </div></div><div class="phase-card s-inprogress" id="pc-4">
+      <div class="phase-card-header" onclick="togglePhase(4)">
+        <div class="ph-num inprogress">5</div>
+        <div class="ph-title-wrap">
+          <input class="ph-title-input" value="BE Development" onclick="event.stopPropagation()" onchange="curItem.phases[4].label=this.value;buildGantt();syncActions();buildActions()">
+        </div>
+        <div style="text-align:right;margin-right:8px;flex-shrink:0">
+          <svg width="34" height="34" viewBox="0 0 34 34" style="display:block;margin:auto"><circle cx="17" cy="17" r="12" fill="none" stroke="#f0f2ff" stroke-width="4"></circle><circle cx="17" cy="17" r="12" fill="none" stroke="#7b68ee" stroke-width="4" stroke-dasharray="75.39822368615503" stroke-dashoffset="75.39822368615503" stroke-linecap="round" transform="rotate(-90 17 17)"></circle></svg><div style="font-size:10px;font-weight:800;color:#7b68ee;margin-top:2px">0%</div>
+        </div>
+        <select class="status-select ss-inprogress" id="sel-4" onclick="event.stopPropagation()" onchange="changePhaseStatus(4,this.value)">
+          <option value="notstarted">● NOT STARTED</option>
+          <option value="inprogress" selected="">● IN PROGRESS</option>
+          <option value="done">● DONE</option>
+          <option value="blocked">● BLOCKED</option>
+        </select>
+        <button class="phase-del-btn" onclick="event.stopPropagation();delPhaseCard(4)">✕</button>
+        <span class="phase-toggle-arrow open" id="arr-4">▲</span>
+      </div>
+      <div class="phase-card-body" id="pb-4">
+        <div style="margin:14px 0 10px;padding:12px 16px;background:linear-gradient(135deg,#f8f9ff,#f0f2ff);border-radius:12px;display:flex;align-items:center;gap:16px">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#aab0c6;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px"><span>Sub-task progress</span><span style="color:#7b68ee">0%</span></div>
+            <div style="height:8px;background:#e0e4ef;border-radius:20px;overflow:hidden">
+              <div style="height:100%;width:0%;background:linear-gradient(90deg,#7b68ee,#a78bfa);border-radius:20px;transition:width .5s ease;box-shadow:0 2px 6px rgba(123,104,238,.3)"></div>
+            </div>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:#7b68ee;min-width:44px;text-align:center">0%</div>
+          <div style="font-size:11px;color:#aab0c6;min-width:80px">0/2 done</div>
+        </div>
+        <div class="ph-dates-row">
+          <div class="ph-date-field"><label>Planned Start</label><input type="date" value="2026-07-06" onchange="if(validStart(4,this.value,this)){curItem.phases[4].startVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Planned End</label><input type="date" value="2026-08-03" onchange="if(validEnd(4,this.value,this)){curItem.phases[4].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Actual End </label>
+            <input type="date" value="" onchange="if(validActualEnd(4,this.value,this)){curItem.phases[4].actualEndVal=this.value;buildGantt(true);schedSave();}" style="">
+          </div>
+        </div>
+        <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[4].comments=this.value;schedSave()"></textarea></div>
+        <div class="ph-subtasks">
+          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn" onclick="addSubtask(4)">+ Sub-task</button></div>
+          <div id="st-4"><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" onchange="toggleSubtask(4,0,this.checked)">
+    <input class="subtask-input" value="Game server logic" placeholder="Sub-task" onchange="updateSubtask(4,0,this.value)" style="">
+    <button class="subtask-del" onclick="delSubtask(4,0)">✕</button>
+  </div><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" onchange="toggleSubtask(4,1,this.checked)">
+    <input class="subtask-input" value="API endpoints" placeholder="Sub-task" onchange="updateSubtask(4,1,this.value)" style="">
+    <button class="subtask-del" onclick="delSubtask(4,1)">✕</button>
+  </div></div>
+        </div>
+      </div></div><div class="phase-card s-inprogress" id="pc-5">
+      <div class="phase-card-header" onclick="togglePhase(5)">
+        <div class="ph-num inprogress">6</div>
+        <div class="ph-title-wrap">
+          <input class="ph-title-input" value="FE Development" onclick="event.stopPropagation()" onchange="curItem.phases[5].label=this.value;buildGantt();syncActions();buildActions()">
+        </div>
+        <div style="text-align:right;margin-right:8px;flex-shrink:0">
+          <svg width="34" height="34" viewBox="0 0 34 34" style="display:block;margin:auto"><circle cx="17" cy="17" r="12" fill="none" stroke="#f0f2ff" stroke-width="4"></circle><circle cx="17" cy="17" r="12" fill="none" stroke="#7b68ee" stroke-width="4" stroke-dasharray="75.39822368615503" stroke-dashoffset="75.39822368615503" stroke-linecap="round" transform="rotate(-90 17 17)"></circle></svg><div style="font-size:10px;font-weight:800;color:#7b68ee;margin-top:2px">0%</div>
+        </div>
+        <select class="status-select ss-inprogress" id="sel-5" onclick="event.stopPropagation()" onchange="changePhaseStatus(5,this.value)">
+          <option value="notstarted">● NOT STARTED</option>
+          <option value="inprogress" selected="">● IN PROGRESS</option>
+          <option value="done">● DONE</option>
+          <option value="blocked">● BLOCKED</option>
+        </select>
+        <button class="phase-del-btn" onclick="event.stopPropagation();delPhaseCard(5)">✕</button>
+        <span class="phase-toggle-arrow open" id="arr-5">▲</span>
+      </div>
+      <div class="phase-card-body" id="pb-5">
+        <div style="margin:14px 0 10px;padding:12px 16px;background:linear-gradient(135deg,#f8f9ff,#f0f2ff);border-radius:12px;display:flex;align-items:center;gap:16px">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#aab0c6;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px"><span>Sub-task progress</span><span style="color:#7b68ee">0%</span></div>
+            <div style="height:8px;background:#e0e4ef;border-radius:20px;overflow:hidden">
+              <div style="height:100%;width:0%;background:linear-gradient(90deg,#7b68ee,#a78bfa);border-radius:20px;transition:width .5s ease;box-shadow:0 2px 6px rgba(123,104,238,.3)"></div>
+            </div>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:#7b68ee;min-width:44px;text-align:center">0%</div>
+          <div style="font-size:11px;color:#aab0c6;min-width:80px">0/2 done</div>
+        </div>
+        <div class="ph-dates-row">
+          <div class="ph-date-field"><label>Planned Start</label><input type="date" value="2026-07-06" onchange="if(validStart(5,this.value,this)){curItem.phases[5].startVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Planned End</label><input type="date" value="2026-08-03" onchange="if(validEnd(5,this.value,this)){curItem.phases[5].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Actual End </label>
+            <input type="date" value="" onchange="if(validActualEnd(5,this.value,this)){curItem.phases[5].actualEndVal=this.value;buildGantt(true);schedSave();}" style="">
+          </div>
+        </div>
+        <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[5].comments=this.value;schedSave()"></textarea></div>
+        <div class="ph-subtasks">
+          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn" onclick="addSubtask(5)">+ Sub-task</button></div>
+          <div id="st-5"><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" onchange="toggleSubtask(5,0,this.checked)">
+    <input class="subtask-input" value="Game shell" placeholder="Sub-task" onchange="updateSubtask(5,0,this.value)" style="">
+    <button class="subtask-del" onclick="delSubtask(5,0)">✕</button>
+  </div><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" onchange="toggleSubtask(5,1,this.checked)">
+    <input class="subtask-input" value="UI build" placeholder="Sub-task" onchange="updateSubtask(5,1,this.value)" style="">
+    <button class="subtask-del" onclick="delSubtask(5,1)">✕</button>
+  </div></div>
+        </div>
+      </div></div><div class="phase-card s-notstarted" id="pc-6">
+      <div class="phase-card-header" onclick="togglePhase(6)">
+        <div class="ph-num ">7</div>
+        <div class="ph-title-wrap">
+          <input class="ph-title-input" value="UI Integration" onclick="event.stopPropagation()" onchange="curItem.phases[6].label=this.value;buildGantt();syncActions();buildActions()">
+        </div>
+        <div style="text-align:right;margin-right:8px;flex-shrink:0">
+          <svg width="34" height="34" viewBox="0 0 34 34" style="display:block;margin:auto"><circle cx="17" cy="17" r="12" fill="none" stroke="#f0f2ff" stroke-width="4"></circle><circle cx="17" cy="17" r="12" fill="none" stroke="#7b68ee" stroke-width="4" stroke-dasharray="75.39822368615503" stroke-dashoffset="75.39822368615503" stroke-linecap="round" transform="rotate(-90 17 17)"></circle></svg><div style="font-size:10px;font-weight:800;color:#7b68ee;margin-top:2px">0%</div>
+        </div>
+        <select class="status-select ss-notstarted" id="sel-6" onclick="event.stopPropagation()" onchange="changePhaseStatus(6,this.value)">
+          <option value="notstarted" selected="">● NOT STARTED</option>
+          <option value="inprogress">● IN PROGRESS</option>
+          <option value="done">● DONE</option>
+          <option value="blocked">● BLOCKED</option>
+        </select>
+        <button class="phase-del-btn" onclick="event.stopPropagation();delPhaseCard(6)">✕</button>
+        <span class="phase-toggle-arrow open" id="arr-6">▲</span>
+      </div>
+      <div class="phase-card-body" id="pb-6">
+        <div style="margin:14px 0 10px;padding:12px 16px;background:linear-gradient(135deg,#f8f9ff,#f0f2ff);border-radius:12px;display:flex;align-items:center;gap:16px">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#aab0c6;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px"><span>Sub-task progress</span><span style="color:#7b68ee">0%</span></div>
+            <div style="height:8px;background:#e0e4ef;border-radius:20px;overflow:hidden">
+              <div style="height:100%;width:0%;background:linear-gradient(90deg,#7b68ee,#a78bfa);border-radius:20px;transition:width .5s ease;box-shadow:0 2px 6px rgba(123,104,238,.3)"></div>
+            </div>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:#7b68ee;min-width:44px;text-align:center">0%</div>
+          <div style="font-size:11px;color:#aab0c6;min-width:80px">0/1 done</div>
+        </div>
+        <div class="ph-dates-row">
+          <div class="ph-date-field"><label>Planned Start</label><input type="date" value="2026-08-10" onchange="if(validStart(6,this.value,this)){curItem.phases[6].startVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Planned End</label><input type="date" value="2026-08-31" onchange="if(validEnd(6,this.value,this)){curItem.phases[6].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Actual End </label>
+            <input type="date" value="" onchange="if(validActualEnd(6,this.value,this)){curItem.phases[6].actualEndVal=this.value;buildGantt(true);schedSave();}" style="">
+          </div>
+        </div>
+        <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[6].comments=this.value;schedSave()"></textarea></div>
+        <div class="ph-subtasks">
+          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn" onclick="addSubtask(6)">+ Sub-task</button></div>
+          <div id="st-6"><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" onchange="toggleSubtask(6,0,this.checked)">
+    <input class="subtask-input" value="Connect designs" placeholder="Sub-task" onchange="updateSubtask(6,0,this.value)" style="">
+    <button class="subtask-del" onclick="delSubtask(6,0)">✕</button>
+  </div></div>
+        </div>
+      </div></div><div class="phase-card s-notstarted" id="pc-7">
+      <div class="phase-card-header" onclick="togglePhase(7)">
+        <div class="ph-num ">8</div>
+        <div class="ph-title-wrap">
+          <input class="ph-title-input" value="QA" onclick="event.stopPropagation()" onchange="curItem.phases[7].label=this.value;buildGantt();syncActions();buildActions()">
+        </div>
+        <div style="text-align:right;margin-right:8px;flex-shrink:0">
+          <svg width="34" height="34" viewBox="0 0 34 34" style="display:block;margin:auto"><circle cx="17" cy="17" r="12" fill="none" stroke="#f0f2ff" stroke-width="4"></circle><circle cx="17" cy="17" r="12" fill="none" stroke="#7b68ee" stroke-width="4" stroke-dasharray="75.39822368615503" stroke-dashoffset="75.39822368615503" stroke-linecap="round" transform="rotate(-90 17 17)"></circle></svg><div style="font-size:10px;font-weight:800;color:#7b68ee;margin-top:2px">0%</div>
+        </div>
+        <select class="status-select ss-notstarted" id="sel-7" onclick="event.stopPropagation()" onchange="changePhaseStatus(7,this.value)">
+          <option value="notstarted" selected="">● NOT STARTED</option>
+          <option value="inprogress">● IN PROGRESS</option>
+          <option value="done">● DONE</option>
+          <option value="blocked">● BLOCKED</option>
+        </select>
+        <button class="phase-del-btn" onclick="event.stopPropagation();delPhaseCard(7)">✕</button>
+        <span class="phase-toggle-arrow open" id="arr-7">▲</span>
+      </div>
+      <div class="phase-card-body" id="pb-7">
+        <div style="margin:14px 0 10px;padding:12px 16px;background:linear-gradient(135deg,#f8f9ff,#f0f2ff);border-radius:12px;display:flex;align-items:center;gap:16px">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#aab0c6;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px"><span>Sub-task progress</span><span style="color:#7b68ee">0%</span></div>
+            <div style="height:8px;background:#e0e4ef;border-radius:20px;overflow:hidden">
+              <div style="height:100%;width:0%;background:linear-gradient(90deg,#7b68ee,#a78bfa);border-radius:20px;transition:width .5s ease;box-shadow:0 2px 6px rgba(123,104,238,.3)"></div>
+            </div>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:#7b68ee;min-width:44px;text-align:center">0%</div>
+          <div style="font-size:11px;color:#aab0c6;min-width:80px">0/2 done</div>
+        </div>
+        <div class="ph-dates-row">
+          <div class="ph-date-field"><label>Planned Start</label><input type="date" value="2026-09-07" onchange="if(validStart(7,this.value,this)){curItem.phases[7].startVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Planned End</label><input type="date" value="2026-10-05" onchange="if(validEnd(7,this.value,this)){curItem.phases[7].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Actual End </label>
+            <input type="date" value="" onchange="if(validActualEnd(7,this.value,this)){curItem.phases[7].actualEndVal=this.value;buildGantt(true);schedSave();}" style="">
+          </div>
+        </div>
+        <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[7].comments=this.value;schedSave()"></textarea></div>
+        <div class="ph-subtasks">
+          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn" onclick="addSubtask(7)">+ Sub-task</button></div>
+          <div id="st-7"><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" onchange="toggleSubtask(7,0,this.checked)">
+    <input class="subtask-input" value="Test plan" placeholder="Sub-task" onchange="updateSubtask(7,0,this.value)" style="">
+    <button class="subtask-del" onclick="delSubtask(7,0)">✕</button>
+  </div><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" onchange="toggleSubtask(7,1,this.checked)">
+    <input class="subtask-input" value="Functional testing" placeholder="Sub-task" onchange="updateSubtask(7,1,this.value)" style="">
+    <button class="subtask-del" onclick="delSubtask(7,1)">✕</button>
+  </div></div>
+        </div>
+      </div></div><div class="phase-card s-notstarted" id="pc-8">
+      <div class="phase-card-header" onclick="togglePhase(8)">
+        <div class="ph-num ">9</div>
+        <div class="ph-title-wrap">
+          <input class="ph-title-input" value="Infosec" onclick="event.stopPropagation()" onchange="curItem.phases[8].label=this.value;buildGantt();syncActions();buildActions()">
+        </div>
+        <div style="text-align:right;margin-right:8px;flex-shrink:0">
+          <svg width="34" height="34" viewBox="0 0 34 34" style="display:block;margin:auto"><circle cx="17" cy="17" r="12" fill="none" stroke="#f0f2ff" stroke-width="4"></circle><circle cx="17" cy="17" r="12" fill="none" stroke="#7b68ee" stroke-width="4" stroke-dasharray="75.39822368615503" stroke-dashoffset="75.39822368615503" stroke-linecap="round" transform="rotate(-90 17 17)"></circle></svg><div style="font-size:10px;font-weight:800;color:#7b68ee;margin-top:2px">0%</div>
+        </div>
+        <select class="status-select ss-notstarted" id="sel-8" onclick="event.stopPropagation()" onchange="changePhaseStatus(8,this.value)">
+          <option value="notstarted" selected="">● NOT STARTED</option>
+          <option value="inprogress">● IN PROGRESS</option>
+          <option value="done">● DONE</option>
+          <option value="blocked">● BLOCKED</option>
+        </select>
+        <button class="phase-del-btn" onclick="event.stopPropagation();delPhaseCard(8)">✕</button>
+        <span class="phase-toggle-arrow open" id="arr-8">▲</span>
+      </div>
+      <div class="phase-card-body" id="pb-8">
+        <div style="margin:14px 0 10px;padding:12px 16px;background:linear-gradient(135deg,#f8f9ff,#f0f2ff);border-radius:12px;display:flex;align-items:center;gap:16px">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#aab0c6;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px"><span>Sub-task progress</span><span style="color:#7b68ee">0%</span></div>
+            <div style="height:8px;background:#e0e4ef;border-radius:20px;overflow:hidden">
+              <div style="height:100%;width:0%;background:linear-gradient(90deg,#7b68ee,#a78bfa);border-radius:20px;transition:width .5s ease;box-shadow:0 2px 6px rgba(123,104,238,.3)"></div>
+            </div>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:#7b68ee;min-width:44px;text-align:center">0%</div>
+          <div style="font-size:11px;color:#aab0c6;min-width:80px">0/2 done</div>
+        </div>
+        <div class="ph-dates-row">
+          <div class="ph-date-field"><label>Planned Start</label><input type="date" value="2026-10-12" onchange="if(validStart(8,this.value,this)){curItem.phases[8].startVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Planned End</label><input type="date" value="2026-10-26" onchange="if(validEnd(8,this.value,this)){curItem.phases[8].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          <div class="ph-date-field"><label>Actual End </label>
+            <input type="date" value="" onchange="if(validActualEnd(8,this.value,this)){curItem.phases[8].actualEndVal=this.value;buildGantt(true);schedSave();}" style="">
+          </div>
+        </div>
+        <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[8].comments=this.value;schedSave()"></textarea></div>
+        <div class="ph-subtasks">
+          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn" onclick="addSubtask(8)">+ Sub-task</button></div>
+          <div id="st-8"><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" onchange="toggleSubtask(8,0,this.checked)">
+    <input class="subtask-input" value="Staging deploy" placeholder="Sub-task" onchange="updateSubtask(8,0,this.value)" style="">
+    <button class="subtask-del" onclick="delSubtask(8,0)">✕</button>
+  </div><div class="subtask-row">
+    <input type="checkbox" class="subtask-cb" onchange="toggleSubtask(8,1,this.checked)">
+    <input class="subtask-input" value="UAT sign-off" placeholder="Sub-task" onchange="updateSubtask(8,1,this.value)" style="">
+    <button class="subtask-del" onclick="delSubtask(8,1)">✕</button>
+  </div></div>
+        </div>
+      </div></div></div>
         <div class="add-phase-card-btn" onclick="addPhaseCard()">＋ Add phase</div>
       </div>
 
       <div id="tc-actions" style="display:none">
-        <div id="actionsContainer"></div>
+        <div id="actionsContainer"><div class="action-phase-section"><div class="action-phase-title"><div class="aph-dot" style="background:#aab0c6"></div>
+      <span contenteditable="true" spellcheck="false" style="outline:none;flex:1;cursor:text" onblur="curItem.actions[0].phaseLabel=this.textContent.trim()">Algorithm</span>
+      <button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(0)" title="Delete section">🗑</button></div><table class="action-items-table"></table><div class="action-add-form" id="aform-0"><div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:12px">New Action / Follow-up</div>
+      <div class="action-form-grid">
+        <div class="action-form-field full"><label>Description</label><textarea id="af-desc-0" placeholder="What happened or needs to be done..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Impact</label><input id="af-impact-0" placeholder="Impact..."></div>
+        <div class="action-form-field"><label>Root Cause</label><input id="af-rootcause-0" placeholder="Root cause..."></div>
+        <div class="action-form-field full"><label>Resolution Plan</label><textarea id="af-plan-0" placeholder="Steps to resolve..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Owner</label><input id="af-owner-0" placeholder="Owner"></div>
+        <div class="action-form-field"><label>ETA</label><input id="af-eta-0" type="date"></div>
+        <div class="action-form-field"><label>Status</label>
+          <select id="af-status-0"><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select>
+        </div>
+      </div>
+      <div class="action-form-btns">
+        <button class="btn-cancel-sm" onclick="document.getElementById('aform-0').classList.remove('open')">Cancel</button>
+        <button class="btn-submit" onclick="submitAction(0)">✓ Submit</button>
+      </div></div><div class="add-action-row-btn">＋ Add action / follow-up</div></div><div class="action-phase-section"><div class="action-phase-title"><div class="aph-dot" style="background:#aab0c6"></div>
+      <span contenteditable="true" spellcheck="false" style="outline:none;flex:1;cursor:text" onblur="curItem.actions[1].phaseLabel=this.textContent.trim()">Illustrations</span>
+      <button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(1)" title="Delete section">🗑</button></div><table class="action-items-table"></table><div class="action-add-form" id="aform-1"><div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:12px">New Action / Follow-up</div>
+      <div class="action-form-grid">
+        <div class="action-form-field full"><label>Description</label><textarea id="af-desc-1" placeholder="What happened or needs to be done..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Impact</label><input id="af-impact-1" placeholder="Impact..."></div>
+        <div class="action-form-field"><label>Root Cause</label><input id="af-rootcause-1" placeholder="Root cause..."></div>
+        <div class="action-form-field full"><label>Resolution Plan</label><textarea id="af-plan-1" placeholder="Steps to resolve..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Owner</label><input id="af-owner-1" placeholder="Owner"></div>
+        <div class="action-form-field"><label>ETA</label><input id="af-eta-1" type="date"></div>
+        <div class="action-form-field"><label>Status</label>
+          <select id="af-status-1"><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select>
+        </div>
+      </div>
+      <div class="action-form-btns">
+        <button class="btn-cancel-sm" onclick="document.getElementById('aform-1').classList.remove('open')">Cancel</button>
+        <button class="btn-submit" onclick="submitAction(1)">✓ Submit</button>
+      </div></div><div class="add-action-row-btn">＋ Add action / follow-up</div></div><div class="action-phase-section"><div class="action-phase-title"><div class="aph-dot" style="background:#aab0c6"></div>
+      <span contenteditable="true" spellcheck="false" style="outline:none;flex:1;cursor:text" onblur="curItem.actions[2].phaseLabel=this.textContent.trim()">UI Design</span>
+      <button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(2)" title="Delete section">🗑</button></div><table class="action-items-table"></table><div class="action-add-form" id="aform-2"><div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:12px">New Action / Follow-up</div>
+      <div class="action-form-grid">
+        <div class="action-form-field full"><label>Description</label><textarea id="af-desc-2" placeholder="What happened or needs to be done..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Impact</label><input id="af-impact-2" placeholder="Impact..."></div>
+        <div class="action-form-field"><label>Root Cause</label><input id="af-rootcause-2" placeholder="Root cause..."></div>
+        <div class="action-form-field full"><label>Resolution Plan</label><textarea id="af-plan-2" placeholder="Steps to resolve..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Owner</label><input id="af-owner-2" placeholder="Owner"></div>
+        <div class="action-form-field"><label>ETA</label><input id="af-eta-2" type="date"></div>
+        <div class="action-form-field"><label>Status</label>
+          <select id="af-status-2"><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select>
+        </div>
+      </div>
+      <div class="action-form-btns">
+        <button class="btn-cancel-sm" onclick="document.getElementById('aform-2').classList.remove('open')">Cancel</button>
+        <button class="btn-submit" onclick="submitAction(2)">✓ Submit</button>
+      </div></div><div class="add-action-row-btn">＋ Add action / follow-up</div></div><div class="action-phase-section"><div class="action-phase-title"><div class="aph-dot" style="background:#aab0c6"></div>
+      <span contenteditable="true" spellcheck="false" style="outline:none;flex:1;cursor:text" onblur="curItem.actions[3].phaseLabel=this.textContent.trim()">Animations</span>
+      <button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(3)" title="Delete section">🗑</button></div><table class="action-items-table"></table><div class="action-add-form" id="aform-3"><div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:12px">New Action / Follow-up</div>
+      <div class="action-form-grid">
+        <div class="action-form-field full"><label>Description</label><textarea id="af-desc-3" placeholder="What happened or needs to be done..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Impact</label><input id="af-impact-3" placeholder="Impact..."></div>
+        <div class="action-form-field"><label>Root Cause</label><input id="af-rootcause-3" placeholder="Root cause..."></div>
+        <div class="action-form-field full"><label>Resolution Plan</label><textarea id="af-plan-3" placeholder="Steps to resolve..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Owner</label><input id="af-owner-3" placeholder="Owner"></div>
+        <div class="action-form-field"><label>ETA</label><input id="af-eta-3" type="date"></div>
+        <div class="action-form-field"><label>Status</label>
+          <select id="af-status-3"><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select>
+        </div>
+      </div>
+      <div class="action-form-btns">
+        <button class="btn-cancel-sm" onclick="document.getElementById('aform-3').classList.remove('open')">Cancel</button>
+        <button class="btn-submit" onclick="submitAction(3)">✓ Submit</button>
+      </div></div><div class="add-action-row-btn">＋ Add action / follow-up</div></div><div class="action-phase-section"><div class="action-phase-title"><div class="aph-dot" style="background:#27ae60"></div>
+      <span contenteditable="true" spellcheck="false" style="outline:none;flex:1;cursor:text" onblur="curItem.actions[4].phaseLabel=this.textContent.trim()">BE Development</span>
+      <button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(4)" title="Delete section">🗑</button></div><table class="action-items-table"></table><div class="action-add-form" id="aform-4"><div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:12px">New Action / Follow-up</div>
+      <div class="action-form-grid">
+        <div class="action-form-field full"><label>Description</label><textarea id="af-desc-4" placeholder="What happened or needs to be done..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Impact</label><input id="af-impact-4" placeholder="Impact..."></div>
+        <div class="action-form-field"><label>Root Cause</label><input id="af-rootcause-4" placeholder="Root cause..."></div>
+        <div class="action-form-field full"><label>Resolution Plan</label><textarea id="af-plan-4" placeholder="Steps to resolve..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Owner</label><input id="af-owner-4" placeholder="Owner"></div>
+        <div class="action-form-field"><label>ETA</label><input id="af-eta-4" type="date"></div>
+        <div class="action-form-field"><label>Status</label>
+          <select id="af-status-4"><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select>
+        </div>
+      </div>
+      <div class="action-form-btns">
+        <button class="btn-cancel-sm" onclick="document.getElementById('aform-4').classList.remove('open')">Cancel</button>
+        <button class="btn-submit" onclick="submitAction(4)">✓ Submit</button>
+      </div></div><div class="add-action-row-btn">＋ Add action / follow-up</div></div><div class="action-phase-section"><div class="action-phase-title"><div class="aph-dot" style="background:#27ae60"></div>
+      <span contenteditable="true" spellcheck="false" style="outline:none;flex:1;cursor:text" onblur="curItem.actions[5].phaseLabel=this.textContent.trim()">FE Development</span>
+      <button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(5)" title="Delete section">🗑</button></div><table class="action-items-table"></table><div class="action-add-form" id="aform-5"><div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:12px">New Action / Follow-up</div>
+      <div class="action-form-grid">
+        <div class="action-form-field full"><label>Description</label><textarea id="af-desc-5" placeholder="What happened or needs to be done..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Impact</label><input id="af-impact-5" placeholder="Impact..."></div>
+        <div class="action-form-field"><label>Root Cause</label><input id="af-rootcause-5" placeholder="Root cause..."></div>
+        <div class="action-form-field full"><label>Resolution Plan</label><textarea id="af-plan-5" placeholder="Steps to resolve..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Owner</label><input id="af-owner-5" placeholder="Owner"></div>
+        <div class="action-form-field"><label>ETA</label><input id="af-eta-5" type="date"></div>
+        <div class="action-form-field"><label>Status</label>
+          <select id="af-status-5"><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select>
+        </div>
+      </div>
+      <div class="action-form-btns">
+        <button class="btn-cancel-sm" onclick="document.getElementById('aform-5').classList.remove('open')">Cancel</button>
+        <button class="btn-submit" onclick="submitAction(5)">✓ Submit</button>
+      </div></div><div class="add-action-row-btn">＋ Add action / follow-up</div></div><div class="action-phase-section"><div class="action-phase-title"><div class="aph-dot" style="background:#27ae60"></div>
+      <span contenteditable="true" spellcheck="false" style="outline:none;flex:1;cursor:text" onblur="curItem.actions[6].phaseLabel=this.textContent.trim()">UI Integration</span>
+      <button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(6)" title="Delete section">🗑</button></div><table class="action-items-table"></table><div class="action-add-form" id="aform-6"><div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:12px">New Action / Follow-up</div>
+      <div class="action-form-grid">
+        <div class="action-form-field full"><label>Description</label><textarea id="af-desc-6" placeholder="What happened or needs to be done..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Impact</label><input id="af-impact-6" placeholder="Impact..."></div>
+        <div class="action-form-field"><label>Root Cause</label><input id="af-rootcause-6" placeholder="Root cause..."></div>
+        <div class="action-form-field full"><label>Resolution Plan</label><textarea id="af-plan-6" placeholder="Steps to resolve..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Owner</label><input id="af-owner-6" placeholder="Owner"></div>
+        <div class="action-form-field"><label>ETA</label><input id="af-eta-6" type="date"></div>
+        <div class="action-form-field"><label>Status</label>
+          <select id="af-status-6"><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select>
+        </div>
+      </div>
+      <div class="action-form-btns">
+        <button class="btn-cancel-sm" onclick="document.getElementById('aform-6').classList.remove('open')">Cancel</button>
+        <button class="btn-submit" onclick="submitAction(6)">✓ Submit</button>
+      </div></div><div class="add-action-row-btn">＋ Add action / follow-up</div></div><div class="action-phase-section"><div class="action-phase-title"><div class="aph-dot" style="background:#f6a623"></div>
+      <span contenteditable="true" spellcheck="false" style="outline:none;flex:1;cursor:text" onblur="curItem.actions[7].phaseLabel=this.textContent.trim()">QA</span>
+      <button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(7)" title="Delete section">🗑</button></div><table class="action-items-table"></table><div class="action-add-form" id="aform-7"><div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:12px">New Action / Follow-up</div>
+      <div class="action-form-grid">
+        <div class="action-form-field full"><label>Description</label><textarea id="af-desc-7" placeholder="What happened or needs to be done..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Impact</label><input id="af-impact-7" placeholder="Impact..."></div>
+        <div class="action-form-field"><label>Root Cause</label><input id="af-rootcause-7" placeholder="Root cause..."></div>
+        <div class="action-form-field full"><label>Resolution Plan</label><textarea id="af-plan-7" placeholder="Steps to resolve..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Owner</label><input id="af-owner-7" placeholder="Owner"></div>
+        <div class="action-form-field"><label>ETA</label><input id="af-eta-7" type="date"></div>
+        <div class="action-form-field"><label>Status</label>
+          <select id="af-status-7"><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select>
+        </div>
+      </div>
+      <div class="action-form-btns">
+        <button class="btn-cancel-sm" onclick="document.getElementById('aform-7').classList.remove('open')">Cancel</button>
+        <button class="btn-submit" onclick="submitAction(7)">✓ Submit</button>
+      </div></div><div class="add-action-row-btn">＋ Add action / follow-up</div></div><div class="action-phase-section"><div class="action-phase-title"><div class="aph-dot" style="background:#f6a623"></div>
+      <span contenteditable="true" spellcheck="false" style="outline:none;flex:1;cursor:text" onblur="curItem.actions[8].phaseLabel=this.textContent.trim()">Infosec</span>
+      <button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(8)" title="Delete section">🗑</button></div><table class="action-items-table"></table><div class="action-add-form" id="aform-8"><div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:12px">New Action / Follow-up</div>
+      <div class="action-form-grid">
+        <div class="action-form-field full"><label>Description</label><textarea id="af-desc-8" placeholder="What happened or needs to be done..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Impact</label><input id="af-impact-8" placeholder="Impact..."></div>
+        <div class="action-form-field"><label>Root Cause</label><input id="af-rootcause-8" placeholder="Root cause..."></div>
+        <div class="action-form-field full"><label>Resolution Plan</label><textarea id="af-plan-8" placeholder="Steps to resolve..." rows="2"></textarea></div>
+        <div class="action-form-field"><label>Owner</label><input id="af-owner-8" placeholder="Owner"></div>
+        <div class="action-form-field"><label>ETA</label><input id="af-eta-8" type="date"></div>
+        <div class="action-form-field"><label>Status</label>
+          <select id="af-status-8"><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select>
+        </div>
+      </div>
+      <div class="action-form-btns">
+        <button class="btn-cancel-sm" onclick="document.getElementById('aform-8').classList.remove('open')">Cancel</button>
+        <button class="btn-submit" onclick="submitAction(8)">✓ Submit</button>
+      </div></div><div class="add-action-row-btn">＋ Add action / follow-up</div></div><div class="add-phase-card-btn" style="margin-top: 8px;">＋ Add custom section</div></div>
       </div>
 
       <div id="tc-risk" style="display:none">
@@ -647,7 +1583,35 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
             <th style="color:#8e44ad">Mitigation</th>
             <th></th>
           </tr></thead>
-          <tbody id="riskBody"></tbody>
+          <tbody id="riskBody"><tr><td style="color:#aab0c6;font-weight:700">1</td>
+      <td><input class="inline-input" value="BE delivery delay" onchange="curItem.risks[0].desc=this.value"></td>
+      <td><select style="border:none;background:transparent;font-size:11px;font-weight:700;cursor:pointer" onchange="curItem.risks[0].impact=this.value;buildRisk()">
+        <option value="high" selected="">HIGH</option>
+        <option value="medium">MEDIUM</option>
+        <option value="low">LOW</option>
+      </select></td>
+      <td><select style="border:none;background:transparent;font-size:11px;font-weight:700;cursor:pointer" onchange="curItem.risks[0].status=this.value;buildRisk()">
+        <option value="open" selected="">OPEN</option>
+        <option value="mitigated">MITIGATED</option>
+        <option value="closed">CLOSED</option>
+      </select></td>
+      <td><input class="inline-input" value="Tech Lead" onchange="curItem.risks[0].owner=this.value" placeholder="Owner"></td>
+      <td><input class="inline-input" value="Escalate by Sprint 4" onchange="curItem.risks[0].mitigation=this.value" placeholder="Mitigation..."></td>
+      <td><button class="risk-del" onclick="delRisk(0)">✕</button></td></tr><tr><td style="color:#aab0c6;font-weight:700">2</td>
+      <td><input class="inline-input" value="Scope creep" onchange="curItem.risks[1].desc=this.value"></td>
+      <td><select style="border:none;background:transparent;font-size:11px;font-weight:700;cursor:pointer" onchange="curItem.risks[1].impact=this.value;buildRisk()">
+        <option value="high">HIGH</option>
+        <option value="medium" selected="">MEDIUM</option>
+        <option value="low">LOW</option>
+      </select></td>
+      <td><select style="border:none;background:transparent;font-size:11px;font-weight:700;cursor:pointer" onchange="curItem.risks[1].status=this.value;buildRisk()">
+        <option value="open">OPEN</option>
+        <option value="mitigated" selected="">MITIGATED</option>
+        <option value="closed">CLOSED</option>
+      </select></td>
+      <td><input class="inline-input" value="Design Lead" onchange="curItem.risks[1].owner=this.value" placeholder="Owner"></td>
+      <td><input class="inline-input" value="Scope locked v1.2" onchange="curItem.risks[1].mitigation=this.value" placeholder="Mitigation..."></td>
+      <td><button class="risk-del" onclick="delRisk(1)">✕</button></td></tr></tbody>
         </table>
       </div>
 
@@ -698,7 +1662,7 @@ function defPhases(){return[
 ];}
 
 /* BAKED_AT_START */
-const BAKED_AT=1782452955211;
+const BAKED_AT=1782453216090;
 /* BAKED_AT_END */
 
 /* ITEMS_DATA_START */
