@@ -281,6 +281,8 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
 .ibtn:hover{background:#e8e5ff;transform:scale(1.15)}
 .ibtn.ipicked{background:#e8e5ff;outline:2px solid var(--purple);outline-offset:1px;transform:scale(1.1)}
 .btn-cancel{padding:9px 20px;border:1.5px solid var(--border);border-radius:10px;background:#fff;color:var(--muted);cursor:pointer;font-size:13px;font-weight:600}
+.btn-delete{padding:9px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;cursor:pointer;font-size:13px;font-weight:700;box-shadow:0 2px 8px rgba(231,76,60,.3);transition:all .15s}
+.btn-delete:hover{box-shadow:0 4px 14px rgba(231,76,60,.5);transform:translateY(-1px)}
 .btn-save{padding:9px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,#7b68ee,#a78bfa);color:#fff;cursor:pointer;font-size:13px;font-weight:700;box-shadow:0 2px 8px rgba(123,104,238,.3)}
 .publish-btn{font-size:12px;color:#fff;background:linear-gradient(135deg,#0077b6,#0096c7);cursor:pointer;padding:5px 14px;border:none;border-radius:20px;font-weight:700;transition:all .2s;box-shadow:0 2px 8px rgba(0,119,182,.35);display:flex;align-items:center;gap:5px;letter-spacing:.2px}
 .publish-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,119,182,.45)}
@@ -325,6 +327,22 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeGHModal()">Cancel</button>
       <button class="btn-save" onclick="saveGHSettings()">✓ Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deleteModal" style="display:none" onclick="if(event.target===this)closeDeleteModal()">
+  <div class="modal" style="max-width:420px">
+    <div style="text-align:center;margin-bottom:22px">
+      <div style="width:60px;height:60px;background:#fff0f0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px;border:2px solid #fecaca">🗑️</div>
+      <h2 style="color:#e74c3c;margin-bottom:10px;font-size:20px">Delete Project?</h2>
+      <p style="color:#555;font-size:14px;line-height:1.65;margin:0">You are about to permanently delete</p>
+      <p style="color:#1a1a2e;font-size:16px;font-weight:800;margin:6px 0" id="deleteProjectName"></p>
+      <p style="color:#e74c3c;font-size:12px;font-weight:700;letter-spacing:.3px;margin:0">⚠ This cannot be undone.</p>
+    </div>
+    <div class="modal-btns" style="justify-content:center;gap:14px">
+      <button class="btn-save" onclick="closeDeleteModal()" style="min-width:130px;font-size:14px">Keep it</button>
+      <button class="btn-delete" onclick="confirmDelete()" style="min-width:130px;font-size:14px">Yes, Delete</button>
     </div>
   </div>
 </div>
@@ -410,7 +428,10 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
           <h1 id="itemTitle"></h1>
           <p id="itemMeta"></p>
         </div>
-        <div id="releaseToggle" style="margin-top:8px"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap">
+          <div id="releaseToggle"></div>
+          <button onclick="curItem&&openDeleteModal(curItem.id)" title="Delete this project" style="background:none;border:1.5px solid #fca5a5;color:#e74c3c;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px" onmouseover="this.style.background='#fff0f0'" onmouseout="this.style.background='none'">🗑 Delete</button>
+        </div>
       </div>
       <div class="tab-bar">
         <div class="tab active" id="tab-overview" onclick="switchTab('overview')">📋 Overview</div>
@@ -560,11 +581,14 @@ function defPhases(){return[
 ];}
 
 /* BAKED_AT_START */
-const BAKED_AT=1782458890838;
+const BAKED_AT=0;
 /* BAKED_AT_END */
 
 /* ITEMS_DATA_START */
-let items=[{"id":0,"name":"Multihand Black Jack","type":"Fast Game","color":"#e74c3c","icon":"🃏","status":"Committed","size":"XL","epicId":"GX-13746","epicUrl":"https://dg-group.atlassian.net/browse/GX-13746","desc":"Multi-hand blackjack fast game.","scope":"Deliver a complete multi-hand blackjack game.","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[{"desc":"BE delivery delay","impact":"high","status":"open","owner":"Tech Lead","mitigation":"Escalate by Sprint 4"},{"desc":"Scope creep","impact":"medium","status":"mitigated","owner":"Design Lead","mitigation":"Scope locked v1.2"}],"phases":[{"label":"Algorithm","sub":"Galaxsys","startVal":"2026-06-15","endVal":"2026-06-05","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"Completed.","subtasks":[{"text":"Define math model & RTP","done":true},{"text":"Algorithm spec","done":true}]},{"label":"Illustrations","sub":"Galaxsys Algorithm","startVal":"","endVal":"","actualEndVal":"","color":"#aab0c6","icon":"🖼️","statusKey":"notstarted","comments":"No illustrations needed.","subtasks":[]},{"label":"UI Design","sub":"Devops","startVal":"2026-06-06","endVal":"2026-07-03","actualEndVal":"","color":"#aab0c6","icon":"🎨","statusKey":"done","comments":"Mockups signed off.","subtasks":[{"text":"Wireframes","done":true},{"text":"Hi-fi mockups","done":true}]},{"label":"Animations","sub":"Infosec","startVal":"2026-06-20","endVal":"2026-07-10","actualEndVal":"","color":"#aab0c6","icon":"✨","statusKey":"done","comments":"Delivered.","subtasks":[{"text":"Card flip","done":true},{"text":"Win FX","done":true}]},{"label":"BE Development","sub":"Backend · 120hrs","startVal":"2026-07-06","endVal":"2026-08-03","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"inprogress","comments":"","subtasks":[{"text":"Game server logic","done":false},{"text":"API endpoints","done":false}]},{"label":"FE Development","sub":"Frontend · 120hrs","startVal":"2026-07-06","endVal":"2026-08-03","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"inprogress","comments":"","subtasks":[{"text":"Game shell","done":false},{"text":"UI build","done":false}]},{"label":"UI Integration","sub":"Frontend · 90hrs","startVal":"2026-08-10","endVal":"2026-08-31","actualEndVal":"","color":"#27ae60","icon":"🔗","statusKey":"notstarted","comments":"","subtasks":[{"text":"Connect designs","done":false}]},{"label":"QA","sub":"QA Team · 120hrs","startVal":"2026-09-07","endVal":"2026-10-05","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[{"text":"Test plan","done":false},{"text":"Functional testing","done":false}]},{"label":"Infosec","sub":"Release · 2wks","startVal":"2026-10-12","endVal":"2026-09-30","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[{"text":"Staging deploy","done":false},{"text":"UAT sign-off","done":false}]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"Illustrations","items":[]},{"phaseLabel":"UI Design","items":[]},{"phaseLabel":"Animations","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"UI Integration","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":1,"name":"Tower Rush 2","type":"Slot Game","color":"#7b68ee","icon":"🗼","size":"XL","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":2,"name":"Fruity Lines","type":"Slot Game","color":"#f6a623","icon":"🍓","size":"L","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":3,"name":"Wonder Forest","type":"Slot Game","color":"#27ae60","icon":"🌲","size":"XL","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":4,"name":"Wingo","type":"Fast Game","color":"#0077b6","icon":"🎯","size":"L","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":5,"name":"Ice Fish","type":"Slot Game","color":"#16a085","icon":"🐟","size":"L","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":6,"name":"Gift Box","type":"Promo Tool","color":"#c0392b","icon":"🎁","size":"M","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":7,"name":"Double Approval","type":"BO","color":"#8e44ad","icon":"✅","size":"M","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":8,"name":"Related Changes","type":"BO","color":"#2980b9","icon":"🔗","size":"M","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"}];
+let items=[
+  {id:0,name:'Multihand Black Jack',type:'Fast Game',color:'#e74c3c',icon:'🃏',status:'Committed',size:'XL',epicId:'GX-13746',epicUrl:'https://dg-group.atlassian.net/browse/GX-13746',desc:'Multi-hand blackjack fast game.',scope:'Deliver a complete multi-hand blackjack game.',kickoff:{date:'',facilitator:'',attendees:'',notes:''},released:false,releaseDate:'',team:[],risks:[{desc:'BE delivery delay',impact:'high',status:'open',owner:'Tech Lead',mitigation:'Escalate by Sprint 4'},{desc:'Scope creep',impact:'medium',status:'mitigated',owner:'Design Lead',mitigation:'Scope locked v1.2'}],phases:mkPhases(),actions:null},
+  ...[{id:1,name:'Tower Rush 2',type:'Slot Game',color:'#7b68ee',icon:'🗼',size:'XL'},{id:2,name:'Fruity Lines',type:'Slot Game',color:'#f6a623',icon:'🍓',size:'L'},{id:3,name:'Wonder Forest',type:'Slot Game',color:'#27ae60',icon:'🌲',size:'XL'},{id:4,name:'Wingo',type:'Fast Game',color:'#0077b6',icon:'🎯',size:'L'},{id:5,name:'Ice Fish',type:'Slot Game',color:'#16a085',icon:'🐟',size:'L'},{id:6,name:'Gift Box',type:'Promo Tool',color:'#c0392b',icon:'🎁',size:'M'},{id:7,name:'Double Approval',type:'BO',color:'#8e44ad',icon:'✅',size:'M'},{id:8,name:'Related Changes',type:'BO',color:'#2980b9',icon:'🔗',size:'M'}].map(x=>({...x,status:'Committed',epicId:'',epicUrl:'',desc:'',scope:'',kickoff:{date:'',facilitator:'',attendees:'',notes:''},released:false,releaseDate:'',team:[],risks:[],phases:defPhases(),actions:null}))
+];
 /* ITEMS_DATA_END */
 items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
 
@@ -590,7 +614,10 @@ function schedSave(){clearTimeout(_saveTimer);_saveTimer=setTimeout(saveItems,40
 
 // ── ROADMAP META (editable titles) ───────────────────────────────────────────
 /* META_DATA_START */
-let roadmapMeta={"roadmap":{"navName":"Q3/26 Roadmap","heading":"✦ Galaxsys Q3/26 Roadmap","subtitle":"May 2026 – Feb 2027 · All committed projects","sectionTitle":"All Projects"},"tech":{"navName":"Q3/26 Technical Roadmap","heading":"⚙ Galaxsys Q3/26 Technical Roadmap","subtitle":"Technical projects & infrastructure","sectionTitle":"All Projects"}};
+let roadmapMeta={
+  roadmap:{navName:'Q3/26 Roadmap',heading:'✦ Galaxsys Q3/26 Roadmap',subtitle:'May 2026 – Feb 2027 · All committed projects',sectionTitle:'All Projects'},
+  tech:{navName:'Q3/26 Technical Roadmap',heading:'⚙ Galaxsys Q3/26 Technical Roadmap',subtitle:'Technical projects & infrastructure',sectionTitle:'All Projects'}
+};
 /* META_DATA_END */
 function saveRoadmapData(){try{localStorage.setItem('gx_roadmap_meta_v1',JSON.stringify({...roadmapMeta,_savedAt:Date.now()}));}catch(e){}}
 function saveRoadmapMeta(section,field,val){if(!val||!roadmapMeta[section])return;roadmapMeta[section][field]=val;if(section===activeSection&&field==='navName'){document.getElementById('topTitle').textContent=val;document.getElementById('homeBCText').textContent=val;}saveRoadmapData();}
@@ -607,8 +634,25 @@ function renameRoadmapNav(section){
     el.contentEditable='false';
     el.style.outline='';el.style.borderRadius='';el.style.padding='';
     const val=el.textContent.trim();
-    if(val){roadmapMeta[section].navName=val;if(activeSection===section){document.getElementById('topTitle').textContent=val;document.getElementById('homeBCText').textContent=val;}saveRoadmapData();}
-    else el.textContent=roadmapMeta[section].navName;
+    if(val){
+      const oldName=roadmapMeta[section].navName;
+      roadmapMeta[section].navName=val;
+      // Auto-sync heading: replace old navName portion with new one
+      const h=roadmapMeta[section].heading||'';
+      roadmapMeta[section].heading=h.includes(oldName)?h.replace(oldName,val):h;
+      // Refresh all visible title elements
+      if(activeSection===section){
+        document.getElementById('topTitle').textContent=val;
+        document.getElementById('homeBCText').textContent=val;
+        showHome(section); // re-render home page with updated meta
+      } else {
+        // Update the sidebar label of the non-active section
+        el.textContent=val;
+      }
+      saveRoadmapData();schedSave();
+    } else {
+      el.textContent=roadmapMeta[section].navName;
+    }
     el.removeEventListener('keydown',onKey);
   }
   function onKey(e){if(e.key==='Enter'){e.preventDefault();el.blur();}if(e.key==='Escape'){el.textContent=roadmapMeta[section].navName;el.blur();}}
@@ -643,16 +687,17 @@ function undoDelete(){
 
 // ── NAV / HOME ────────────────────────────────────────────────────────────────
 let curItem=null,navOpen=true,navTechOpen=false,activeSection='roadmap';
+let _hiddenIds=new Set(),_deleteItemId=null; // delete state — in-memory only, cleared on refresh
 // Ensure every item has a section tag (default to 'roadmap')
 items.forEach(it=>{if(!it.section)it.section='roadmap';});
 function renderNav(){
   function buildNavList(containerId, sectionKey){
     const nl=document.getElementById(containerId);nl.innerHTML='';
-    items.filter(i=>i.section===sectionKey).forEach(item=>{
+    items.filter(i=>i.section===sectionKey&&!_hiddenIds.has(i.id)).forEach(item=>{
       const d=document.createElement('div');d.className='nav-item';d.id='nav-'+item.id;d.onclick=()=>showItem(item.id);
-      d.innerHTML=`<div class="dot" style="background:${item.color}"></div><span style="flex:1">${item.icon} ${item.name}</span>${item.released?'<span style="font-size:9px;background:#27ae60;color:#fff;padding:1px 5px;border-radius:8px;margin-left:2px">✓</span>':''}<span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(${item.id})">✎</span>`;
-      d.onmouseenter=()=>d.querySelector('.nav-eb').style.opacity='1';
-      d.onmouseleave=()=>d.querySelector('.nav-eb').style.opacity='0';
+      d.innerHTML=`<div class="dot" style="background:${item.color}"></div><span style="flex:1">${item.icon} <span id="nav-name-${item.id}">${item.name}</span></span>${item.released?'<span style="font-size:9px;background:#27ae60;color:#fff;padding:1px 5px;border-radius:8px;margin-left:2px">✓</span>':''}<span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(${item.id})">✎</span><span class="nav-del" style="opacity:0;font-size:11px;color:#e74c3c;margin-left:2px;cursor:pointer" onclick="event.stopPropagation();openDeleteModal(${item.id})">🗑</span>`;
+      d.onmouseenter=()=>{d.querySelector('.nav-eb').style.opacity='1';d.querySelector('.nav-del').style.opacity='1';};
+      d.onmouseleave=()=>{d.querySelector('.nav-eb').style.opacity='0';d.querySelector('.nav-del').style.opacity='0';};
       nl.appendChild(d);
     });
   }
@@ -661,7 +706,7 @@ function renderNav(){
 }
 let activeFilter=null;
 function renderHomeStats(){
-  const si=items.filter(i=>i.section===activeSection);
+  const si=items.filter(i=>i.section===activeSection&&!_hiddenIds.has(i.id));
   const filters=[
     {v:si.length,l:'All',c:'c1',f:null},
     {v:si.filter(i=>i.status==='Committed').length,l:'Committed',c:'c2',f:'Committed'},
@@ -684,7 +729,7 @@ function setFilter(f){
 }
 function renderCards(){
   const g=document.getElementById('cardsGrid');g.innerHTML='';
-  const sectionItems=items.filter(i=>i.section===activeSection);
+  const sectionItems=items.filter(i=>i.section===activeSection&&!_hiddenIds.has(i.id));
   const filtered=sectionItems.filter(item=>{
     if(!activeFilter||activeFilter==='null')return true;
     if(activeFilter==='released')return item.released;
@@ -717,9 +762,35 @@ function renderCards(){
   });
 }
 function refreshHome(){renderNav();renderHomeStats();renderCards();}
-refreshHome();
+showHome('roadmap'); // initialise all titles + sidebar labels from roadmapMeta on load
 
-function renameItem(id){const item=items.find(i=>i.id===id);const n=prompt('Rename:',item.name);if(n&&n.trim()){item.name=n.trim();refreshHome();if(curItem&&curItem.id===id){renderItemHeader();document.getElementById('topTitle').textContent=item.name;}schedSave();}}
+function renameItem(id){
+  const item=items.find(i=>i.id===id);
+  if(!item)return;
+  const el=document.getElementById('nav-name-'+id);
+  if(!el)return;
+  el.contentEditable='true';
+  el.style.cssText+='outline:1px solid #a78bfa;border-radius:4px;padding:1px 4px;min-width:10px;';
+  el.focus();
+  const range=document.createRange();range.selectNodeContents(el);
+  const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);
+  function commit(){
+    el.contentEditable='false';
+    el.style.outline='';el.style.borderRadius='';el.style.padding='';
+    const val=el.textContent.trim();
+    if(val&&val!==item.name){
+      item.name=val;
+      if(curItem&&curItem.id===id){renderItemHeader();document.getElementById('topTitle').textContent=val;}
+      schedSave();
+    } else {
+      el.textContent=item.name;
+    }
+    el.removeEventListener('keydown',onKey);
+  }
+  function onKey(e){if(e.key==='Enter'){e.preventDefault();el.blur();}if(e.key==='Escape'){el.textContent=item.name;el.blur();}}
+  el.addEventListener('blur',commit,{once:true});
+  el.addEventListener('keydown',onKey);
+}
 function toggleParent(){navOpen=!navOpen;document.getElementById('navParent').classList.toggle('open',navOpen);document.getElementById('navChildren').classList.toggle('open',navOpen);if(navOpen)showHome('roadmap');}
 function toggleTechParent(){navTechOpen=!navTechOpen;document.getElementById('navTechParent').classList.toggle('open',navTechOpen);document.getElementById('navTechChildren').classList.toggle('open',navTechOpen);if(navTechOpen)showHome('tech');}
 function setNav(id){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));if(id!=null&&document.getElementById('nav-'+id))document.getElementById('nav-'+id).classList.add('active');}
@@ -1541,7 +1612,25 @@ function saveNewItem(){
   items.push({id:Date.now(),name,type:document.getElementById('m-type').value,color:document.getElementById('m-color').value,icon:document.getElementById('m-icon').value||'🎮',status:'Committed',size:document.getElementById('m-size').value,epicId:eid,epicUrl:eid?`https://dg-group.atlassian.net/browse/${eid}`:'',desc:document.getElementById('m-desc').value,scope:'',kickoff:{date:'',facilitator:'',attendees:'',notes:''},released:false,releaseDate:'',team:[],risks:[],phases,actions:mkActions(phases),section:_sec});
   closeModal();refreshHome();['m-name','m-epic','m-desc'].forEach(id=>document.getElementById(id).value='');resetIconPicker();schedSave();
 }
-// ── GITHUB INTEGRATION ───────────────────────────────────────────────────────
+// ── DELETE PROJECT ────────────────────────────────────────────────────────────
+function openDeleteModal(id){
+  const item=items.find(i=>i.id===id);if(!item)return;
+  _deleteItemId=id;
+  document.getElementById('deleteProjectName').textContent='"'+item.name+'"';
+  document.getElementById('deleteModal').style.display='flex';
+}
+function closeDeleteModal(){_deleteItemId=null;document.getElementById('deleteModal').style.display='none';}
+function confirmDelete(){
+  if(!_deleteItemId)return;
+  const item=items.find(i=>i.id===_deleteItemId);
+  if(!item)return;
+  const section=item.section||'roadmap';
+  const id=_deleteItemId; // capture before closeDeleteModal nullifies _deleteItemId
+  _hiddenIds.add(id);
+  closeDeleteModal();
+  curItem=null;
+  showHome(section); // always navigate home — project must disappear from view
+}
 function openGHModal(){
   const s=k=>localStorage.getItem(k)||'';
   document.getElementById('gh-token').value=s('gh_token');
@@ -1655,8 +1744,9 @@ async function publishToGitHub(){
     let html=sourceHtml;
     html=html.replace(/\/\* BAKED_AT_START \*\/[\s\S]*?\/\* BAKED_AT_END \*\//,
       `/* BAKED_AT_START */\nconst BAKED_AT=${ts};\n/* BAKED_AT_END */`);
+    const publishItems=items.filter(i=>!_hiddenIds.has(i.id));
     html=html.replace(/\/\* ITEMS_DATA_START \*\/[\s\S]*?\/\* ITEMS_DATA_END \*\//,
-      `/* ITEMS_DATA_START */\nlet items=${safe(JSON.stringify(items))};\n/* ITEMS_DATA_END */`);
+      `/* ITEMS_DATA_START */\nlet items=${safe(JSON.stringify(publishItems))};\n/* ITEMS_DATA_END */`);
     html=html.replace(/\/\* META_DATA_START \*\/[\s\S]*?\/\* META_DATA_END \*\//,
       `/* META_DATA_START */\nlet roadmapMeta=${safe(JSON.stringify(roadmapMeta))};\n/* META_DATA_END */`);
 
