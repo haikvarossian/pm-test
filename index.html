@@ -659,8 +659,8 @@ items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
 
 // ── SUPABASE CLIENT ───────────────────────────────────────────────────────────
 // ⬇ Replace these two values with your project's URL and anon key
-const SUPABASE_URL = https://veyxjztlakngxequomwm.supabase.co/rest/v1/;
-const SUPABASE_ANON_KEY = sb_publishable_XN1knFfvMzW2AQsX8QeeHQ_EO8f_B1B;
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 // ⬆ Safe to commit — anon key is public; RLS enforces access control
 let _sb = null; // initialised in initSupabase()
 let _currentUser = null;
@@ -1820,18 +1820,32 @@ function showLoginError(msg){
 async function sendMagicLink(){
   const email=document.getElementById('loginEmail').value.trim();
   if(!email){showLoginError('Please enter your email address.');return;}
+  // Guard: if initSupabase() failed silently, _sb is null
+  if(!_sb){
+    showLoginError('Supabase is not initialised. Make sure SUPABASE_URL and SUPABASE_ANON_KEY are set correctly in the HTML file, then reload.');
+    return;
+  }
   const btn=document.getElementById('loginBtn');
   btn.disabled=true;btn.textContent='Sending…';
   document.getElementById('loginErr').style.display='none';
+  // file:// URLs are not valid Supabase redirect targets — fall back to the
+  // configured Site URL in your Supabase dashboard instead
+  const isFileProtocol=window.location.protocol==='file:';
+  const redirectTo=isFileProtocol?undefined:window.location.href;
   try{
     const{error}=await _sb.auth.signInWithOtp({
       email,
-      options:{emailRedirectTo:window.location.href}
+      options:redirectTo?{emailRedirectTo:redirectTo}:{}
     });
     if(error)throw error;
     document.getElementById('loginForm').style.display='none';
     document.getElementById('sentEmailLabel').textContent=email;
     document.getElementById('loginSent').style.display='block';
+    if(isFileProtocol){
+      // Warn that the magic link will redirect to the Site URL, not this local file
+      document.getElementById('loginSent').insertAdjacentHTML('beforeend',
+        '<p style="font-size:11px;color:#f6a623;margin-top:12px;padding:8px 12px;background:#fff7e6;border-radius:8px">⚠ You\'re running from a local file. The magic link will open your configured Supabase Site URL, not this file. Serve the file via HTTP for a smoother flow.</p>');
+    }
   }catch(err){
     showLoginError(err.message||'Could not send magic link. Please try again.');
   }finally{btn.disabled=false;btn.textContent='✉ Send Magic Link';}
@@ -1878,16 +1892,30 @@ async function initSupabase(){
     document.getElementById('loginUnconfigured').style.display='block';
     return;
   }
-  _sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-  // Listen for auth state changes (handles magic link redirect)
+  // Guard: Supabase CDN might not have loaded (ad-blocker, offline, etc.)
+  if(typeof supabase==='undefined'||typeof supabase.createClient!=='function'){
+    showLoginError('Supabase library failed to load. Check your internet connection or disable any ad-blockers, then reload the page.');
+    return;
+  }
+  try{
+    _sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  }catch(e){
+    showLoginError('Supabase client error: '+e.message+'. Verify your Project URL and anon key.');
+    return;
+  }
+  // Listen for auth state changes — this handles the magic link redirect callback
   _sb.auth.onAuthStateChange(async(event,session)=>{
     if(event==='SIGNED_IN'&&session){await handleAuthSession(session);}
-    else if(event==='SIGNED_OUT'){/* handled by signOut() */}
   });
-  // Check for existing session
-  const{data:{session}}=await _sb.auth.getSession();
-  if(session){await handleAuthSession(session);}
-  // else: login overlay stays visible
+  // Check for an existing session (e.g. page refresh after sign-in)
+  try{
+    const{data:{session},error}=await _sb.auth.getSession();
+    if(error)throw error;
+    if(session){await handleAuthSession(session);}
+    // else: no session → login overlay stays visible
+  }catch(e){
+    showLoginError('Could not reach Supabase: '+e.message+'. Check your Project URL.');
+  }
 }
 
 function goBack(){showHome(curItem?curItem.section:activeSection);}
