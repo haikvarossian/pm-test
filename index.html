@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Galaxsys Project Management</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-height:100vh}
@@ -287,46 +288,110 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
 .publish-btn{font-size:12px;color:#fff;background:linear-gradient(135deg,#0077b6,#0096c7);cursor:pointer;padding:5px 14px;border:none;border-radius:20px;font-weight:700;transition:all .2s;box-shadow:0 2px 8px rgba(0,119,182,.35);display:flex;align-items:center;gap:5px;letter-spacing:.2px}
 .publish-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,119,182,.45)}
 .publish-btn:disabled{opacity:.65;cursor:default;transform:none}
-.gh-cfg-btn{background:none;border:none;color:#ffffffaa;cursor:pointer;font-size:15px;padding:4px 6px;border-radius:8px;transition:all .15s;line-height:1}
-.gh-cfg-btn:hover{color:#fff;background:#ffffff18}
-.gh-status{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;letter-spacing:.3px}
-.gh-status.ok{background:#f0fff4;color:#27ae60}
-.gh-status.err{background:#fff0f0;color:#e74c3c}
-.gh-status.busy{background:#f0f2ff;color:#7b68ee}
+.sb-cfg-btn{background:none;border:none;color:#ffffffaa;cursor:pointer;font-size:15px;padding:4px 6px;border-radius:8px;transition:all .15s;line-height:1}
+.sb-cfg-btn:hover{color:#fff;background:#ffffff18}
+.sb-status{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;letter-spacing:.3px}
+.sb-status.ok{background:#f0fff4;color:#27ae60}
+.sb-status.err{background:#fff0f0;color:#e74c3c}
+.sb-status.busy{background:#f0f2ff;color:#7b68ee}
+
+/* ── AUTH / LOGIN ─────────────────────────────────────────────────── */
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e 0%,#2d2b6b 100%);z-index:2000;display:flex;align-items:center;justify-content:center;transition:opacity .4s}
+.login-card{background:#fff;border-radius:24px;padding:40px;width:420px;max-width:95vw;box-shadow:0 24px 64px rgba(0,0,0,.45)}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo .l-icon{font-size:40px;color:#a78bfa;display:block;margin-bottom:10px}
+.login-logo h1{font-size:22px;font-weight:800;color:#1a1a2e;margin-bottom:5px}
+.login-logo p{font-size:13px;color:#7a80a0}
+.login-input{width:100%;padding:12px 16px;border:1.5px solid #e0e4ef;border-radius:12px;font-size:14px;outline:none;font-family:inherit;transition:border-color .2s;box-sizing:border-box;margin-bottom:14px}
+.login-input:focus{border-color:#7b68ee}
+.login-btn{width:100%;padding:13px;background:linear-gradient(135deg,#7b68ee,#a78bfa);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(123,104,238,.4);transition:all .2s}
+.login-btn:hover{box-shadow:0 6px 20px rgba(123,104,238,.5);transform:translateY(-1px)}
+.login-btn:disabled{opacity:.6;cursor:default;transform:none}
+.login-err{font-size:12px;color:#e74c3c;margin-top:12px;padding:9px 14px;background:#fff0f0;border-radius:10px;text-align:center;display:none}
+.login-sent{text-align:center;display:none}
+.login-sent .sent-icon{font-size:52px;margin-bottom:14px}
+.login-sent h3{font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
+.login-sent p{font-size:13px;color:#7a80a0;line-height:1.6}
+.login-loading{text-align:center;display:none;padding:20px 0}
+.login-loading .spin{width:36px;height:36px;border:3px solid #f0f2ff;border-top-color:#7b68ee;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.role-badge-editor{background:linear-gradient(135deg,#7b68ee,#a78bfa);color:#fff;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px}
+.role-badge-viewer{background:#ffffff22;color:#ffffffaa;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;border:1px solid #ffffff22}
+.user-chip{display:none;align-items:center;gap:8px}
+.user-email-label{font-size:11px;color:#ffffffaa;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.signout-btn{font-size:11px;color:#ffffffaa;background:none;border:1px solid #ffffff22;border-radius:20px;padding:3px 10px;cursor:pointer;transition:all .15s;font-family:inherit}
+.signout-btn:hover{color:#fff;border-color:#ffffff55}
+/* unconfigured warning inside login card */
+.setup-warn{background:#fff7e6;border:1.5px solid #f6a623;border-radius:14px;padding:20px 24px;text-align:left}
+.setup-warn h3{font-size:15px;font-weight:700;color:#d48806;margin-bottom:8px}
+.setup-warn p{font-size:12px;color:#7a5c00;line-height:1.7;margin-bottom:6px}
+.setup-warn code{background:#ffe9b0;border-radius:4px;padding:1px 5px;font-size:11px}
 </style>
 </head>
 <body>
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="l-icon">✦</span>
+      <h1>Galaxsys PM</h1>
+      <p>Sign in to access the roadmap</p>
+    </div>
+
+    <div id="loginUnconfigured" style="display:none">
+      <div class="setup-warn">
+        <h3>⚠ Supabase not configured</h3>
+        <p>Open <code>index.html</code> in a text editor and set the two constants near the top of the <code>&lt;script&gt;</code> block:</p>
+        <p><code>const SUPABASE_URL = 'https://xxx.supabase.co';</code></p>
+        <p><code>const SUPABASE_ANON_KEY = 'eyJ…';</code></p>
+        <p>See the setup guide for full instructions.</p>
+      </div>
+    </div>
+
+    <div id="loginForm">
+      <label style="font-size:11px;font-weight:700;color:#7a80a0;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Work Email</label>
+      <input id="loginEmail" type="email" class="login-input" placeholder="you@galaxsys.com"
+        onkeydown="if(event.key==='Enter')sendMagicLink()">
+      <button class="login-btn" id="loginBtn" onclick="sendMagicLink()">✉ Send Magic Link</button>
+      <p style="font-size:11px;color:#aab0c6;text-align:center;margin-top:12px">No password needed — we'll email you a one-click sign-in link.</p>
+    </div>
+
+    <div class="login-sent" id="loginSent">
+      <div class="sent-icon">📬</div>
+      <h3>Check your inbox</h3>
+      <p>We sent a magic link to <strong id="sentEmailLabel"></strong>.<br>Click it to sign in — it expires in 1 hour.</p>
+      <button onclick="showLoginForm()" style="margin-top:18px;font-size:12px;color:#7b68ee;background:none;border:none;cursor:pointer;text-decoration:underline">Use a different email</button>
+    </div>
+
+    <div class="login-loading" id="loginLoading">
+      <div class="spin"></div>
+      <p style="font-size:13px;color:#7a80a0" id="loginLoadingMsg">Signing you in…</p>
+    </div>
+
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
 <div class="topbar">
   <div class="logo">✦ GALAXSYS PM</div>
   <div class="divider"></div>
   <div class="top-title" id="topTitle">Q3/26 Roadmap</div>
   <div class="undo-btn" id="undoBtn" onclick="undoDelete()">↩ Undo delete</div>
-  <span id="ghStatus" style="display:none"></span>
-  <button class="publish-btn" id="publishBtn" onclick="publishToGitHub()">⬆ Publish</button>
-  <button class="gh-cfg-btn" onclick="openGHModal()" title="GitHub settings">⚙</button>
+  <span id="sbStatus" style="display:none"></span>
+  <button class="publish-btn" id="publishBtn" onclick="publishToSupabase()" style="display:none">⬆ Publish</button>
+  <div class="user-chip" id="userChip">
+    <span class="user-email-label" id="userEmailLabel"></span>
+    <span id="userRoleBadge"></span>
+    <button class="signout-btn" onclick="signOut()">Sign out</button>
+  </div>
   <div class="back-btn" id="backBtn" style="display:none" onclick="goBack()">← Back</div>
 </div>
 
-<div class="modal-overlay" id="ghModal" style="display:none" onclick="if(event.target===this)closeGHModal()">
-  <div class="modal" style="max-width:480px">
-    <h2>⚙ GitHub Connection</h2>
-    <div class="modal-field">
-      <label>Personal Access Token</label>
-      <input id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
-      <div style="font-size:11px;color:#aab0c6;margin-top:5px">Requires <strong>repo</strong> scope (or <strong>contents: write</strong> for fine-grained tokens). Stored in your browser only — never sent anywhere except GitHub.</div>
-    </div>
-    <div class="modal-row">
-      <div class="modal-field"><label>Owner</label><input id="gh-owner" placeholder="username or org"></div>
-      <div class="modal-field"><label>Repository</label><input id="gh-repo" placeholder="repo-name"></div>
-    </div>
-    <div class="modal-row">
-      <div class="modal-field"><label>File path in repo</label><input id="gh-path" placeholder="roadmap.html"></div>
-      <div class="modal-field"><label>Branch</label><input id="gh-branch" placeholder="main"></div>
-    </div>
-    <div id="ghModalErr" style="display:none;font-size:12px;color:#e74c3c;margin-top:8px;padding:8px 12px;background:#fff0f0;border-radius:8px"></div>
+<div class="modal-overlay" id="userModal" style="display:none" onclick="if(event.target===this)closeUserModal()">
+  <div class="modal" style="max-width:380px">
+    <h2>👤 Account</h2>
+    <div id="userModalContent" style="margin-bottom:20px"></div>
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeGHModal()">Cancel</button>
-      <button class="btn-save" onclick="saveGHSettings()">✓ Save</button>
+      <button class="btn-cancel" onclick="closeUserModal()">Close</button>
+      <button style="padding:9px 20px;border:1.5px solid #e74c3c;border-radius:10px;background:#fff;color:#e74c3c;cursor:pointer;font-size:13px;font-weight:700;transition:all .15s" onmouseover="this.style.background='#fff0f0'" onmouseout="this.style.background='#fff'" onclick="signOut()">Sign out</button>
     </div>
   </div>
 </div>
@@ -581,27 +646,89 @@ function defPhases(){return[
 ];}
 
 /* BAKED_AT_START */
-const BAKED_AT=1782472922762;
+const BAKED_AT=0;
 /* BAKED_AT_END */
 
 /* ITEMS_DATA_START */
-let items=[{"id":0,"name":"Multihand Black Jack","type":"Fast Game","color":"#e74c3c","icon":"🃏","status":"Committed","size":"XL","epicId":"GX-13746","epicUrl":"https://dg-group.atlassian.net/browse/GX-13746","desc":"Multi-hand blackjack fast game.","scope":"Deliver a complete multi-hand blackjack game.","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[{"desc":"BE delivery delay","impact":"high","status":"open","owner":"Tech Lead","mitigation":"Escalate by Sprint 4"},{"desc":"Scope creep","impact":"medium","status":"mitigated","owner":"Design Lead","mitigation":"Scope locked v1.2"}],"phases":[{"label":"Algorithm","sub":"Galaxsys","startVal":"2026-06-15","endVal":"2026-06-05","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"Completed.","subtasks":[{"text":"Define math model & RTP","done":true},{"text":"Algorithm spec","done":true}]},{"label":"Illustrations","sub":"Galaxsys Algorithm","startVal":"","endVal":"","actualEndVal":"","color":"#aab0c6","icon":"🖼️","statusKey":"notstarted","comments":"No illustrations needed.","subtasks":[]},{"label":"UI Design","sub":"Devops","startVal":"2026-06-06","endVal":"2026-07-03","actualEndVal":"","color":"#aab0c6","icon":"🎨","statusKey":"done","comments":"Mockups signed off.","subtasks":[{"text":"Wireframes","done":true},{"text":"Hi-fi mockups","done":true}]},{"label":"Animations","sub":"Infosec","startVal":"2026-06-20","endVal":"2026-07-10","actualEndVal":"","color":"#aab0c6","icon":"✨","statusKey":"done","comments":"Delivered.","subtasks":[{"text":"Card flip","done":true},{"text":"Win FX","done":true}]},{"label":"BE Development","sub":"Backend · 120hrs","startVal":"2026-07-06","endVal":"2026-08-03","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"inprogress","comments":"","subtasks":[{"text":"Game server logic","done":false},{"text":"API endpoints","done":false}]},{"label":"FE Development","sub":"Frontend · 120hrs","startVal":"2026-07-06","endVal":"2026-08-03","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"inprogress","comments":"","subtasks":[{"text":"Game shell","done":false},{"text":"UI build","done":false}]},{"label":"UI Integration","sub":"Frontend · 90hrs","startVal":"2026-08-10","endVal":"2026-08-31","actualEndVal":"","color":"#27ae60","icon":"🔗","statusKey":"notstarted","comments":"","subtasks":[{"text":"Connect designs","done":false}]},{"label":"QA","sub":"QA Team · 120hrs","startVal":"2026-09-07","endVal":"2026-10-05","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[{"text":"Test plan","done":false},{"text":"Functional testing","done":false}]},{"label":"Infosec","sub":"Release · 2wks","startVal":"2026-10-12","endVal":"2026-09-30","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[{"text":"Staging deploy","done":false},{"text":"UAT sign-off","done":false}]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"Illustrations","items":[]},{"phaseLabel":"UI Design","items":[]},{"phaseLabel":"Animations","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"UI Integration","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":1,"name":"Tower Rush 2","type":"Slot Game","color":"#7b68ee","icon":"🗼","size":"XL","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":2,"name":"Fruity Lines","type":"Slot Game","color":"#f6a623","icon":"🍓","size":"L","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":3,"name":"Wonder Forest","type":"Slot Game","color":"#27ae60","icon":"🌲","size":"XL","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":4,"name":"Wingo","type":"Fast Game","color":"#0077b6","icon":"🎯","size":"L","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":5,"name":"Ice Fish","type":"Slot Game","color":"#16a085","icon":"🐟","size":"L","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":6,"name":"Gift Box","type":"Promo Tool","color":"#c0392b","icon":"🎁","size":"M","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":7,"name":"Double Approval","type":"BO","color":"#8e44ad","icon":"✅","size":"M","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":8,"name":"Related Changes","type":"BO","color":"#2980b9","icon":"🔗","size":"M","status":"Committed","epicId":"","epicUrl":"","desc":"","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"roadmap"},{"id":1782470793260,"name":"Cron","type":"Slot Game","color":"#7b68ee","icon":"🎮","status":"Committed","size":"XL","epicId":"","epicUrl":"","desc":"test","scope":"","kickoff":{"date":"","facilitator":"","attendees":"","notes":""},"released":false,"releaseDate":"","team":[],"risks":[],"phases":[{"label":"Algorithm","sub":"Algorithm","startVal":"2026-05-13","endVal":"2026-06-09","actualEndVal":"","color":"#aab0c6","icon":"⚙️","statusKey":"done","comments":"","subtasks":[]},{"label":"BE Development","sub":"Backend","startVal":"2026-07-08","endVal":"2026-08-04","actualEndVal":"","color":"#27ae60","icon":"🛠️","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"FE Development","sub":"Frontend","startVal":"2026-07-08","endVal":"2026-09-01","actualEndVal":"","color":"#27ae60","icon":"💻","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"QA","sub":"Testing","startVal":"2026-09-08","endVal":"2026-10-06","actualEndVal":"","color":"#f6a623","icon":"🔍","statusKey":"notstarted","comments":"","subtasks":[]},{"label":"Infosec","sub":"Release","startVal":"2026-10-07","endVal":"2026-11-03","actualEndVal":"","color":"#f6a623","icon":"🚀","statusKey":"notstarted","comments":"","subtasks":[]}],"actions":[{"phaseLabel":"Algorithm","items":[]},{"phaseLabel":"BE Development","items":[]},{"phaseLabel":"FE Development","items":[]},{"phaseLabel":"QA","items":[]},{"phaseLabel":"Infosec","items":[]}],"section":"tech"}];
+let items=[
+  {id:0,name:'Multihand Black Jack',type:'Fast Game',color:'#e74c3c',icon:'🃏',status:'Committed',size:'XL',epicId:'GX-13746',epicUrl:'https://dg-group.atlassian.net/browse/GX-13746',desc:'Multi-hand blackjack fast game.',scope:'Deliver a complete multi-hand blackjack game.',kickoff:{date:'',facilitator:'',attendees:'',notes:''},released:false,releaseDate:'',team:[],risks:[{desc:'BE delivery delay',impact:'high',status:'open',owner:'Tech Lead',mitigation:'Escalate by Sprint 4'},{desc:'Scope creep',impact:'medium',status:'mitigated',owner:'Design Lead',mitigation:'Scope locked v1.2'}],phases:mkPhases(),actions:null},
+  ...[{id:1,name:'Tower Rush 2',type:'Slot Game',color:'#7b68ee',icon:'🗼',size:'XL'},{id:2,name:'Fruity Lines',type:'Slot Game',color:'#f6a623',icon:'🍓',size:'L'},{id:3,name:'Wonder Forest',type:'Slot Game',color:'#27ae60',icon:'🌲',size:'XL'},{id:4,name:'Wingo',type:'Fast Game',color:'#0077b6',icon:'🎯',size:'L'},{id:5,name:'Ice Fish',type:'Slot Game',color:'#16a085',icon:'🐟',size:'L'},{id:6,name:'Gift Box',type:'Promo Tool',color:'#c0392b',icon:'🎁',size:'M'},{id:7,name:'Double Approval',type:'BO',color:'#8e44ad',icon:'✅',size:'M'},{id:8,name:'Related Changes',type:'BO',color:'#2980b9',icon:'🔗',size:'M'}].map(x=>({...x,status:'Committed',epicId:'',epicUrl:'',desc:'',scope:'',kickoff:{date:'',facilitator:'',attendees:'',notes:''},released:false,releaseDate:'',team:[],risks:[],phases:defPhases(),actions:null}))
+];
 /* ITEMS_DATA_END */
 items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
 
-// ── LOCALSTORAGE PERSISTENCE ──────────────────────────────────────────────────
-function saveItems(){try{localStorage.setItem('gx_roadmap_v1',JSON.stringify({items,savedAt:Date.now()}));}catch(e){}}
+// ── SUPABASE CLIENT ───────────────────────────────────────────────────────────
+// ⬇ Replace these two values with your project's URL and anon key
+const SUPABASE_URL = https://veyxjztlakngxequomwm.supabase.co/rest/v1/;
+const SUPABASE_ANON_KEY = sb_publishable_XN1knFfvMzW2AQsX8QeeHQ_EO8f_B1B;
+// ⬆ Safe to commit — anon key is public; RLS enforces access control
+let _sb = null; // initialised in initSupabase()
+let _currentUser = null;
+let _currentRole = null; // 'editor' | 'viewer'
+
+// ── PERSISTENCE ───────────────────────────────────────────────────────────────
+function saveItems(){
+  try{localStorage.setItem('gx_roadmap_v1',JSON.stringify({items,savedAt:Date.now()}));}catch(e){}
+  schedSBSave();
+}
 let _saveTimer=null;
-function schedSave(){clearTimeout(_saveTimer);_saveTimer=setTimeout(saveItems,400);}
+function schedSave(){clearTimeout(_saveTimer);_saveTimer=setTimeout(saveItems,600);}
+
+// Supabase debounced auto-save (editors only)
+let _sbSaveTimer=null;
+function schedSBSave(){
+  if(_currentRole!=='editor')return;
+  clearTimeout(_sbSaveTimer);_sbSaveTimer=setTimeout(()=>saveToSupabase(false),2000);
+}
+
+async function saveToSupabase(isPublish){
+  if(!_sb||_currentRole!=='editor')return;
+  const now=new Date().toISOString();
+  const publishItems=items.filter(i=>!_hiddenIds.has(i.id));
+  const rows=[
+    {key:'items',data:publishItems,updated_at:now,...(isPublish?{published_at:now}:{})},
+    {key:'meta',data:roadmapMeta,updated_at:now,...(isPublish?{published_at:now}:{})}
+  ];
+  const{error}=await _sb.from('roadmap_state').upsert(rows,{onConflict:'key'});
+  if(error)throw new Error(error.message);
+}
+
+async function loadFromSupabase(){
+  if(!_sb)return;
+  try{
+    const{data:rows,error}=await _sb.from('roadmap_state').select('key,data,updated_at');
+    if(error||!rows)return;
+    const byKey=Object.fromEntries(rows.map(r=>[r.key,r]));
+
+    if(byKey.items){
+      const sbAt=new Date(byKey.items.updated_at).getTime();
+      const lsRaw=localStorage.getItem('gx_roadmap_v1');
+      const lsAt=lsRaw?JSON.parse(lsRaw).savedAt||0:0;
+      if(sbAt>BAKED_AT&&sbAt>=lsAt&&Array.isArray(byKey.items.data)&&byKey.items.data.length){
+        items=byKey.items.data;
+        items.forEach(it=>{if(!it.section)it.section='roadmap';if(!it.actions)it.actions=mkActions(it.phases);});
+      }
+    }
+    if(byKey.meta){
+      const sbAt=new Date(byKey.meta.updated_at).getTime();
+      const lsRaw=localStorage.getItem('gx_roadmap_meta_v1');
+      const lsAt=lsRaw?JSON.parse(lsRaw)._savedAt||0:0;
+      if(sbAt>BAKED_AT&&sbAt>=lsAt&&byKey.meta.data){
+        Object.keys(roadmapMeta).forEach(k=>{if(byKey.meta.data[k])roadmapMeta[k]={...roadmapMeta[k],...byKey.meta.data[k]};});
+      }
+    }
+    refreshHome();
+    if(curItem){const found=items.find(i=>i.id===curItem.id);if(found){curItem=found;syncActions();renderItemHeader();buildOverview();}}
+  }catch(e){console.warn('Supabase load:',e.message);}
+}
+
 (function loadSaved(){
   try{
     const raw=localStorage.getItem('gx_roadmap_v1');
     if(!raw)return;
     const parsed=JSON.parse(raw);
-    // Support both old format (array) and new format ({items, savedAt})
     const savedAt=parsed.savedAt||0;
     const savedItems=Array.isArray(parsed)?parsed:(parsed.items||[]);
-    // If the HTML file was saved more recently than the localStorage data, use the baked-in data
     if(BAKED_AT>0&&savedAt<=BAKED_AT)return;
     if(!savedItems.length)return;
     items=savedItems;
@@ -611,9 +738,12 @@ function schedSave(){clearTimeout(_saveTimer);_saveTimer=setTimeout(saveItems,40
 
 // ── ROADMAP META (editable titles) ───────────────────────────────────────────
 /* META_DATA_START */
-let roadmapMeta={"roadmap":{"navName":"Q3/26 Roadmap","heading":"✦ Galaxsys Q3/26 Roadmap","subtitle":"May 2026 – Feb 2027 · All committed projects","sectionTitle":"All Projects"},"tech":{"navName":"Q3/26 Technical Roadmap","heading":"⚙ Galaxsys Q3/26 Technical Roadmap","subtitle":"Technical projects & infrastructure","sectionTitle":"All Projects"}};
+let roadmapMeta={
+  roadmap:{navName:'Q3/26 Roadmap',heading:'✦ Galaxsys Q3/26 Roadmap',subtitle:'May 2026 – Feb 2027 · All committed projects',sectionTitle:'All Projects'},
+  tech:{navName:'Q3/26 Technical Roadmap',heading:'⚙ Galaxsys Q3/26 Technical Roadmap',subtitle:'Technical projects & infrastructure',sectionTitle:'All Projects'}
+};
 /* META_DATA_END */
-function saveRoadmapData(){try{localStorage.setItem('gx_roadmap_meta_v1',JSON.stringify({...roadmapMeta,_savedAt:Date.now()}));}catch(e){}}
+function saveRoadmapData(){try{localStorage.setItem('gx_roadmap_meta_v1',JSON.stringify({...roadmapMeta,_savedAt:Date.now()}));}catch(e){}schedSBSave();}
 function saveRoadmapMeta(section,field,val){if(!val||!roadmapMeta[section])return;roadmapMeta[section][field]=val;if(section===activeSection&&field==='navName'){document.getElementById('topTitle').textContent=val;document.getElementById('homeBCText').textContent=val;}saveRoadmapData();}
 function renameRoadmapNav(section){
   const labelId=section==='tech'?'navTechParentLabel':'navParentLabel';
@@ -654,6 +784,7 @@ function renameRoadmapNav(section){
   el.addEventListener('keydown',onKey);
 }
 (function loadRoadmapMeta(){try{const raw=localStorage.getItem('gx_roadmap_meta_v1');if(!raw)return;const p=JSON.parse(raw);const savedAt=p._savedAt||0;if(BAKED_AT>0&&savedAt<=BAKED_AT)return;Object.keys(roadmapMeta).forEach(k=>{if(p[k])roadmapMeta[k]={...roadmapMeta[k],...p[k]};});}catch(e){}})();
+// Supabase load is triggered after successful auth in initSupabase()
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
 function parseDate(s){if(!s)return null;const[y,m,d]=s.split('-');return new Date(+y,+m-1,+d);}
@@ -1625,154 +1756,144 @@ function confirmDelete(){
   curItem=null;
   showHome(section); // always navigate home — project must disappear from view
 }
-function openGHModal(){
-  const s=k=>localStorage.getItem(k)||'';
-  document.getElementById('gh-token').value=s('gh_token');
-  document.getElementById('gh-owner').value=s('gh_owner');
-  document.getElementById('gh-repo').value=s('gh_repo');
-  document.getElementById('gh-path').value=s('gh_path');
-  document.getElementById('gh-branch').value=s('gh_branch')||'main';
-  document.getElementById('ghModalErr').style.display='none';
-  document.getElementById('ghModal').style.display='flex';
+// ── USER MODAL ───────────────────────────────────────────────────────────────
+function openUserModal(){
+  const content=document.getElementById('userModalContent');
+  const roleLabel=_currentRole==='editor'?'Editor (full access)':'Viewer (read-only)';
+  const roleColor=_currentRole==='editor'?'#7b68ee':'#7a80a0';
+  content.innerHTML=`
+    <div style="display:flex;align-items:center;gap:14px;padding:16px;background:#f8f9ff;border-radius:14px;margin-bottom:16px">
+      <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#7b68ee,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">👤</div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:3px">${_currentUser?.email||'—'}</div>
+        <div style="font-size:11px;font-weight:700;color:${roleColor}">${roleLabel}</div>
+      </div>
+    </div>
+    ${_currentRole==='viewer'?'<div style="font-size:12px;color:#7a80a0;padding:10px 14px;background:#f8f9ff;border-radius:10px;border:1px solid #e0e4ef">You have read-only access. Changes you make are local only and will not be saved to the shared roadmap. Contact an admin to request editor access.</div>':'<div style="font-size:12px;color:#27ae60;padding:10px 14px;background:#f0fff4;border-radius:10px;border:1px solid #b7ebd0">You have full editor access. All changes auto-save to Supabase and are visible to all users after refresh or Publish.</div>'}`;
+  document.getElementById('userModal').style.display='flex';
 }
-function closeGHModal(){document.getElementById('ghModal').style.display='none';}
-function saveGHSettings(){
-  const v=id=>document.getElementById(id).value.trim();
-  const err=document.getElementById('ghModalErr');
-  if(!v('gh-token')||!v('gh-owner')||!v('gh-repo')||!v('gh-path')){
-    err.textContent='Please fill in all fields.';err.style.display='block';return;
-  }
-  ['gh_token','gh_owner','gh_repo','gh_path','gh_branch'].forEach(k=>{
-    localStorage.setItem(k,document.getElementById(k.replace('gh_','gh-')).value.trim()||'main');
-  });
-  closeGHModal();
-  setGHStatus('ok','Settings saved');
-  setTimeout(()=>document.getElementById('ghStatus').style.display='none',2500);
-}
-function setGHStatus(type,msg){
-  const el=document.getElementById('ghStatus');
-  el.className='gh-status '+type;el.textContent=msg;el.style.display='inline';
-}
-function buildPageHTML(){
-  const ts=Date.now();
-  const safe=s=>s.replace(/<\/script>/gi,'<\\/script>');
+function closeUserModal(){document.getElementById('userModal').style.display='none';}
 
-  // Temporarily reset all dynamic UI to default before snapshot
-  const pb=document.getElementById('publishBtn');
-  const gs=document.getElementById('ghStatus');
-  const [pbDis,pbTxt,gsDis]=[pb.disabled,pb.textContent,gs.style.display];
-  pb.disabled=false; pb.textContent='⬆ Publish';
-  gs.style.display='none';
-
-  let html=document.documentElement.outerHTML;
-
-  // Restore live state
-  pb.disabled=pbDis; pb.textContent=pbTxt;
-  gs.style.display=gsDis;
-
-  html=html.replace(/\/\* BAKED_AT_START \*\/[\s\S]*?\/\* BAKED_AT_END \*\//,
-    `/* BAKED_AT_START */\nconst BAKED_AT=${ts};\n/* BAKED_AT_END */`);
-  html=html.replace(/\/\* ITEMS_DATA_START \*\/[\s\S]*?\/\* ITEMS_DATA_END \*\//,
-    `/* ITEMS_DATA_START */\nlet items=${safe(JSON.stringify(items))};\n/* ITEMS_DATA_END */`);
-  html=html.replace(/\/\* META_DATA_START \*\/[\s\S]*?\/\* META_DATA_END \*\//,
-    `/* META_DATA_START */\nlet roadmapMeta=${safe(JSON.stringify(roadmapMeta))};\n/* META_DATA_END */`);
-  return html;
+function setSBStatus(type,msg){
+  const el=document.getElementById('sbStatus');
+  el.className='sb-status '+type;el.textContent=msg;el.style.display='inline';
 }
-// Chunked UTF-8→base64 — avoids stack overflow on large files
-function htmlToBase64(str){
-  const bytes=new TextEncoder().encode(str);
-  const CHUNK=65535;// 65535 = 3×21845, so no padding mid-string
-  let b64='';
-  for(let i=0;i<bytes.length;i+=CHUNK){
-    const chunk=bytes.subarray(i,i+CHUNK);
-    let bin='';
-    for(let j=0;j<chunk.length;j++)bin+=String.fromCharCode(chunk[j]);
-    b64+=btoa(bin);
-  }
-  return b64;
-}
-// fetch with AbortController timeout (ms)
-async function fetchWithTimeout(url,opts,ms=30000){
-  const ctrl=new AbortController();
-  const timer=setTimeout(()=>ctrl.abort(),ms);
-  try{return await fetch(url,{...opts,signal:ctrl.signal});}
-  finally{clearTimeout(timer);}
-}
-async function publishToGitHub(){
+
+// ── PUBLISH TO SUPABASE ───────────────────────────────────────────────────────
+async function publishToSupabase(){
+  if(_currentRole!=='editor'){return;}
   const publishBtn=document.getElementById('publishBtn');
   const resetBtn=()=>{publishBtn.disabled=false;publishBtn.textContent='⬆ Publish';};
-
-  const token=localStorage.getItem('gh_token');
-  const owner=localStorage.getItem('gh_owner');
-  const repo =localStorage.getItem('gh_repo');
-  const path =localStorage.getItem('gh_path');
-  const branch=localStorage.getItem('gh_branch')||'main';
-  if(!token||!owner||!repo||!path){openGHModal();return;}
-
-  publishBtn.disabled=true;
-  publishBtn.textContent='⏳ Publishing…';
-  setGHStatus('busy','Connecting…');
-
+  publishBtn.disabled=true;publishBtn.textContent='⏳ Publishing…';
+  setSBStatus('busy','Saving…');
   try{
-    const apiBase=`https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-    const headers={'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
-
-    // 1. Fetch the actual file content + SHA from GitHub
-    setGHStatus('busy','Fetching file…');
-    const getRes=await fetchWithTimeout(`${apiBase}?ref=${branch}`,{headers});
-    if(!getRes.ok){const e=await getRes.json();throw new Error(e.message||`API error ${getRes.status}`);}
-    const fileData=await getRes.json();
-    const sha=fileData.sha;
-
-    // Decode base64 → UTF-8 string (the real HTML source)
-    const rawB64=fileData.content.replace(/\n/g,'');
-    const rawBin=atob(rawB64);
-    const rawBytes=new Uint8Array(rawBin.length);
-    for(let i=0;i<rawBin.length;i++) rawBytes[i]=rawBin.charCodeAt(i);
-    const sourceHtml=new TextDecoder('utf-8').decode(rawBytes);
-
-    // 2. Stamp current data into the source
-    setGHStatus('busy','Encoding…');
-    const ts=Date.now();
-    const safe=s=>s.replace(/<\/script>/gi,'<\\/script>');
-    let html=sourceHtml;
-    html=html.replace(/\/\* BAKED_AT_START \*\/[\s\S]*?\/\* BAKED_AT_END \*\//,
-      `/* BAKED_AT_START */\nconst BAKED_AT=${ts};\n/* BAKED_AT_END */`);
-    const publishItems=items.filter(i=>!_hiddenIds.has(i.id));
-    html=html.replace(/\/\* ITEMS_DATA_START \*\/[\s\S]*?\/\* ITEMS_DATA_END \*\//,
-      `/* ITEMS_DATA_START */\nlet items=${safe(JSON.stringify(publishItems))};\n/* ITEMS_DATA_END */`);
-    html=html.replace(/\/\* META_DATA_START \*\/[\s\S]*?\/\* META_DATA_END \*\//,
-      `/* META_DATA_START */\nlet roadmapMeta=${safe(JSON.stringify(roadmapMeta))};\n/* META_DATA_END */`);
-
-    // Sanity check – markers must have been found
-    if(!html.includes(`BAKED_AT=${ts}`)){
-      throw new Error('Marker comments not found in file. Re-upload the base HTML and try again.');
-    }
-
-    // 3. Commit
-    setGHStatus('busy','Pushing…');
-    const putRes=await fetchWithTimeout(apiBase,{method:'PUT',headers,body:JSON.stringify({
-      message:`Update roadmap – ${new Date().toLocaleString()}`,
-      content:htmlToBase64(html),sha,branch
-    })});
-    if(!putRes.ok){const e=await putRes.json();throw new Error(e.message||`Commit failed (${putRes.status})`);}
-
-    setGHStatus('ok','✓ Published! Others will see changes after refreshing.');
-    setTimeout(()=>document.getElementById('ghStatus').style.display='none',5000);
+    await saveToSupabase(true);
+    setSBStatus('ok','✓ Published! Others see changes on next refresh.');
+    setTimeout(()=>document.getElementById('sbStatus').style.display='none',5000);
   }catch(err){
-    setGHStatus('err',err.name==='AbortError'?'✗ Timed out — try again.':'✗ '+err.message);
-    console.error('GitHub publish:',err);
-  }finally{
-    resetBtn();
-  }
+    setSBStatus('err','✗ '+err.message);
+    console.error('Supabase publish:',err);
+  }finally{resetBtn();}
 }
-// Load GitHub settings on startup (show indicator if configured)
-(function(){if(localStorage.getItem('gh_token')&&localStorage.getItem('gh_repo')){
-  setGHStatus('ok','GitHub connected');
-  setTimeout(()=>document.getElementById('ghStatus').style.display='none',2000);
-}})();
+
+// ── AUTH HELPERS ──────────────────────────────────────────────────────────────
+function showLoginForm(){
+  document.getElementById('loginForm').style.display='block';
+  document.getElementById('loginSent').style.display='none';
+  document.getElementById('loginLoading').style.display='none';
+  document.getElementById('loginErr').style.display='none';
+  document.getElementById('loginUnconfigured').style.display='none';
+}
+function showLoginLoading(msg){
+  document.getElementById('loginForm').style.display='none';
+  document.getElementById('loginSent').style.display='none';
+  document.getElementById('loginErr').style.display='none';
+  document.getElementById('loginLoading').style.display='block';
+  document.getElementById('loginLoadingMsg').textContent=msg||'Signing you in…';
+}
+function showLoginError(msg){
+  document.getElementById('loginErr').textContent=msg;
+  document.getElementById('loginErr').style.display='block';
+  document.getElementById('loginLoading').style.display='none';
+  document.getElementById('loginForm').style.display='block';
+}
+async function sendMagicLink(){
+  const email=document.getElementById('loginEmail').value.trim();
+  if(!email){showLoginError('Please enter your email address.');return;}
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=true;btn.textContent='Sending…';
+  document.getElementById('loginErr').style.display='none';
+  try{
+    const{error}=await _sb.auth.signInWithOtp({
+      email,
+      options:{emailRedirectTo:window.location.href}
+    });
+    if(error)throw error;
+    document.getElementById('loginForm').style.display='none';
+    document.getElementById('sentEmailLabel').textContent=email;
+    document.getElementById('loginSent').style.display='block';
+  }catch(err){
+    showLoginError(err.message||'Could not send magic link. Please try again.');
+  }finally{btn.disabled=false;btn.textContent='✉ Send Magic Link';}
+}
+async function handleAuthSession(session){
+  showLoginLoading('Loading your profile…');
+  _currentUser=session.user;
+  // Fetch role from profiles table
+  const{data,error}=await _sb.from('profiles').select('role').eq('id',_currentUser.id).single();
+  _currentRole=(data?.role)||'viewer';
+  // Update UI
+  const chip=document.getElementById('userChip');
+  chip.style.display='flex';
+  document.getElementById('userEmailLabel').textContent=_currentUser.email;
+  const badge=document.getElementById('userRoleBadge');
+  if(_currentRole==='editor'){
+    badge.className='role-badge-editor';badge.textContent='Editor';
+    document.getElementById('publishBtn').style.display='flex';
+  }else{
+    badge.className='role-badge-viewer';badge.textContent='Viewer';
+    document.getElementById('publishBtn').style.display='none';
+  }
+  // Load fresh data then hide overlay
+  await loadFromSupabase();
+  refreshHome();
+  // Fade out login overlay
+  const overlay=document.getElementById('loginOverlay');
+  overlay.style.opacity='0';
+  setTimeout(()=>overlay.style.display='none',400);
+}
+async function signOut(){
+  closeUserModal();
+  await _sb.auth.signOut();
+  _currentUser=null;_currentRole=null;
+  document.getElementById('userChip').style.display='none';
+  document.getElementById('publishBtn').style.display='none';
+  const overlay=document.getElementById('loginOverlay');
+  overlay.style.opacity='1';overlay.style.display='flex';
+  showLoginForm();
+}
+async function initSupabase(){
+  if(!SUPABASE_URL||SUPABASE_URL==='YOUR_SUPABASE_URL'){
+    document.getElementById('loginForm').style.display='none';
+    document.getElementById('loginUnconfigured').style.display='block';
+    return;
+  }
+  _sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  // Listen for auth state changes (handles magic link redirect)
+  _sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='SIGNED_IN'&&session){await handleAuthSession(session);}
+    else if(event==='SIGNED_OUT'){/* handled by signOut() */}
+  });
+  // Check for existing session
+  const{data:{session}}=await _sb.auth.getSession();
+  if(session){await handleAuthSession(session);}
+  // else: login overlay stays visible
+}
+
 function goBack(){showHome(curItem?curItem.section:activeSection);}
 document.addEventListener('click',function(e){const p=document.getElementById('iconPopover');if(p&&p.classList.contains('open')&&!p.contains(e.target)&&e.target.id!=='iconTrigger')p.classList.remove('open');});
+// Kick off auth initialisation
+initSupabase();
 </script>
 </body>
 </html>
