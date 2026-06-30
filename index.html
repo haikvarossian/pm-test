@@ -337,6 +337,11 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
 /* Login-to-edit button in topbar */
 .login-topbar-btn{font-size:12px;color:#ffffffcc;background:none;border:1px solid #ffffff33;border-radius:20px;padding:5px 14px;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.2px}
 .login-topbar-btn:hover{color:#fff;border-color:#ffffff66;background:#ffffff11}
+/* Live update banner (shown to editors when someone else publishes) */
+.live-update-banner{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;padding:13px 18px;border-radius:14px;font-size:13px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(0,0,0,.35);z-index:1500;opacity:0;transition:all .3s ease;pointer-events:none}
+.live-update-banner.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}
+.live-update-banner button{background:linear-gradient(135deg,#7b68ee,#a78bfa);color:#fff;border:none;border-radius:20px;padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.live-update-banner .lub-dismiss{background:none;border:none;color:#ffffff88;font-size:16px;cursor:pointer;padding:0 4px}
 </style>
 </head>
 <body>
@@ -409,6 +414,11 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
     <button class="signout-btn" onclick="signOut()">Sign out</button>
   </div>
   <div class="back-btn" id="backBtn" style="display:none" onclick="goBack()">← Back</div>
+</div>
+<div class="live-update-banner" id="liveUpdateBanner">
+  <span>🔄 The roadmap was just published with new changes.</span>
+  <button onclick="applyLiveUpdate()">Refresh now</button>
+  <button class="lub-dismiss" onclick="dismissLiveUpdate()">✕</button>
 </div>
 
 <div class="modal-overlay" id="userModal" style="display:none" onclick="if(event.target===this)closeUserModal()">
@@ -685,8 +695,8 @@ items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
 
 // ── SUPABASE CLIENT ───────────────────────────────────────────────────────────
 // ⬇ Replace these two values with your project's URL and anon key
-const SUPABASE_URL = 'https://veyxjztlakngxequomwm.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_XN1knFfvMzW2AQsX8QeeHQ_EO8f_B1B';
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 // ⬆ Safe to commit — anon key is public; RLS enforces access control
 let _sb = null; // initialised in initSupabase()
 let _currentUser = null;
@@ -696,53 +706,76 @@ let _currentRole = null; // 'editor' | 'viewer'
 function saveItems(){
   if(_currentRole!=='editor')return; // viewers & guests: no saves
   try{localStorage.setItem('gx_roadmap_v1',JSON.stringify({items,savedAt:Date.now()}));}catch(e){}
-  schedSBSave();
 }
 let _saveTimer=null;
-function schedSave(){clearTimeout(_saveTimer);_saveTimer=setTimeout(saveItems,600);}
-
-// Supabase debounced auto-save (editors only)
-let _sbSaveTimer=null;
-function schedSBSave(){
-  if(_currentRole!=='editor')return;
-  clearTimeout(_sbSaveTimer);_sbSaveTimer=setTimeout(()=>saveToSupabase(false),2000);
+function schedSave(){
+  if(curItem)markItemDirty(curItem.id); // covers phases/team/actions/risk/gantt/overview edits
+  clearTimeout(_saveTimer);_saveTimer=setTimeout(saveItems,600);
 }
 
-async function saveToSupabase(isPublish){
+// ── GRANULAR SUPABASE SYNC ────────────────────────────────────────────────────
+// Each editor only ever uploads the specific items/meta sections THEY touched —
+// never the whole dataset — so two editors working on different projects can
+// publish at the same time without clobbering each other's work.
+let _dirtyItemIds=new Set();
+let _dirtyMetaSections=new Set();
+let _sbSaveTimer=null;
+function markItemDirty(id){
+  if(_currentRole!=='editor')return;
+  _dirtyItemIds.add(id);
+  clearTimeout(_sbSaveTimer);_sbSaveTimer=setTimeout(()=>flushDirtySaves(false),2000);
+}
+function markMetaDirty(section){
+  if(_currentRole!=='editor')return;
+  _dirtyMetaSections.add(section);
+  clearTimeout(_sbSaveTimer);_sbSaveTimer=setTimeout(()=>flushDirtySaves(false),2000);
+}
+async function flushDirtySaves(isPublish){
   if(!_sb||_currentRole!=='editor')return;
+  const itemIds=[..._dirtyItemIds];
+  const metaSecs=[..._dirtyMetaSections];
+  if(!itemIds.length&&!metaSecs.length)return;
   const now=new Date().toISOString();
-  const publishItems=items.filter(i=>!_hiddenIds.has(i.id));
-  const rows=[
-    {key:'items',data:publishItems,updated_at:now,...(isPublish?{published_at:now}:{})},
-    {key:'meta',data:roadmapMeta,updated_at:now,...(isPublish?{published_at:now}:{})}
-  ];
-  const{error}=await _sb.from('roadmap_state').upsert(rows,{onConflict:'key'});
-  if(error)throw new Error(error.message);
+  if(itemIds.length){
+    const rows=itemIds.map(id=>{
+      const it=items.find(i=>i.id===id);
+      if(!it)return null; // deleted locally — handled by deleteItemRemote, not here
+      return{id,section:it.section||'roadmap',data:it,updated_at:now,...(isPublish?{published_at:now}:{})};
+    }).filter(Boolean);
+    if(rows.length){
+      const{error}=await _sb.from('roadmap_items').upsert(rows,{onConflict:'id'});
+      if(error)throw new Error(error.message);
+    }
+  }
+  if(metaSecs.length){
+    const rows=metaSecs.map(s=>({section:s,data:roadmapMeta[s],updated_at:now,...(isPublish?{published_at:now}:{})}));
+    const{error}=await _sb.from('roadmap_meta').upsert(rows,{onConflict:'section'});
+    if(error)throw new Error(error.message);
+  }
+  // Only clear the dirty set on an actual Publish — routine auto-saves keep
+  // re-uploading the same in-progress rows every ~2s without marking them published.
+  if(isPublish){_dirtyItemIds.clear();_dirtyMetaSections.clear();}
+}
+async function deleteItemRemote(id){
+  if(!_sb||_currentRole!=='editor')return;
+  _dirtyItemIds.delete(id);
+  try{await _sb.from('roadmap_items').delete().eq('id',id);}
+  catch(e){console.warn('Remote delete failed:',e.message);}
 }
 
 async function loadFromSupabase(){
   if(!_sb)return;
   try{
-    const{data:rows,error}=await _sb.from('roadmap_state').select('key,data,updated_at');
-    if(error||!rows)return;
-    const byKey=Object.fromEntries(rows.map(r=>[r.key,r]));
-
-    if(byKey.items){
-      const sbAt=new Date(byKey.items.updated_at).getTime();
-      const lsRaw=localStorage.getItem('gx_roadmap_v1');
-      const lsAt=lsRaw?JSON.parse(lsRaw).savedAt||0:0;
-      if(sbAt>BAKED_AT&&sbAt>=lsAt&&Array.isArray(byKey.items.data)&&byKey.items.data.length){
-        items=byKey.items.data;
-        items.forEach(it=>{if(!it.section)it.section='roadmap';if(!it.actions)it.actions=mkActions(it.phases);});
-      }
+    const[{data:itemRows,error:e1},{data:metaRows,error:e2}]=await Promise.all([
+      _sb.from('roadmap_items').select('id,section,data,updated_at'),
+      _sb.from('roadmap_meta').select('section,data,updated_at')
+    ]);
+    if(!e1&&itemRows&&itemRows.length){
+      items=itemRows.map(r=>({...r.data,id:r.id,section:r.section}));
+      items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
     }
-    if(byKey.meta){
-      const sbAt=new Date(byKey.meta.updated_at).getTime();
-      const lsRaw=localStorage.getItem('gx_roadmap_meta_v1');
-      const lsAt=lsRaw?JSON.parse(lsRaw)._savedAt||0:0;
-      if(sbAt>BAKED_AT&&sbAt>=lsAt&&byKey.meta.data){
-        Object.keys(roadmapMeta).forEach(k=>{if(byKey.meta.data[k])roadmapMeta[k]={...roadmapMeta[k],...byKey.meta.data[k]};});
-      }
+    if(!e2&&metaRows){
+      metaRows.forEach(r=>{if(roadmapMeta[r.section])roadmapMeta[r.section]={...roadmapMeta[r.section],...r.data};});
     }
     refreshHome();
     if(curItem){const found=items.find(i=>i.id===curItem.id);if(found){curItem=found;syncActions();renderItemHeader();buildOverview();}}
@@ -770,8 +803,8 @@ let roadmapMeta={
   tech:{navName:'Q3/26 Technical Roadmap',heading:'⚙ Galaxsys Q3/26 Technical Roadmap',subtitle:'Technical projects & infrastructure',sectionTitle:'All Projects'}
 };
 /* META_DATA_END */
-function saveRoadmapData(){try{localStorage.setItem('gx_roadmap_meta_v1',JSON.stringify({...roadmapMeta,_savedAt:Date.now()}));}catch(e){}schedSBSave();}
-function saveRoadmapMeta(section,field,val){if(!val||!roadmapMeta[section]||_currentRole!=='editor')return;roadmapMeta[section][field]=val;if(section===activeSection&&field==='navName'){document.getElementById('topTitle').textContent=val;document.getElementById('homeBCText').textContent=val;}saveRoadmapData();}
+function saveRoadmapData(section){try{localStorage.setItem('gx_roadmap_meta_v1',JSON.stringify({...roadmapMeta,_savedAt:Date.now()}));}catch(e){}if(section)markMetaDirty(section);}
+function saveRoadmapMeta(section,field,val){if(!val||!roadmapMeta[section]||_currentRole!=='editor')return;roadmapMeta[section][field]=val;if(section===activeSection&&field==='navName'){document.getElementById('topTitle').textContent=val;document.getElementById('homeBCText').textContent=val;}saveRoadmapData(section);}
 function renameRoadmapNav(section){
   if(_currentRole!=='editor')return;
   const labelId=section==='tech'?'navTechParentLabel':'navParentLabel';
@@ -801,7 +834,7 @@ function renameRoadmapNav(section){
         // Update the sidebar label of the non-active section
         el.textContent=val;
       }
-      saveRoadmapData();schedSave();
+      saveRoadmapData(section);
     } else {
       el.textContent=roadmapMeta[section].navName;
     }
@@ -935,7 +968,7 @@ function renameItem(id){
     if(val&&val!==item.name){
       item.name=val;
       if(curItem&&curItem.id===id){renderItemHeader();document.getElementById('topTitle').textContent=val;}
-      schedSave();
+      markItemDirty(id);saveItems();
     } else {
       el.textContent=item.name;
     }
@@ -1773,8 +1806,10 @@ function saveNewItem(){
   const eid=document.getElementById('m-epic').value.trim();
   const phases=defPhases();
   const _sec=document.getElementById('addModal').dataset.targetSection||activeSection;
-  items.push({id:Date.now(),name,type:document.getElementById('m-type').value,color:document.getElementById('m-color').value,icon:document.getElementById('m-icon').value||'🎮',status:'Committed',size:document.getElementById('m-size').value,epicId:eid,epicUrl:eid?`https://dg-group.atlassian.net/browse/${eid}`:'',desc:document.getElementById('m-desc').value,scope:'',kickoff:{date:'',facilitator:'',attendees:'',notes:''},released:false,releaseDate:'',team:[],risks:[],phases,actions:mkActions(phases),section:_sec});
-  closeModal();refreshHome();['m-name','m-epic','m-desc'].forEach(id=>document.getElementById(id).value='');resetIconPicker();schedSave();
+  const newId=Date.now();
+  items.push({id:newId,name,type:document.getElementById('m-type').value,color:document.getElementById('m-color').value,icon:document.getElementById('m-icon').value||'🎮',status:'Committed',size:document.getElementById('m-size').value,epicId:eid,epicUrl:eid?`https://dg-group.atlassian.net/browse/${eid}`:'',desc:document.getElementById('m-desc').value,scope:'',kickoff:{date:'',facilitator:'',attendees:'',notes:''},released:false,releaseDate:'',team:[],risks:[],phases,actions:mkActions(phases),section:_sec});
+  closeModal();refreshHome();['m-name','m-epic','m-desc'].forEach(id=>document.getElementById(id).value='');resetIconPicker();
+  markItemDirty(newId);saveItems();
 }
 // ── DELETE PROJECT ────────────────────────────────────────────────────────────
 function openDeleteModal(id){
@@ -1790,10 +1825,11 @@ function confirmDelete(){
   if(!item)return;
   const section=item.section||'roadmap';
   const id=_deleteItemId; // capture before closeDeleteModal nullifies _deleteItemId
-  _hiddenIds.add(id);
+  items=items.filter(i=>i.id!==id);
   closeDeleteModal();
   curItem=null;
   showHome(section); // always navigate home — project must disappear from view
+  saveItems();deleteItemRemote(id); // remote delete is immediate, not debounced
 }
 // ── USER MODAL ───────────────────────────────────────────────────────────────
 function openUserModal(){
@@ -1821,13 +1857,19 @@ function setSBStatus(type,msg){
 // ── PUBLISH TO SUPABASE ───────────────────────────────────────────────────────
 async function publishToSupabase(){
   if(_currentRole!=='editor'){return;}
+  if(!_dirtyItemIds.size&&!_dirtyMetaSections.size){
+    setSBStatus('ok','Nothing to publish — no changes since last publish.');
+    setTimeout(()=>document.getElementById('sbStatus').style.display='none',3000);
+    return;
+  }
   const publishBtn=document.getElementById('publishBtn');
   const resetBtn=()=>{publishBtn.disabled=false;publishBtn.textContent='⬆ Publish';};
   publishBtn.disabled=true;publishBtn.textContent='⏳ Publishing…';
   setSBStatus('busy','Saving…');
   try{
-    await saveToSupabase(true);
-    setSBStatus('ok','✓ Published! Others see changes on next refresh.');
+    clearTimeout(_sbSaveTimer);
+    await flushDirtySaves(true);
+    setSBStatus('ok','✓ Published! Others see your changes immediately.');
     setTimeout(()=>document.getElementById('sbStatus').style.display='none',5000);
   }catch(err){
     setSBStatus('err','✗ '+err.message);
@@ -2034,6 +2076,54 @@ async function initSupabase(){
     const{data:{session}}=await _sb.auth.getSession();
     if(session)await handleAuthSession(session);
   }catch(e){console.warn('Session check:',e.message);}
+  // Subscribe to live changes — pushes Publish events to every open session
+  subscribeRealtime();
+}
+
+// ── REALTIME SYNC ─────────────────────────────────────────────────────────────
+function subscribeRealtime(){
+  if(!_sb)return;
+  _sb.channel('roadmap_items_changes')
+    .on('postgres_changes',{event:'*',schema:'public',table:'roadmap_items'},payload=>{
+      if(payload.eventType==='DELETE'){
+        const delId=payload.old?.id;
+        if(delId==null)return;
+        items=items.filter(i=>i.id!==delId);
+        if(curItem&&curItem.id===delId){curItem=null;showHome(activeSection);}
+        else{refreshHome();}
+        return;
+      }
+      // INSERT (new project) always counts; UPDATE only counts as a real
+      // publish if published_at actually changed (ignores routine auto-saves).
+      // Requires REPLICA IDENTITY FULL on roadmap_items so payload.old is populated.
+      const isRealPublish=payload.eventType==='INSERT'||payload.new?.published_at!==payload.old?.published_at;
+      if(!isRealPublish)return;
+      onRoadmapPublished();
+    })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'roadmap_meta'},payload=>{
+      // Requires REPLICA IDENTITY FULL on roadmap_meta as well.
+      if(payload.new?.published_at!==payload.old?.published_at)return;
+      onRoadmapPublished();
+    })
+    .subscribe();
+}
+function onRoadmapPublished(){
+  if(_currentRole==='editor'){
+    // Don't silently overwrite an editor's in-progress work — let them choose.
+    document.getElementById('liveUpdateBanner').classList.add('show');
+  }else{
+    // Viewers have nothing to lose — apply immediately and quietly.
+    applyLiveUpdate();
+  }
+}
+async function applyLiveUpdate(){
+  document.getElementById('liveUpdateBanner').classList.remove('show');
+  await loadFromSupabase();
+  refreshHome();
+  if(curItem){syncActions();renderItemHeader();buildOverview();buildPhases();buildActions();buildTeam();buildGantt(true);}
+}
+function dismissLiveUpdate(){
+  document.getElementById('liveUpdateBanner').classList.remove('show');
 }
 
 function goBack(){showHome(curItem?curItem.section:activeSection);}
