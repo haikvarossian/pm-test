@@ -326,15 +326,28 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
 .setup-warn h3{font-size:15px;font-weight:700;color:#d48806;margin-bottom:8px}
 .setup-warn p{font-size:12px;color:#7a5c00;line-height:1.7;margin-bottom:6px}
 .setup-warn code{background:#ffe9b0;border-radius:4px;padding:1px 5px;font-size:11px}
+
+/* ── ROLE-BASED ACCESS CONTROL ────────────────────────────────────────── */
+body:not(.editor-mode) .edit-only{display:none!important}
+/* Data-display inputs are visible but non-interactive for viewers/guests */
+body:not(.editor-mode) .page input,
+body:not(.editor-mode) .page select,
+body:not(.editor-mode) .page textarea{pointer-events:none!important;cursor:default!important}
+body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cursor:default!important;cursor:default}
+/* Login-to-edit button in topbar */
+.login-topbar-btn{font-size:12px;color:#ffffffcc;background:none;border:1px solid #ffffff33;border-radius:20px;padding:5px 14px;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.2px}
+.login-topbar-btn:hover{color:#fff;border-color:#ffffff66;background:#ffffff11}
 </style>
 </head>
 <body>
-<div class="login-overlay" id="loginOverlay">
+<div class="login-overlay" id="loginOverlay" style="display:none;opacity:0" onclick="if(event.target===this)closeLoginModal()">
   <div class="login-card">
+    <div style="position:relative"><button onclick="closeLoginModal()" style="position:absolute;top:-8px;right:-8px;background:none;border:none;font-size:18px;color:#bbb;cursor:pointer;line-height:1;transition:color .15s;z-index:1" onmouseover="this.style.color='#555'" onmouseout="this.style.color='#bbb'">✕</button>
     <div class="login-logo">
       <span class="l-icon">✦</span>
       <h1>Galaxsys PM</h1>
-      <p>Sign in to access the roadmap</p>
+      <p>Sign in to access editing</p>
+    </div>
     </div>
 
     <div id="loginUnconfigured" style="display:none">
@@ -347,19 +360,31 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
       </div>
     </div>
 
+    <div id="authTabs" style="display:flex;gap:4px;background:#f0f2ff;border-radius:12px;padding:4px;margin-bottom:20px">
+      <button id="tabSignIn" onclick="switchAuthTab('signin')" style="flex:1;padding:9px;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;color:#7b68ee;box-shadow:0 1px 4px rgba(0,0,0,.08);transition:all .15s">Sign In</button>
+      <button id="tabSignUp" onclick="switchAuthTab('signup')" style="flex:1;padding:9px;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#7a80a0;transition:all .15s">Sign Up</button>
+    </div>
+
     <div id="loginForm">
       <label style="font-size:11px;font-weight:700;color:#7a80a0;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Work Email</label>
-      <input id="loginEmail" type="email" class="login-input" placeholder="you@galaxsys.com"
-        onkeydown="if(event.key==='Enter')sendMagicLink()">
-      <button class="login-btn" id="loginBtn" onclick="sendMagicLink()">✉ Send Magic Link</button>
-      <p style="font-size:11px;color:#aab0c6;text-align:center;margin-top:12px">No password needed — we'll email you a one-click sign-in link.</p>
+      <input id="loginEmail" type="email" class="login-input" placeholder="you@galaxsys.com" autocomplete="username">
+      <label style="font-size:11px;font-weight:700;color:#7a80a0;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Password</label>
+      <input id="loginPassword" type="password" class="login-input" placeholder="••••••••" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')submitAuth()">
+      <div id="confirmPasswordWrap" style="display:none">
+        <label style="font-size:11px;font-weight:700;color:#7a80a0;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Confirm Password</label>
+        <input id="loginPasswordConfirm" type="password" class="login-input" placeholder="••••••••" autocomplete="new-password"
+          onkeydown="if(event.key==='Enter')submitAuth()">
+      </div>
+      <button class="login-btn" id="loginBtn" onclick="submitAuth()">Sign In</button>
+      <p id="authHint" style="font-size:11px;color:#aab0c6;text-align:center;margin-top:12px">New users start as viewers — ask an admin to upgrade your role to Editor.</p>
     </div>
 
     <div class="login-sent" id="loginSent">
       <div class="sent-icon">📬</div>
-      <h3>Check your inbox</h3>
-      <p>We sent a magic link to <strong id="sentEmailLabel"></strong>.<br>Click it to sign in — it expires in 1 hour.</p>
-      <button onclick="showLoginForm()" style="margin-top:18px;font-size:12px;color:#7b68ee;background:none;border:none;cursor:pointer;text-decoration:underline">Use a different email</button>
+      <h3 id="sentTitle">Check your inbox</h3>
+      <p id="sentMessage">We sent a confirmation link to <strong id="sentEmailLabel"></strong>.<br>Click it, then come back and sign in.</p>
+      <button onclick="switchAuthTab('signin')" style="margin-top:18px;font-size:12px;color:#7b68ee;background:none;border:none;cursor:pointer;text-decoration:underline">Back to sign in</button>
     </div>
 
     <div class="login-loading" id="loginLoading">
@@ -374,10 +399,11 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
   <div class="logo">✦ GALAXSYS PM</div>
   <div class="divider"></div>
   <div class="top-title" id="topTitle">Q3/26 Roadmap</div>
-  <div class="undo-btn" id="undoBtn" onclick="undoDelete()">↩ Undo delete</div>
+  <div class="undo-btn edit-only" id="undoBtn" onclick="undoDelete()">↩ Undo delete</div>
   <span id="sbStatus" style="display:none"></span>
   <button class="publish-btn" id="publishBtn" onclick="publishToSupabase()" style="display:none">⬆ Publish</button>
-  <div class="user-chip" id="userChip">
+  <button class="login-topbar-btn" id="loginToEditBtn" onclick="openLoginModal()">✎ Login to edit</button>
+  <div class="user-chip" id="userChip" style="display:none">
     <span class="user-email-label" id="userEmailLabel"></span>
     <span id="userRoleBadge"></span>
     <button class="signout-btn" onclick="signOut()">Sign out</button>
@@ -449,23 +475,23 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
     <div class="nav-parent active open" id="navParent" onclick="toggleParent()" onmouseenter="document.getElementById('navParentEdit').style.opacity='1'" onmouseleave="document.getElementById('navParentEdit').style.opacity='0'">
       <div style="width:8px;height:8px;border-radius:2px;background:#a78bfa;flex-shrink:0"></div>
       <span id="navParentLabel" style="flex:1">Q3/26 Roadmap</span>
-      <span id="navParentEdit" style="opacity:0;font-size:11px;color:#a78bfa;cursor:pointer;padding:2px 4px;border-radius:4px;transition:opacity .15s" onclick="event.stopPropagation();renameRoadmapNav('roadmap')">✎</span>
+      <span id="navParentEdit" class="edit-only" style="opacity:0;font-size:11px;color:#a78bfa;cursor:pointer;padding:2px 4px;border-radius:4px;transition:opacity .15s" onclick="event.stopPropagation();renameRoadmapNav('roadmap')">✎</span>
       <span class="chevron open">▶</span>
     </div>
     <div class="nav-children open" id="navChildren">
       <div id="navList"></div>
-      <div class="nav-add" onclick="openModal('roadmap')">＋ Add project</div>
+      <div class="nav-add edit-only" onclick="openModal('roadmap')">＋ Add project</div>
     </div>
     <div class="sidebar-section" style="margin-top:10px;padding-top:10px;border-top:1px solid #ffffff15">Technical</div>
     <div class="nav-parent" id="navTechParent" onclick="toggleTechParent()" onmouseenter="document.getElementById('navTechParentEdit').style.opacity='1'" onmouseleave="document.getElementById('navTechParentEdit').style.opacity='0'">
       <div style="width:8px;height:8px;border-radius:2px;background:#f6a623;flex-shrink:0"></div>
       <span id="navTechParentLabel" style="flex:1">Q3/26 Technical Roadmap</span>
-      <span id="navTechParentEdit" style="opacity:0;font-size:11px;color:#f6a623;cursor:pointer;padding:2px 4px;border-radius:4px;transition:opacity .15s" onclick="event.stopPropagation();renameRoadmapNav('tech')">✎</span>
+      <span id="navTechParentEdit" class="edit-only" style="opacity:0;font-size:11px;color:#f6a623;cursor:pointer;padding:2px 4px;border-radius:4px;transition:opacity .15s" onclick="event.stopPropagation();renameRoadmapNav('tech')">✎</span>
       <span class="chevron">▶</span>
     </div>
     <div class="nav-children" id="navTechChildren">
       <div id="navTechList"></div>
-      <div class="nav-add" onclick="openModal('tech')">＋ Add project</div>
+      <div class="nav-add edit-only" onclick="openModal('tech')">＋ Add project</div>
     </div>
   </div>
 
@@ -495,7 +521,7 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap">
           <div id="releaseToggle"></div>
-          <button onclick="curItem&&openDeleteModal(curItem.id)" title="Delete this project" style="background:none;border:1.5px solid #fca5a5;color:#e74c3c;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px" onmouseover="this.style.background='#fff0f0'" onmouseout="this.style.background='none'">🗑 Delete</button>
+          <button class="edit-only" onclick="curItem&&openDeleteModal(curItem.id)" title="Delete this project" style="background:none;border:1.5px solid #fca5a5;color:#e74c3c;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px" onmouseover="this.style.background='#fff0f0'" onmouseout="this.style.background='none'">🗑 Delete</button>
         </div>
       </div>
       <div class="tab-bar">
@@ -526,7 +552,7 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
       </div>
 
       <div id="tc-team" style="display:none">
-        <div class="team-add-form">
+        <div class="team-add-form edit-only">
           <input id="inp-name" placeholder="Full name">
           <input id="inp-pos" placeholder="Position / Role">
           <input id="inp-dept" placeholder="Department">
@@ -556,7 +582,7 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
             <button class="scroll-btn" onclick="scrollG(4)">4w ▶▶</button>
             <input type="range" id="ganttSlider" min="0" step="1" style="width:100px;margin-left:8px" oninput="ganttWO=+this.value;buildGantt()">
             <button class="scroll-btn" onclick="resetGanttView()" style="margin-left:auto">Today</button>
-            <button class="add-btn" onclick="addGanttRow()" style="padding:6px 14px;font-size:12px">＋ Add row</button>
+            <button class="add-btn edit-only" onclick="addGanttRow()" style="padding:6px 14px;font-size:12px">＋ Add row</button>
           </div>
           <div class="gantt-scroll-outer"><table class="gantt-table" id="ganttTable"></table></div>
         </div>
@@ -570,7 +596,7 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
           <div class="ph-leg"><div class="ph-leg-dot" style="background:#e74c3c"></div>Blocked → Gantt red</div>
         </div>
         <div id="phasesContainer"></div>
-        <div class="add-phase-card-btn" onclick="addPhaseCard()">＋ Add phase</div>
+        <div class="add-phase-card-btn edit-only" onclick="addPhaseCard()">＋ Add phase</div>
       </div>
 
       <div id="tc-actions" style="display:none">
@@ -578,7 +604,7 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
       </div>
 
       <div id="tc-risk" style="display:none">
-        <div class="risk-add-row">
+        <div class="risk-add-row edit-only">
           <input id="risk-desc" placeholder="Risk description" style="flex:3">
           <select id="risk-impact"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select>
           <select id="risk-status"><option value="open">Open</option><option value="mitigated">Mitigated</option><option value="closed">Closed</option></select>
@@ -659,8 +685,8 @@ items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
 
 // ── SUPABASE CLIENT ───────────────────────────────────────────────────────────
 // ⬇ Replace these two values with your project's URL and anon key
-const SUPABASE_URL = 'https://veyxjztlakngxequomwm.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_XN1knFfvMzW2AQsX8QeeHQ_EO8f_B1B';
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 // ⬆ Safe to commit — anon key is public; RLS enforces access control
 let _sb = null; // initialised in initSupabase()
 let _currentUser = null;
@@ -668,6 +694,7 @@ let _currentRole = null; // 'editor' | 'viewer'
 
 // ── PERSISTENCE ───────────────────────────────────────────────────────────────
 function saveItems(){
+  if(_currentRole!=='editor')return; // viewers & guests: no saves
   try{localStorage.setItem('gx_roadmap_v1',JSON.stringify({items,savedAt:Date.now()}));}catch(e){}
   schedSBSave();
 }
@@ -744,8 +771,9 @@ let roadmapMeta={
 };
 /* META_DATA_END */
 function saveRoadmapData(){try{localStorage.setItem('gx_roadmap_meta_v1',JSON.stringify({...roadmapMeta,_savedAt:Date.now()}));}catch(e){}schedSBSave();}
-function saveRoadmapMeta(section,field,val){if(!val||!roadmapMeta[section])return;roadmapMeta[section][field]=val;if(section===activeSection&&field==='navName'){document.getElementById('topTitle').textContent=val;document.getElementById('homeBCText').textContent=val;}saveRoadmapData();}
+function saveRoadmapMeta(section,field,val){if(!val||!roadmapMeta[section]||_currentRole!=='editor')return;roadmapMeta[section][field]=val;if(section===activeSection&&field==='navName'){document.getElementById('topTitle').textContent=val;document.getElementById('homeBCText').textContent=val;}saveRoadmapData();}
 function renameRoadmapNav(section){
+  if(_currentRole!=='editor')return;
   const labelId=section==='tech'?'navTechParentLabel':'navParentLabel';
   const el=document.getElementById(labelId);
   if(!el)return;
@@ -820,7 +848,7 @@ function renderNav(){
     const nl=document.getElementById(containerId);nl.innerHTML='';
     items.filter(i=>i.section===sectionKey&&!_hiddenIds.has(i.id)).forEach(item=>{
       const d=document.createElement('div');d.className='nav-item';d.id='nav-'+item.id;d.onclick=()=>showItem(item.id);
-      d.innerHTML=`<div class="dot" style="background:${item.color}"></div><span style="flex:1">${item.icon} <span id="nav-name-${item.id}">${item.name}</span></span>${item.released?'<span style="font-size:9px;background:#27ae60;color:#fff;padding:1px 5px;border-radius:8px;margin-left:2px">✓</span>':''}<span class="nav-eb" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(${item.id})">✎</span><span class="nav-del" style="opacity:0;font-size:11px;color:#e74c3c;margin-left:2px;cursor:pointer" onclick="event.stopPropagation();openDeleteModal(${item.id})">🗑</span>`;
+      d.innerHTML=`<div class="dot" style="background:${item.color}"></div><span style="flex:1">${item.icon} <span id="nav-name-${item.id}">${item.name}</span></span>${item.released?'<span style="font-size:9px;background:#27ae60;color:#fff;padding:1px 5px;border-radius:8px;margin-left:2px">✓</span>':''}<span class="nav-eb edit-only" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(${item.id})">✎</span><span class="nav-del edit-only" style="opacity:0;font-size:11px;color:#e74c3c;margin-left:2px;cursor:pointer" onclick="event.stopPropagation();openDeleteModal(${item.id})">🗑</span>`;
       d.onmouseenter=()=>{d.querySelector('.nav-eb').style.opacity='1';d.querySelector('.nav-del').style.opacity='1';};
       d.onmouseleave=()=>{d.querySelector('.nav-eb').style.opacity='0';d.querySelector('.nav-del').style.opacity='0';};
       nl.appendChild(d);
@@ -890,6 +918,7 @@ function refreshHome(){renderNav();renderHomeStats();renderCards();}
 showHome('roadmap'); // initialise all titles + sidebar labels from roadmapMeta on load
 
 function renameItem(id){
+  if(_currentRole!=='editor')return;
   const item=items.find(i=>i.id===id);
   if(!item)return;
   const el=document.getElementById('nav-name-'+id);
@@ -931,9 +960,16 @@ function showHome(section){
   document.getElementById('backBtn').style.display='none';
   document.getElementById('topTitle').textContent=meta.navName;
   document.getElementById('homeBCText').textContent=meta.navName;
-  document.getElementById('homeTitle').innerHTML=`<span contenteditable="true" spellcheck="false" style="${eStyle}" onfocus="this.style.borderBottomColor='#a78bfa'" onblur="this.style.borderBottomColor='transparent';saveRoadmapMeta('${section}','heading',this.textContent.trim())">${meta.heading}</span>`;
-  document.getElementById('homeSubtitle').innerHTML=`<span contenteditable="true" spellcheck="false" style="${sStyle}" onfocus="this.style.borderBottomColor='#a78bfa'" onblur="this.style.borderBottomColor='transparent';saveRoadmapMeta('${section}','subtitle',this.textContent.trim())">${meta.subtitle}</span>`;
-  document.getElementById('homeSectionTitle').innerHTML=`<span contenteditable="true" spellcheck="false" style="${tStyle}" onfocus="this.style.borderBottomColor='#aab0c6'" onblur="this.style.borderBottomColor='transparent';saveRoadmapMeta('${section}','sectionTitle',this.textContent.trim())">${meta.sectionTitle}</span>`;
+  const _isEd=_currentRole==='editor';
+  document.getElementById('homeTitle').innerHTML=_isEd
+    ?`<span contenteditable="true" spellcheck="false" style="${eStyle}" onfocus="this.style.borderBottomColor='#a78bfa'" onblur="this.style.borderBottomColor='transparent';saveRoadmapMeta('${section}','heading',this.textContent.trim())">${meta.heading}</span>`
+    :`<span style="display:inline">${meta.heading}</span>`;
+  document.getElementById('homeSubtitle').innerHTML=_isEd
+    ?`<span contenteditable="true" spellcheck="false" style="${sStyle}" onfocus="this.style.borderBottomColor='#a78bfa'" onblur="this.style.borderBottomColor='transparent';saveRoadmapMeta('${section}','subtitle',this.textContent.trim())">${meta.subtitle}</span>`
+    :`<span>${meta.subtitle}</span>`;
+  document.getElementById('homeSectionTitle').innerHTML=_isEd
+    ?`<span contenteditable="true" spellcheck="false" style="${tStyle}" onfocus="this.style.borderBottomColor='#aab0c6'" onblur="this.style.borderBottomColor='transparent';saveRoadmapMeta('${section}','sectionTitle',this.textContent.trim())">${meta.sectionTitle}</span>`
+    :`<span style="display:inline">${meta.sectionTitle}</span>`;
   document.getElementById('navParentLabel').textContent=roadmapMeta.roadmap.navName;
   document.getElementById('navTechParentLabel').textContent=roadmapMeta.tech.navName;
   document.getElementById('navParent').classList.toggle('active',section==='roadmap');
@@ -954,11 +990,14 @@ function syncActions(){
 function renderItemHeader(){
   const _bcLabel=(roadmapMeta[curItem.section||'roadmap']||roadmapMeta.roadmap).navName;
   document.getElementById('itemBC').innerHTML=`<span class="bc-link" onclick="showHome('${curItem.section||'roadmap'}')">${_bcLabel}</span><span class="bc-sep">›</span><span style="color:#1a1a2e;font-weight:600">${curItem.name}</span>`;
-  document.getElementById('itemTitle').innerHTML=`${curItem.icon} <span contenteditable="true" spellcheck="false" style="outline:none;border-bottom:2px solid transparent;transition:border-color .2s" onfocus="this.style.borderBottomColor='#a78bfa'" onblur="this.style.borderBottomColor='transparent';curItem.name=this.textContent.trim();refreshHome()">${curItem.name}</span>`;
+  const _isEd2=_currentRole==='editor';
+  document.getElementById('itemTitle').innerHTML=_isEd2
+    ?`${curItem.icon} <span contenteditable="true" spellcheck="false" style="outline:none;border-bottom:2px solid transparent;transition:border-color .2s" onfocus="this.style.borderBottomColor='#a78bfa'" onblur="this.style.borderBottomColor='transparent';curItem.name=this.textContent.trim();refreshHome()">${curItem.name}</span>`
+    :`${curItem.icon} <span>${curItem.name}</span>`;
   document.getElementById('itemMeta').innerHTML=`${curItem.type} · ${curItem.status} · Size ${curItem.size}${curItem.epicId?` · <a href="${curItem.epicUrl}" target="_blank" class="epic-link">🔗 ${curItem.epicId}</a>`:''}`;
   document.getElementById('releaseToggle').innerHTML=curItem.released
-    ?`<span class="released-badge" onclick="toggleReleased()">✓ RELEASED${curItem.releaseDate?' · '+fmtDate(curItem.releaseDate):''}</span>`
-    :`<button class="release-btn" onclick="toggleReleased()">Mark as released</button>`;
+    ?`<span class="released-badge"${_isEd2?' onclick="toggleReleased()"':''}>✓ RELEASED${curItem.releaseDate?' · '+fmtDate(curItem.releaseDate):''}</span>`
+    :(_isEd2?`<button class="release-btn" onclick="toggleReleased()">Mark as released</button>`:'');
 }
 function toggleReleased(){
   if(!curItem.released){const d=prompt('Release date (YYYY-MM-DD):','');curItem.released=true;curItem.releaseDate=d||'';}
@@ -1096,7 +1135,7 @@ function buildOverview(){
 const MEMBER_COLORS=['#7b68ee','#27ae60','#f6a623','#e74c3c','#0077b6','#16a085','#8e44ad','#c0392b','#2980b9','#d35400'];
 function buildTeam(){
   document.getElementById('teamGrid').innerHTML=curItem.team.length
-    ?curItem.team.map((m,i)=>{const nc=MEMBER_COLORS[i%MEMBER_COLORS.length];return`<div class="role-card"><button class="del-btn" onclick="delTeam(${i})">✕</button><div class="rc-role">${m.dept}</div><div class="rc-name" style="color:${nc}">${m.name}</div><div class="rc-pos">${m.pos}</div></div>`;}).join('')
+    ?curItem.team.map((m,i)=>{const nc=MEMBER_COLORS[i%MEMBER_COLORS.length];return`<div class="role-card"><button class="del-btn edit-only" onclick="delTeam(${i})">✕</button><div class="rc-role">${m.dept}</div><div class="rc-name" style="color:${nc}">${m.name}</div><div class="rc-pos">${m.pos}</div></div>`;}).join('')
     :'<div style="color:#aab0c6;font-size:13px;grid-column:1/-1;padding:16px 0">No members yet.</div>';
 }
 function addTeamMember(){
@@ -1315,7 +1354,7 @@ function buildPhases(){
           <option value="done" ${phase.statusKey==='done'?'selected':''}>● DONE</option>
           <option value="blocked" ${phase.statusKey==='blocked'?'selected':''}>● BLOCKED</option>
         </select>
-        <button class="phase-del-btn" onclick="event.stopPropagation();delPhaseCard(${pi})">✕</button>
+        <button class="phase-del-btn edit-only" onclick="event.stopPropagation();delPhaseCard(${pi})">✕</button>
         <span class="phase-toggle-arrow open" id="arr-${pi}">▲</span>
       </div>
       <div class="phase-card-body" id="pb-${pi}">
@@ -1338,7 +1377,7 @@ function buildPhases(){
         </div>
         <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[${pi}].comments=this.value;schedSave()">${phase.comments}</textarea></div>
         <div class="ph-subtasks">
-          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn" onclick="addSubtask(${pi})">+ Sub-task</button></div>
+          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn edit-only" onclick="addSubtask(${pi})">+ Sub-task</button></div>
           <div id="st-${pi}">${renderSubtasks(pi,phase.subtasks)}</div>
         </div>
       </div>`;
@@ -1351,7 +1390,7 @@ function renderSubtasks(pi,st){
   return st.map((s,si)=>`<div class="subtask-row">
     <input type="checkbox" class="subtask-cb" ${s.done?'checked':''} onchange="toggleSubtask(${pi},${si},this.checked)">
     <input class="subtask-input" value="${s.text}" placeholder="Sub-task" onchange="updateSubtask(${pi},${si},this.value)" style="${s.done?'text-decoration:line-through;color:#aab0c6':''}">
-    <button class="subtask-del" onclick="delSubtask(${pi},${si})">✕</button>
+    <button class="subtask-del edit-only" onclick="delSubtask(${pi},${si})">✕</button>
   </div>`).join('');
 }
 
@@ -1398,8 +1437,8 @@ function buildActions(){
     // header
     const hdr=document.createElement('div');hdr.className='action-phase-title';
     hdr.innerHTML=`<div class="aph-dot" style="background:${color}"></div>
-      <span contenteditable="true" spellcheck="false" style="outline:none;flex:1;cursor:text" onblur="curItem.actions[${si}].phaseLabel=this.textContent.trim()">${section.phaseLabel}</span>
-      <button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(${si})" title="Delete section">🗑</button>`;
+      <span ${_currentRole==='editor'?'contenteditable="true" spellcheck="false"':''} style="outline:none;flex:1;${_currentRole==='editor'?'cursor:text':''}" ${_currentRole==='editor'?`onblur="curItem.actions[${si}].phaseLabel=this.textContent.trim()"`:''}}>${section.phaseLabel}</span>
+      <button class="edit-only" style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(${si})" title="Delete section">🗑</button>`;
     wrap.appendChild(hdr);
 
     // table
@@ -1422,7 +1461,7 @@ function buildActions(){
           if(col==='description'||col==='resolutionPlan')return`<td><textarea class="action-td-input" onchange="curItem.actions[${si}].items[${ii}]['${col}']=this.value">${item[col]||''}</textarea></td>`;
           return`<td><input class="action-td-input" value="${item[col]||''}" onchange="curItem.actions[${si}].items[${ii}]['${col}']=this.value" placeholder="${ACTION_LABELS[ci]}"></td>`;
         }).join('');
-        tr.innerHTML+=`<td><button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:13px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionItem(${si},${ii})">✕</button></td>`;
+        tr.innerHTML+=`<td><button class="edit-only" style="background:none;border:none;color:#ddd;cursor:pointer;font-size:13px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionItem(${si},${ii})">✕</button></td>`;
         tbody.appendChild(tr);
       });
       tbl.appendChild(tbody);
@@ -1430,7 +1469,7 @@ function buildActions(){
     wrap.appendChild(tbl);
 
     // add form (toggled)
-    const formDiv=document.createElement('div');formDiv.className='action-add-form';formDiv.id=`aform-${si}`;
+    const formDiv=document.createElement('div');formDiv.className='action-add-form edit-only';formDiv.id=`aform-${si}`;
     formDiv.innerHTML=`<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:12px">New Action / Follow-up</div>
       <div class="action-form-grid">
         <div class="action-form-field full"><label>Description</label><textarea id="af-desc-${si}" placeholder="What happened or needs to be done..." rows="2"></textarea></div>
@@ -1449,7 +1488,7 @@ function buildActions(){
       </div>`;
     wrap.appendChild(formDiv);
 
-    const addBtn=document.createElement('div');addBtn.className='add-action-row-btn';
+    const addBtn=document.createElement('div');addBtn.className='add-action-row-btn edit-only';
     addBtn.innerHTML='＋ Add action / follow-up';
     addBtn.onclick=()=>formDiv.classList.toggle('open');
     wrap.appendChild(addBtn);
@@ -1458,7 +1497,7 @@ function buildActions(){
   });
 
   // add custom section button
-  const addSec=document.createElement('div');addSec.className='add-phase-card-btn';addSec.style.marginTop='8px';
+  const addSec=document.createElement('div');addSec.className='add-phase-card-btn edit-only';addSec.style.marginTop='8px';
   addSec.innerHTML='＋ Add custom section';
   addSec.onclick=()=>{const lbl=prompt('Section name:','Custom Section');if(lbl){curItem.actions.push({phaseLabel:lbl,items:[]});buildActions();}};
   c.appendChild(addSec);
@@ -1797,7 +1836,19 @@ async function publishToSupabase(){
 }
 
 // ── AUTH HELPERS ──────────────────────────────────────────────────────────────
+function openLoginModal(){
+  const ol=document.getElementById('loginOverlay');
+  ol.style.display='flex';
+  requestAnimationFrame(()=>{ol.style.opacity='1';});
+  switchAuthTab('signin');
+}
+function closeLoginModal(){
+  const ol=document.getElementById('loginOverlay');
+  ol.style.opacity='0';
+  setTimeout(()=>{if(ol.style.opacity==='0')ol.style.display='none';},400);
+}
 function showLoginForm(){
+  document.getElementById('authTabs').style.display='flex';
   document.getElementById('loginForm').style.display='block';
   document.getElementById('loginSent').style.display='none';
   document.getElementById('loginLoading').style.display='none';
@@ -1817,105 +1868,172 @@ function showLoginError(msg){
   document.getElementById('loginLoading').style.display='none';
   document.getElementById('loginForm').style.display='block';
 }
-async function sendMagicLink(){
-  const email=document.getElementById('loginEmail').value.trim();
-  if(!email){showLoginError('Please enter your email address.');return;}
-  // Guard: if initSupabase() failed silently, _sb is null
-  if(!_sb){
-    showLoginError('Supabase is not initialised. Make sure SUPABASE_URL and SUPABASE_ANON_KEY are set correctly in the HTML file, then reload.');
-    return;
-  }
+let _authMode='signin'; // 'signin' | 'signup'
+function switchAuthTab(mode){
+  _authMode=mode;
+  showLoginForm();
+  const tIn=document.getElementById('tabSignIn'),tUp=document.getElementById('tabSignUp');
+  const active='background:#fff;color:#7b68ee;box-shadow:0 1px 4px rgba(0,0,0,.08)';
+  const inactive='background:transparent;color:#7a80a0;box-shadow:none';
+  tIn.style.cssText=tIn.style.cssText.split(';').slice(0,6).join(';')+';'+(mode==='signin'?active:inactive);
+  tUp.style.cssText=tUp.style.cssText.split(';').slice(0,6).join(';')+';'+(mode==='signup'?active:inactive);
+  document.getElementById('confirmPasswordWrap').style.display=mode==='signup'?'block':'none';
+  document.getElementById('loginBtn').textContent=mode==='signup'?'Create Account':'Sign In';
+  document.getElementById('authHint').textContent=mode==='signup'
+    ?'New users start as viewers — ask an admin to upgrade your role to Editor.'
+    :'Don\'t have an account yet? Switch to Sign Up above.';
+  document.getElementById('loginPassword').value='';
+  document.getElementById('loginPasswordConfirm').value='';
+}
+let _authCooldownEnd=0;
+let _authCooldownTimer=null;
+function startAuthCooldown(seconds){
+  _authCooldownEnd=Date.now()+seconds*1000;
   const btn=document.getElementById('loginBtn');
-  btn.disabled=true;btn.textContent='Sending…';
+  const label=_authMode==='signup'?'Create Account':'Sign In';
+  clearInterval(_authCooldownTimer);
+  _authCooldownTimer=setInterval(()=>{
+    const remaining=Math.ceil((_authCooldownEnd-Date.now())/1000);
+    if(remaining<=0){clearInterval(_authCooldownTimer);btn.disabled=false;btn.textContent=label;}
+    else{btn.disabled=true;btn.textContent=`Wait ${remaining}s…`;}
+  },500);
+}
+async function submitAuth(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  if(!email||!password){showLoginError('Please enter both email and password.');return;}
+  if(!_sb){showLoginError('Supabase is not initialised. Make sure SUPABASE_URL and SUPABASE_ANON_KEY are set correctly in the HTML file, then reload.');return;}
+  const remaining=Math.ceil((_authCooldownEnd-Date.now())/1000);
+  if(remaining>0){showLoginError(`Please wait ${remaining} more second${remaining!==1?'s':''} before trying again.`);return;}
+
+  const btn=document.getElementById('loginBtn');
   document.getElementById('loginErr').style.display='none';
-  // file:// URLs are not valid Supabase redirect targets — fall back to the
-  // configured Site URL in your Supabase dashboard instead
-  const isFileProtocol=window.location.protocol==='file:';
-  const redirectTo=isFileProtocol?undefined:window.location.href;
-  try{
-    const{error}=await _sb.auth.signInWithOtp({
-      email,
-      options:redirectTo?{emailRedirectTo:redirectTo}:{}
-    });
-    if(error)throw error;
-    document.getElementById('loginForm').style.display='none';
-    document.getElementById('sentEmailLabel').textContent=email;
-    document.getElementById('loginSent').style.display='block';
-    if(isFileProtocol){
-      // Warn that the magic link will redirect to the Site URL, not this local file
-      document.getElementById('loginSent').insertAdjacentHTML('beforeend',
-        '<p style="font-size:11px;color:#f6a623;margin-top:12px;padding:8px 12px;background:#fff7e6;border-radius:8px">⚠ You\'re running from a local file. The magic link will open your configured Supabase Site URL, not this file. Serve the file via HTTP for a smoother flow.</p>');
+
+  if(_authMode==='signup'){
+    const confirm=document.getElementById('loginPasswordConfirm').value;
+    if(password.length<6){showLoginError('Password must be at least 6 characters.');return;}
+    if(password!==confirm){showLoginError('Passwords do not match.');return;}
+    btn.disabled=true;btn.textContent='Creating…';
+    try{
+      const{data,error}=await _sb.auth.signUp({email,password});
+      if(error){
+        if(error.status===429||/rate.limit/i.test(error.message||'')){
+          startAuthCooldown(60);
+          showLoginError('Too many attempts — please wait a moment and try again.');
+          return;
+        }
+        throw error;
+      }
+      // If email confirmation is required, Supabase returns a user with no session yet
+      if(data.user&&!data.session){
+        document.getElementById('authTabs').style.display='none';
+        document.getElementById('loginForm').style.display='none';
+        document.getElementById('sentTitle').textContent='Confirm your email';
+        document.getElementById('sentEmailLabel').textContent=email;
+        document.getElementById('sentMessage').innerHTML=`We sent a confirmation link to <strong>${email}</strong>.<br>Click it, then come back and sign in.`;
+        document.getElementById('loginSent').style.display='block';
+      }else if(data.session){
+        // Email confirmation disabled — signed in immediately
+        await handleAuthSession(data.session);
+      }
+    }catch(err){
+      showLoginError(err.message||'Could not create account. Please try again.');
+    }finally{
+      if(_authCooldownEnd<=Date.now()){btn.disabled=false;btn.textContent='Create Account';}
     }
-  }catch(err){
-    showLoginError(err.message||'Could not send magic link. Please try again.');
-  }finally{btn.disabled=false;btn.textContent='✉ Send Magic Link';}
+  }else{
+    btn.disabled=true;btn.textContent='Signing in…';
+    try{
+      const{data,error}=await _sb.auth.signInWithPassword({email,password});
+      if(error){
+        if(error.status===429||/rate.limit/i.test(error.message||'')){
+          startAuthCooldown(30);
+          showLoginError('Too many attempts — please wait a moment and try again.');
+          return;
+        }
+        if(/email not confirmed/i.test(error.message||'')){
+          showLoginError('Please confirm your email first — check your inbox for the confirmation link.');
+          return;
+        }
+        if(/invalid login credentials/i.test(error.message||'')){
+          showLoginError('Incorrect email or password.');
+          return;
+        }
+        throw error;
+      }
+      await handleAuthSession(data.session);
+    }catch(err){
+      showLoginError(err.message||'Could not sign in. Please try again.');
+    }finally{
+      if(_authCooldownEnd<=Date.now()){btn.disabled=false;btn.textContent='Sign In';}
+    }
+  }
 }
 async function handleAuthSession(session){
-  showLoginLoading('Loading your profile…');
   _currentUser=session.user;
-  // Fetch role from profiles table
-  const{data,error}=await _sb.from('profiles').select('role').eq('id',_currentUser.id).single();
+  const{data}=await _sb.from('profiles').select('role').eq('id',_currentUser.id).single();
   _currentRole=(data?.role)||'viewer';
-  // Update UI
-  const chip=document.getElementById('userChip');
-  chip.style.display='flex';
-  document.getElementById('userEmailLabel').textContent=_currentUser.email;
-  const badge=document.getElementById('userRoleBadge');
+  // Apply editor mode to the DOM
   if(_currentRole==='editor'){
-    badge.className='role-badge-editor';badge.textContent='Editor';
+    document.body.classList.add('editor-mode');
     document.getElementById('publishBtn').style.display='flex';
   }else{
-    badge.className='role-badge-viewer';badge.textContent='Viewer';
+    document.body.classList.remove('editor-mode');
     document.getElementById('publishBtn').style.display='none';
   }
-  // Load fresh data then hide overlay
-  await loadFromSupabase();
+  // Update user chip
+  document.getElementById('userChip').style.display='flex';
+  document.getElementById('userEmailLabel').textContent=_currentUser.email;
+  const badge=document.getElementById('userRoleBadge');
+  badge.className=_currentRole==='editor'?'role-badge-editor':'role-badge-viewer';
+  badge.textContent=_currentRole==='editor'?'Editor':'Viewer';
+  // Hide login button, close modal if open, clear sensitive fields
+  document.getElementById('loginToEditBtn').style.display='none';
+  document.getElementById('loginPassword').value='';
+  document.getElementById('loginPasswordConfirm').value='';
+  document.getElementById('authTabs').style.display='flex';
+  closeLoginModal();
+  // Re-render everything so edit controls show/hide correctly
   refreshHome();
-  // Fade out login overlay
-  const overlay=document.getElementById('loginOverlay');
-  overlay.style.opacity='0';
-  setTimeout(()=>overlay.style.display='none',400);
+  if(curItem){renderItemHeader();buildOverview();buildPhases();buildActions();buildTeam();}
 }
 async function signOut(){
   closeUserModal();
   await _sb.auth.signOut();
   _currentUser=null;_currentRole=null;
-  document.getElementById('userChip').style.display='none';
+  document.body.classList.remove('editor-mode');
   document.getElementById('publishBtn').style.display='none';
-  const overlay=document.getElementById('loginOverlay');
-  overlay.style.opacity='1';overlay.style.display='flex';
-  showLoginForm();
+  document.getElementById('userChip').style.display='none';
+  document.getElementById('loginToEditBtn').style.display='';
+  // Re-render to hide edit controls
+  refreshHome();
+  if(curItem){renderItemHeader();buildOverview();buildPhases();buildActions();buildTeam();}
 }
 async function initSupabase(){
   if(!SUPABASE_URL||SUPABASE_URL==='YOUR_SUPABASE_URL'){
-    document.getElementById('loginForm').style.display='none';
-    document.getElementById('loginUnconfigured').style.display='block';
+    // Not configured — hide login button since there's nowhere to log in to
+    document.getElementById('loginToEditBtn').style.display='none';
     return;
   }
-  // Guard: Supabase CDN might not have loaded (ad-blocker, offline, etc.)
   if(typeof supabase==='undefined'||typeof supabase.createClient!=='function'){
-    showLoginError('Supabase library failed to load. Check your internet connection or disable any ad-blockers, then reload the page.');
+    document.getElementById('loginToEditBtn').title='Supabase library failed to load (check ad-blocker)';
     return;
   }
-  try{
-    _sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-  }catch(e){
-    showLoginError('Supabase client error: '+e.message+'. Verify your Project URL and anon key.');
-    return;
-  }
-  // Listen for auth state changes — this handles the magic link redirect callback
+  try{_sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}
+  catch(e){console.error('Supabase init:',e);return;}
+  // Load latest published data for all visitors (requires RLS: for select using (true))
+  await loadFromSupabase();
+  refreshHome();
+  // Listen for auth changes — handles magic link redirect
   _sb.auth.onAuthStateChange(async(event,session)=>{
     if(event==='SIGNED_IN'&&session){await handleAuthSession(session);}
+    else if(event==='SIGNED_OUT'&&_currentUser){/* handled by signOut() */}
   });
-  // Check for an existing session (e.g. page refresh after sign-in)
+  // Restore existing session (page refresh while logged in)
   try{
-    const{data:{session},error}=await _sb.auth.getSession();
-    if(error)throw error;
-    if(session){await handleAuthSession(session);}
-    // else: no session → login overlay stays visible
-  }catch(e){
-    showLoginError('Could not reach Supabase: '+e.message+'. Check your Project URL.');
-  }
+    const{data:{session}}=await _sb.auth.getSession();
+    if(session)await handleAuthSession(session);
+  }catch(e){console.warn('Session check:',e.message);}
 }
 
 function goBack(){showHome(curItem?curItem.section:activeSection);}
