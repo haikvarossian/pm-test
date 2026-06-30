@@ -360,7 +360,7 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
         <h3>⚠ Supabase not configured</h3>
         <p>Open <code>index.html</code> in a text editor and set the two constants near the top of the <code>&lt;script&gt;</code> block:</p>
         <p><code>const SUPABASE_URL = 'https://xxx.supabase.co';</code></p>
-        <p><code>const SUPABASE_ANON_KEY = 'sb_publishable_eyJ…';</code></p>
+        <p><code>const SUPABASE_ANON_KEY = 'eyJ…';</code></p>
         <p>See the setup guide for full instructions.</p>
       </div>
     </div>
@@ -869,6 +869,7 @@ function undoDelete(){
   syncActions();buildGantt();buildPhases();buildActions();buildOverview();
   undoStack=[];document.getElementById('undoBtn').style.display='none';
   clearTimeout(undoTimeout);
+  schedSave();
 }
 
 // ── NAV / HOME ────────────────────────────────────────────────────────────────
@@ -1025,7 +1026,7 @@ function renderItemHeader(){
   document.getElementById('itemBC').innerHTML=`<span class="bc-link" onclick="showHome('${curItem.section||'roadmap'}')">${_bcLabel}</span><span class="bc-sep">›</span><span style="color:#1a1a2e;font-weight:600">${curItem.name}</span>`;
   const _isEd2=_currentRole==='editor';
   document.getElementById('itemTitle').innerHTML=_isEd2
-    ?`${curItem.icon} <span contenteditable="true" spellcheck="false" style="outline:none;border-bottom:2px solid transparent;transition:border-color .2s" onfocus="this.style.borderBottomColor='#a78bfa'" onblur="this.style.borderBottomColor='transparent';curItem.name=this.textContent.trim();refreshHome()">${curItem.name}</span>`
+    ?`${curItem.icon} <span contenteditable="true" spellcheck="false" style="outline:none;border-bottom:2px solid transparent;transition:border-color .2s" onfocus="this.style.borderBottomColor='#a78bfa'" onblur="this.style.borderBottomColor='transparent';curItem.name=this.textContent.trim();refreshHome();schedSave()">${curItem.name}</span>`
     :`${curItem.icon} <span>${curItem.name}</span>`;
   document.getElementById('itemMeta').innerHTML=`${curItem.type} · ${curItem.status} · Size ${curItem.size}${curItem.epicId?` · <a href="${curItem.epicUrl}" target="_blank" class="epic-link">🔗 ${curItem.epicId}</a>`:''}`;
   document.getElementById('releaseToggle').innerHTML=curItem.released
@@ -1080,11 +1081,11 @@ function buildOverview(){
   </div>`:'';
   document.getElementById('overviewGrid').innerHTML=`
     ${dateBanner}
-    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Type</div><div class="ic-val"><input class="ic-edit" value="${curItem.type}" onchange="curItem.type=this.value;refreshHome()"></div></div>
-    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Status</div><div class="ic-val"><input class="ic-edit" value="${curItem.status}" onchange="curItem.status=this.value;refreshHome()"></div></div>
-    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Size</div><div class="ic-val"><input class="ic-edit" value="${curItem.size}" onchange="curItem.size=this.value"></div></div>
-    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Epic ID</div><div class="ic-val"><input class="ic-edit" value="${curItem.epicId}" onchange="curItem.epicId=this.value"></div></div>
-    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Release date</div><div class="ic-val"><input class="ic-edit" type="date" value="${curItem.releaseDate}" onchange="curItem.releaseDate=this.value;renderItemHeader();renderCards()" style="font-size:13px"></div></div>`;
+    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Type</div><div class="ic-val"><input class="ic-edit" value="${curItem.type}" onchange="curItem.type=this.value;refreshHome();schedSave()"></div></div>
+    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Status</div><div class="ic-val"><input class="ic-edit" value="${curItem.status}" onchange="curItem.status=this.value;refreshHome();schedSave()"></div></div>
+    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Size</div><div class="ic-val"><input class="ic-edit" value="${curItem.size}" onchange="curItem.size=this.value;schedSave()"></div></div>
+    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Epic ID</div><div class="ic-val"><input class="ic-edit" value="${curItem.epicId}" onchange="curItem.epicId=this.value;schedSave()"></div></div>
+    <div class="info-card" style="padding:12px 14px"><div class="ic-label">Release date</div><div class="ic-val"><input class="ic-edit" type="date" value="${curItem.releaseDate}" onchange="curItem.releaseDate=this.value;renderItemHeader();renderCards();schedSave()" style="font-size:13px"></div></div>`;
 
   // Completion bars
   const cb=document.getElementById('completionBars');
@@ -1156,12 +1157,12 @@ function buildOverview(){
 
   const ko=curItem.kickoff||{};
   document.getElementById('kickoffGrid').innerHTML=`
-    <div class="kickoff-field"><label class="field-label">Kick-off Date</label><input class="kickoff-input" type="date" value="${ko.date||''}" onchange="curItem.kickoff.date=this.value"></div>
-    <div class="kickoff-field"><label class="field-label">Facilitator</label><input class="kickoff-input" placeholder="Who runs it?" value="${ko.facilitator||''}" onchange="curItem.kickoff.facilitator=this.value"></div>
-    <div class="kickoff-field"><label class="field-label">Attendees</label><input class="kickoff-input" placeholder="List attendees..." value="${ko.attendees||''}" onchange="curItem.kickoff.attendees=this.value"></div>
-    <div class="kickoff-field"><label class="field-label">Notes</label><input class="kickoff-input" placeholder="Key decisions..." value="${ko.notes||''}" onchange="curItem.kickoff.notes=this.value"></div>`;
-  const sb=document.getElementById('scopeBox');sb.value=curItem.scope||'';sb.oninput=()=>curItem.scope=sb.value;
-  const db=document.getElementById('descBox');db.value=curItem.desc||'';db.oninput=()=>curItem.desc=db.value;
+    <div class="kickoff-field"><label class="field-label">Kick-off Date</label><input class="kickoff-input" type="date" value="${ko.date||''}" onchange="curItem.kickoff.date=this.value;schedSave()"></div>
+    <div class="kickoff-field"><label class="field-label">Facilitator</label><input class="kickoff-input" placeholder="Who runs it?" value="${ko.facilitator||''}" onchange="curItem.kickoff.facilitator=this.value;schedSave()"></div>
+    <div class="kickoff-field"><label class="field-label">Attendees</label><input class="kickoff-input" placeholder="List attendees..." value="${ko.attendees||''}" onchange="curItem.kickoff.attendees=this.value;schedSave()"></div>
+    <div class="kickoff-field"><label class="field-label">Notes</label><input class="kickoff-input" placeholder="Key decisions..." value="${ko.notes||''}" onchange="curItem.kickoff.notes=this.value;schedSave()"></div>`;
+  const sb=document.getElementById('scopeBox');sb.value=curItem.scope||'';sb.oninput=()=>{curItem.scope=sb.value;schedSave();};
+  const db=document.getElementById('descBox');db.value=curItem.desc||'';db.oninput=()=>{curItem.desc=db.value;schedSave();};
 }
 
 // ── TEAM ──────────────────────────────────────────────────────────────────────
@@ -1305,7 +1306,7 @@ function buildGantt(autoScroll){
       <div class="label-color-bar" style="background:${phase.color}"></div>
       <div class="label-text">
         <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
-          <input class="lbl-name" value="${phase.label}" onchange="curItem.phases[${pi}].label=this.value;syncActions();buildPhases();buildActions()" placeholder="Phase">
+          <input class="lbl-name" value="${phase.label}" onchange="curItem.phases[${pi}].label=this.value;syncActions();buildPhases();buildActions();schedSave()" placeholder="Phase">
           ${isOverdue?`<span class="delay-badge">⚠ ${daysLate}d late</span>`:''}
           ${isDone&&pActual&&pEnd&&pActual>pEnd?`<span class="delay-badge" style="background:#f6a623">↑ ${Math.round((pActual.getTime()-pEnd.getTime())/864e5)}d delay</span>`:''}
         </div>
@@ -1376,7 +1377,7 @@ function buildPhases(){
       <div class="phase-card-header" onclick="togglePhase(${pi})">
         <div class="ph-num ${phNumCls(phase.statusKey)}">${pi+1}</div>
         <div class="ph-title-wrap">
-          <input class="ph-title-input" value="${phase.label}" onclick="event.stopPropagation()" onchange="curItem.phases[${pi}].label=this.value;buildGantt();syncActions();buildActions()">
+          <input class="ph-title-input" value="${phase.label}" onclick="event.stopPropagation()" onchange="curItem.phases[${pi}].label=this.value;buildGantt();syncActions();buildActions();schedSave()">
         </div>
         <div style="text-align:right;margin-right:8px;flex-shrink:0">
           ${(()=>{const pp=pct;const pc=pp>=80?'#27ae60':pp>=40?'#f6a623':'#7b68ee';const mc=2*Math.PI*12;const mo=mc*(1-pp/100);return`<svg width="34" height="34" viewBox="0 0 34 34" style="display:block;margin:auto"><circle cx="17" cy="17" r="12" fill="none" stroke="#f0f2ff" stroke-width="4"/><circle cx="17" cy="17" r="12" fill="none" stroke="${pc}" stroke-width="4" stroke-dasharray="${mc}" stroke-dashoffset="${mo}" stroke-linecap="round" transform="rotate(-90 17 17)"/></svg><div style="font-size:10px;font-weight:800;color:${pc};margin-top:2px">${pp}%</div>`;})()}
@@ -1470,7 +1471,7 @@ function buildActions(){
     // header
     const hdr=document.createElement('div');hdr.className='action-phase-title';
     hdr.innerHTML=`<div class="aph-dot" style="background:${color}"></div>
-      <span ${_currentRole==='editor'?'contenteditable="true" spellcheck="false"':''} style="outline:none;flex:1;${_currentRole==='editor'?'cursor:text':''}" ${_currentRole==='editor'?`onblur="curItem.actions[${si}].phaseLabel=this.textContent.trim()"`:''}}>${section.phaseLabel}</span>
+      <span ${_currentRole==='editor'?'contenteditable="true" spellcheck="false"':''} style="outline:none;flex:1;${_currentRole==='editor'?'cursor:text':''}" ${_currentRole==='editor'?`onblur="curItem.actions[${si}].phaseLabel=this.textContent.trim();schedSave()"`:''}>${section.phaseLabel}</span>
       <button class="edit-only" style="background:none;border:none;color:#ddd;cursor:pointer;font-size:14px;padding:0 4px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionSection(${si})" title="Delete section">🗑</button>`;
     wrap.appendChild(hdr);
 
@@ -1486,13 +1487,13 @@ function buildActions(){
         tr.innerHTML=ACTION_COLS.map((col,ci)=>{
           if(col==='status'){
             const sc=STATUS_COLORS[item.status]||STATUS_COLORS.open;
-            return`<td><select class="action-status-sel" style="background:${sc}" onchange="curItem.actions[${si}].items[${ii}].status=this.value;this.style.background=STATUS_COLORS[this.value]||STATUS_COLORS.open;buildActions()">
+            return`<td><select class="action-status-sel" style="background:${sc}" onchange="curItem.actions[${si}].items[${ii}].status=this.value;this.style.background=STATUS_COLORS[this.value]||STATUS_COLORS.open;buildActions();schedSave()">
               ${STATUS_OPTS.map(o=>`<option value="${o}" ${item.status===o?'selected':''}>${o.charAt(0).toUpperCase()+o.slice(1)}</option>`).join('')}
             </select></td>`;
           }
-          if(col==='eta')return`<td><input class="action-td-input" type="date" value="${item[col]||''}" onchange="curItem.actions[${si}].items[${ii}]['${col}']=this.value"></td>`;
-          if(col==='description'||col==='resolutionPlan')return`<td><textarea class="action-td-input" onchange="curItem.actions[${si}].items[${ii}]['${col}']=this.value">${item[col]||''}</textarea></td>`;
-          return`<td><input class="action-td-input" value="${item[col]||''}" onchange="curItem.actions[${si}].items[${ii}]['${col}']=this.value" placeholder="${ACTION_LABELS[ci]}"></td>`;
+          if(col==='eta')return`<td><input class="action-td-input" type="date" value="${item[col]||''}" onchange="curItem.actions[${si}].items[${ii}]['${col}']=this.value;schedSave()"></td>`;
+          if(col==='description'||col==='resolutionPlan')return`<td><textarea class="action-td-input" onchange="curItem.actions[${si}].items[${ii}]['${col}']=this.value;schedSave()">${item[col]||''}</textarea></td>`;
+          return`<td><input class="action-td-input" value="${item[col]||''}" onchange="curItem.actions[${si}].items[${ii}]['${col}']=this.value;schedSave()" placeholder="${ACTION_LABELS[ci]}"></td>`;
         }).join('');
         tr.innerHTML+=`<td><button class="edit-only" style="background:none;border:none;color:#ddd;cursor:pointer;font-size:13px" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ddd'" onclick="delActionItem(${si},${ii})">✕</button></td>`;
         tbody.appendChild(tr);
@@ -1572,7 +1573,7 @@ function goToPhase(pi){
       <div class="phase-card-header" onclick="togglePhase(${idx})">
         <div class="ph-num ${phNumCls(phase.statusKey)}">${idx+1}</div>
         <div class="ph-title-wrap">
-          <input class="ph-title-input" value="${phase.label}" onclick="event.stopPropagation()" onchange="curItem.phases[${idx}].label=this.value;buildGantt();syncActions();buildActions()">
+          <input class="ph-title-input" value="${phase.label}" onclick="event.stopPropagation()" onchange="curItem.phases[${idx}].label=this.value;buildGantt();syncActions();buildActions();schedSave()">
         </div>
         <div style="text-align:right;margin-right:8px;flex-shrink:0">
           ${(()=>{const pc=pct>=80?'#27ae60':pct>=40?'#f6a623':'#7b68ee';const mc=2*Math.PI*12;const mo=mc*(1-pct/100);return`<svg width="34" height="34" viewBox="0 0 34 34" style="display:block;margin:auto"><circle cx="17" cy="17" r="12" fill="none" stroke="#f0f2ff" stroke-width="4"/><circle cx="17" cy="17" r="12" fill="none" stroke="${pc}" stroke-width="4" stroke-dasharray="${mc}" stroke-dashoffset="${mo}" stroke-linecap="round" transform="rotate(-90 17 17)"/></svg><div style="font-size:10px;font-weight:800;color:${pc};margin-top:2px">${pct}%</div>`;})()}
@@ -1643,19 +1644,19 @@ function buildRisk(){
   curItem.risks.forEach((r,i)=>{
     const tr=document.createElement('tr');
     tr.innerHTML=`<td style="color:#aab0c6;font-weight:700">${i+1}</td>
-      <td><input class="inline-input" value="${r.desc}" onchange="curItem.risks[${i}].desc=this.value"></td>
-      <td><select style="border:none;background:transparent;font-size:11px;font-weight:700;cursor:pointer" onchange="curItem.risks[${i}].impact=this.value;buildRisk()">
+      <td><input class="inline-input" value="${r.desc}" onchange="curItem.risks[${i}].desc=this.value;schedSave()"></td>
+      <td><select style="border:none;background:transparent;font-size:11px;font-weight:700;cursor:pointer" onchange="curItem.risks[${i}].impact=this.value;buildRisk();schedSave()">
         <option value="high" ${r.impact==='high'?'selected':''}>HIGH</option>
         <option value="medium" ${r.impact==='medium'?'selected':''}>MEDIUM</option>
         <option value="low" ${r.impact==='low'?'selected':''}>LOW</option>
       </select></td>
-      <td><select style="border:none;background:transparent;font-size:11px;font-weight:700;cursor:pointer" onchange="curItem.risks[${i}].status=this.value;buildRisk()">
+      <td><select style="border:none;background:transparent;font-size:11px;font-weight:700;cursor:pointer" onchange="curItem.risks[${i}].status=this.value;buildRisk();schedSave()">
         <option value="open" ${r.status==='open'?'selected':''}>OPEN</option>
         <option value="mitigated" ${r.status==='mitigated'?'selected':''}>MITIGATED</option>
         <option value="closed" ${r.status==='closed'?'selected':''}>CLOSED</option>
       </select></td>
-      <td><input class="inline-input" value="${r.owner}" onchange="curItem.risks[${i}].owner=this.value" placeholder="Owner"></td>
-      <td><input class="inline-input" value="${r.mitigation}" onchange="curItem.risks[${i}].mitigation=this.value" placeholder="Mitigation..."></td>
+      <td><input class="inline-input" value="${r.owner}" onchange="curItem.risks[${i}].owner=this.value;schedSave()" placeholder="Owner"></td>
+      <td><input class="inline-input" value="${r.mitigation}" onchange="curItem.risks[${i}].mitigation=this.value;schedSave()" placeholder="Mitigation..."></td>
       <td><button class="risk-del edit-only" onclick="delRisk(${i})">✕</button></td>`;
     tb.appendChild(tr);
   });
