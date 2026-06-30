@@ -766,9 +766,15 @@ async function deleteItemRemote(id){
 async function loadFromSupabase(){
   if(!_sb)return;
   try{
+    const isEditor=_currentRole==='editor';
+    // Editors work against the live draft tables (their own + other editors' unpublished
+    // work). Everyone else can only ever see the *_published mirror tables — rows there
+    // only exist/update because an editor explicitly clicked Publish.
+    const itemsTable=isEditor?'roadmap_items':'roadmap_items_published';
+    const metaTable=isEditor?'roadmap_meta':'roadmap_meta_published';
     const[{data:itemRows,error:e1},{data:metaRows,error:e2}]=await Promise.all([
-      _sb.from('roadmap_items').select('id,section,data,updated_at'),
-      _sb.from('roadmap_meta').select('section,data,updated_at')
+      _sb.from(itemsTable).select('id,section,data'),
+      _sb.from(metaTable).select('section,data')
     ]);
     if(!e1&&itemRows&&itemRows.length){
       items=itemRows.map(r=>({...r.data,id:r.id,section:r.section}));
@@ -2036,6 +2042,10 @@ async function handleAuthSession(session){
   document.getElementById('loginPasswordConfirm').value='';
   document.getElementById('authTabs').style.display='flex';
   closeLoginModal();
+  // Switch data source: editors need the draft tables, not the published-only view
+  // they were reading as a guest a moment ago.
+  await loadFromSupabase();
+  subscribeRealtime();
   // Re-render everything so edit controls show/hide correctly
   refreshHome();
   if(curItem){renderItemHeader();buildOverview();buildPhases();buildActions();buildTeam();}
@@ -2048,6 +2058,10 @@ async function signOut(){
   document.getElementById('publishBtn').style.display='none';
   document.getElementById('userChip').style.display='none';
   document.getElementById('loginToEditBtn').style.display='';
+  // Switch back to the published-only view — drafts must not remain visible
+  // once we no longer have editor privileges.
+  await loadFromSupabase();
+  subscribeRealtime();
   // Re-render to hide edit controls
   refreshHome();
   if(curItem){renderItemHeader();buildOverview();buildPhases();buildActions();buildTeam();}
@@ -2082,10 +2096,17 @@ async function initSupabase(){
 }
 
 // ── REALTIME SYNC ─────────────────────────────────────────────────────────────
+let _realtimeChannel=null;
 function subscribeRealtime(){
   if(!_sb)return;
-  _sb.channel('roadmap_items_changes')
-    .on('postgres_changes',{event:'*',schema:'public',table:'roadmap_items'},payload=>{
+  if(_realtimeChannel){_sb.removeChannel(_realtimeChannel);_realtimeChannel=null;}
+  const isEditor=_currentRole==='editor';
+  // Editors subscribe to the live draft tables; everyone else subscribes to the
+  // *_published mirror tables, which only ever change as a direct result of Publish.
+  const itemsTable=isEditor?'roadmap_items':'roadmap_items_published';
+  const metaTable=isEditor?'roadmap_meta':'roadmap_meta_published';
+  _realtimeChannel=_sb.channel('roadmap_changes')
+    .on('postgres_changes',{event:'*',schema:'public',table:itemsTable},payload=>{
       if(payload.eventType==='DELETE'){
         const delId=payload.old?.id;
         if(delId==null)return;
@@ -2094,16 +2115,22 @@ function subscribeRealtime(){
         else{refreshHome();}
         return;
       }
-      // INSERT (new project) always counts; UPDATE only counts as a real
-      // publish if published_at actually changed (ignores routine auto-saves).
-      // Requires REPLICA IDENTITY FULL on roadmap_items so payload.old is populated.
-      const isRealPublish=payload.eventType==='INSERT'||payload.new?.published_at!==payload.old?.published_at;
+      // On the draft table (editors), only a real Publish — not every 2s auto-save —
+      // should count. Requires REPLICA IDENTITY FULL on roadmap_items.
+      // On the *_published table (everyone else), ANY row appearing/changing there
+      // is, by definition, the result of a Publish — no further check needed.
+      const isRealPublish=isEditor
+        ?(payload.eventType==='INSERT'||payload.new?.published_at!==payload.old?.published_at)
+        :true;
       if(!isRealPublish)return;
       onRoadmapPublished();
     })
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'roadmap_meta'},payload=>{
-      // Requires REPLICA IDENTITY FULL on roadmap_meta as well.
-      if(payload.new?.published_at!==payload.old?.published_at)return;
+    .on('postgres_changes',{event:'*',schema:'public',table:metaTable},payload=>{
+      if(payload.eventType==='DELETE')return; // meta sections are never deleted
+      const isRealPublish=isEditor
+        ?(payload.eventType==='INSERT'||payload.new?.published_at!==payload.old?.published_at)
+        :true;
+      if(!isRealPublish)return;
       onRoadmapPublished();
     })
     .subscribe();
