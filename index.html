@@ -504,7 +504,7 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
           <h1 id="homeTitle">✦ Galaxsys Q3/26 Roadmap</h1>
           <p id="homeSubtitle">May 2026 – Feb 2027 · All committed projects</p>
         </div>
-        <button class="add-btn" id="homeAddBtn" onclick="openModal(activeSection)" style="margin-top:8px">＋ Add project</button>
+        <button class="add-btn edit-only" id="homeAddBtn" onclick="openModal(activeSection)" style="margin-top:8px">＋ Add project</button>
       </div>
       <div class="summary-row" id="homeStats"></div>
       <div class="section-title" id="homeSectionTitle">All Projects</div>
@@ -685,8 +685,8 @@ items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
 
 // ── SUPABASE CLIENT ───────────────────────────────────────────────────────────
 // ⬇ Replace these two values with your project's URL and anon key
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'https://veyxjztlakngxequomwm.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_XN1knFfvMzW2AQsX8QeeHQ_EO8f_B1B';
 // ⬆ Safe to commit — anon key is public; RLS enforces access control
 let _sb = null; // initialised in initSupabase()
 let _currentUser = null;
@@ -1283,7 +1283,7 @@ function buildGantt(autoScroll){
           <input class="lbl-date-in" type="date" value="${phase.endVal}" title="Planned end" onchange="if(validEnd(${pi},this.value,this)){curItem.phases[${pi}].endVal=this.value;buildGantt();buildPhases();buildOverview();schedSave();}">
         </div>
       </div>
-      <div class="label-actions"><button class="la-btn" onclick="delGanttRow(${pi})" title="Remove">✕</button></div>
+      <div class="label-actions"><button class="la-btn edit-only" onclick="delGanttRow(${pi})" title="Remove">✕</button></div>
     </div>`;
     tr.appendChild(lTd);
 
@@ -1318,7 +1318,7 @@ function buildGantt(autoScroll){
   // Add row button row
   const addTr=document.createElement('tr');
   const addTd=document.createElement('td');addTd.colSpan=visW.length+1;
-  addTd.innerHTML=`<div class="add-row-btn" onclick="addGanttRow()">＋ Add row</div>`;
+  addTd.innerHTML=`<div class="add-row-btn edit-only" onclick="addGanttRow()">＋ Add row</div>`;
   addTr.appendChild(addTd);tbl.appendChild(addTr);
 }
 
@@ -1550,7 +1550,7 @@ function goToPhase(pi){
           <option value="done" ${phase.statusKey==='done'?'selected':''}>● DONE</option>
           <option value="blocked" ${phase.statusKey==='blocked'?'selected':''}>● BLOCKED</option>
         </select>
-        <button class="phase-del-btn" onclick="event.stopPropagation();delPhaseCard(${idx})">✕</button>
+        <button class="phase-del-btn edit-only" onclick="event.stopPropagation();delPhaseCard(${idx})">✕</button>
         <span class="phase-toggle-arrow open" id="arr-${idx}">▲</span>
       </div>
       <div class="phase-card-body" id="pb-${idx}">
@@ -1573,7 +1573,7 @@ function goToPhase(pi){
         </div>
         <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[${idx}].comments=this.value;schedSave()">${phase.comments}</textarea></div>
         <div class="ph-subtasks">
-          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn" onclick="addSubtask(${idx})">+ Sub-task</button></div>
+          <div class="ph-subtasks-header"><label>Sub-tasks</label><button class="add-subtask-btn edit-only" onclick="addSubtask(${idx})">+ Sub-task</button></div>
           <div id="st-${idx}">${renderSubtasks(idx,phase.subtasks)}</div>
         </div>
       </div>`;
@@ -1623,7 +1623,7 @@ function buildRisk(){
       </select></td>
       <td><input class="inline-input" value="${r.owner}" onchange="curItem.risks[${i}].owner=this.value" placeholder="Owner"></td>
       <td><input class="inline-input" value="${r.mitigation}" onchange="curItem.risks[${i}].mitigation=this.value" placeholder="Mitigation..."></td>
-      <td><button class="risk-del" onclick="delRisk(${i})">✕</button></td>`;
+      <td><button class="risk-del edit-only" onclick="delRisk(${i})">✕</button></td>`;
     tb.appendChild(tr);
   });
 }
