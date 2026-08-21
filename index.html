@@ -2271,15 +2271,23 @@ async function loadJiraCache(epicKey){
 }
 
 async function triggerJiraSync(epicKey,btnEl){
-  if(!_sb||!epicKey)return null;
+  if(!_sb){alert('Supabase not connected. Make sure you are logged in.');return null;}
+  if(!epicKey)return null;
   if(btnEl){btnEl.disabled=true;btnEl.textContent='Syncing…';}
   try{
     const{data,error}=await _sb.functions.invoke('sync-jira',{body:{epicKey}});
-    if(error)throw new Error(error.message);
+    if(error)throw new Error(error.message||JSON.stringify(error));
+    if(data?.failed?.length){
+      const f=data.failed[0];
+      throw new Error(f.error||'Sync failed');
+    }
+    // Refresh whichever view is currently visible
+    await renderJiraHomeSection().catch(()=>{});
+    if(curItem&&curItem.epicId===epicKey)buildReport();
     return data;
   }catch(e){
-    console.error('Jira sync failed:',e.message);
-    if(btnEl){btnEl.disabled=false;btnEl.textContent='↻ Sync';}
+    console.error('Jira sync failed:',e);
+    alert('Sync failed: '+e.message);
     return null;
   }finally{
     if(btnEl){btnEl.disabled=false;btnEl.textContent='↻ Sync';}
@@ -2313,7 +2321,7 @@ function renderReportPanel(el,d){
       <div class="jira-no-epic">
         <h4>Not synced yet</h4>
         <p>Click Sync to pull data from Jira for <strong>${epicKey}</strong>.</p>
-        ${canSync?`<br><button class="jira-sync-btn" id="${syncBtnId}" onclick="triggerJiraSync('${epicKey}',this).then(()=>buildReport())" style="margin-top:8px">↻ Sync now</button>`:''}
+        ${canSync?`<br><button class="jira-sync-btn" id="${syncBtnId}" onclick="triggerJiraSync('${epicKey}',this)" style="margin-top:8px">↻ Sync now</button>`:''}
       </div>
     </div>`;
     return;
@@ -2338,7 +2346,7 @@ function renderReportPanel(el,d){
       ${isStale?'<span style="font-size:11px;color:#f6a623">⚠ Data may be stale</span>':''}
       <span style="flex:1"></span>
       <span class="jira-staleness${isStale?' stale':''}">Last synced: ${timeSince(d.fetched_at)}</span>
-      ${canSync?`<button class="jira-sync-btn" id="${syncBtnId}" onclick="triggerJiraSync('${epicKey}',this).then(()=>buildReport())">↻ Sync</button>`:''}
+      ${canSync?`<button class="jira-sync-btn" id="${syncBtnId}" onclick="triggerJiraSync('${epicKey}',this)">↻ Sync</button>`:''}
     </div>
 
     <div class="jira-stats-row">
@@ -2443,7 +2451,7 @@ async function renderJiraHomeSection(){
               <td>${item.icon} ${item.name}</td>
               <td><a href="${url}" target="_blank" class="epic-link">${item.epicId}</a></td>
               <td colspan="5" style="color:#aab0c6;font-size:11px">Not synced</td>
-              <td>${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this).then(()=>renderJiraHomeSection().catch(()=>{}))">↻ Sync</button>`:'—'}</td>
+              <td>${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)">↻ Sync</button>`:'—'}</td>
             </tr>`;
             const est=d.original_estimate||0;
             const spent=d.time_spent||0;
@@ -2467,7 +2475,7 @@ async function renderJiraHomeSection(){
               <td>${d.done_issues}/${d.total_issues} <span style="color:#aab0c6">(${donePct}%)</span></td>
               <td>
                 <span class="jira-staleness${isStale?' stale':''}">${timeSince(d.fetched_at)}${isStale?' ⚠':''}</span>
-                ${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this).then(()=>renderJiraHomeSection().catch(()=>{}))" style="margin-left:6px">↻</button>`:''}
+                ${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)" style="margin-left:6px">↻</button>`:''}
               </td>
             </tr>`;
           }).join('')}
@@ -2478,11 +2486,16 @@ async function renderJiraHomeSection(){
 }
 
 async function syncAllJira(btnEl){
+  if(!_sb){alert('Supabase not connected.');return;}
   if(btnEl){btnEl.disabled=true;btnEl.textContent='Syncing…';}
   const keys=items.filter(i=>i.section===activeSection&&i.epicId).map(i=>i.epicId);
   try{
-    await Promise.all(keys.map(k=>triggerJiraSync(k,null)));
-    await renderJiraHomeSection();
+    const{data,error}=await _sb.functions.invoke('sync-jira',{body:{}});
+    if(error)throw new Error(error.message||JSON.stringify(error));
+    await renderJiraHomeSection().catch(()=>{});
+  }catch(e){
+    console.error('Sync all failed:',e);
+    alert('Sync all failed: '+e.message);
   }finally{
     if(btnEl){btnEl.disabled=false;btnEl.textContent='↻ Sync all';}
   }
