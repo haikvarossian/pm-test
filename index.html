@@ -33,6 +33,9 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
 .nav-item .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .nav-add{display:flex;align-items:center;gap:8px;padding:8px 16px 8px 30px;font-size:12px;color:#a78bfa;cursor:pointer;opacity:.8}
 .nav-add:hover{opacity:1}
+.nav-add-quarter{display:flex;align-items:center;gap:8px;padding:12px 16px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;opacity:.85;margin-top:10px;border-top:1px solid #ffffff15}
+.nav-add-quarter:hover{opacity:1;background:#ffffff0c}
+.nav-del-quarter{opacity:0;font-size:11px;color:#e74c3c;margin-left:2px;cursor:pointer;padding:2px 4px}
 .main{flex:1;padding:28px 36px;min-width:0}
 .page{display:none}.page.active{display:block}
 .breadcrumb{font-size:11px;color:#aab0c6;margin-bottom:10px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
@@ -551,30 +554,23 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
   </div>
 </div>
 
+<div class="modal-overlay" id="addQuarterModal" style="display:none" onclick="if(event.target===this)closeAddQuarterModal()">
+  <div class="modal" style="max-width:420px">
+    <h2>🗓️ Add New Quarter Roadmap</h2>
+    <div class="modal-field"><label>Quarter Name</label><input id="q-name" placeholder="e.g. Q4/26 Roadmap" onkeydown="if(event.key==='Enter'){event.preventDefault();saveNewQuarter();}"></div>
+    <div class="modal-field"><label>Accent Color</label><input id="q-color" type="color" value="#3BA2E7" style="height:40px;padding:3px 5px"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeAddQuarterModal()">Cancel</button>
+      <button class="btn-save" onclick="saveNewQuarter()">✓ Add Quarter</button>
+    </div>
+  </div>
+</div>
+
 <div class="layout">
   <div class="sidebar">
     <div class="sidebar-section">Workspace</div>
-    <div class="nav-parent active open" id="navParent" onclick="toggleParent()" onmouseenter="document.getElementById('navParentEdit').style.opacity='1'" onmouseleave="document.getElementById('navParentEdit').style.opacity='0'">
-      <div style="width:8px;height:8px;border-radius:2px;background:#a78bfa;flex-shrink:0"></div>
-      <span id="navParentLabel" style="flex:1">Q3/26 Roadmap</span>
-      <span id="navParentEdit" class="edit-only" style="opacity:0;font-size:11px;color:#a78bfa;cursor:pointer;padding:2px 4px;border-radius:4px;transition:opacity .15s" onclick="event.stopPropagation();renameRoadmapNav('roadmap')">✎</span>
-      <span class="chevron open">▶</span>
-    </div>
-    <div class="nav-children open" id="navChildren">
-      <div id="navList"></div>
-      <div class="nav-add edit-only" onclick="openModal('roadmap')">＋ Add project</div>
-    </div>
-    <div class="sidebar-section" style="margin-top:10px;padding-top:10px;border-top:1px solid #ffffff15">Technical</div>
-    <div class="nav-parent" id="navTechParent" onclick="toggleTechParent()" onmouseenter="document.getElementById('navTechParentEdit').style.opacity='1'" onmouseleave="document.getElementById('navTechParentEdit').style.opacity='0'">
-      <div style="width:8px;height:8px;border-radius:2px;background:#f6a623;flex-shrink:0"></div>
-      <span id="navTechParentLabel" style="flex:1">Q3/26 Technical Roadmap</span>
-      <span id="navTechParentEdit" class="edit-only" style="opacity:0;font-size:11px;color:#f6a623;cursor:pointer;padding:2px 4px;border-radius:4px;transition:opacity .15s" onclick="event.stopPropagation();renameRoadmapNav('tech')">✎</span>
-      <span class="chevron">▶</span>
-    </div>
-    <div class="nav-children" id="navTechChildren">
-      <div id="navTechList"></div>
-      <div class="nav-add edit-only" onclick="openModal('tech')">＋ Add project</div>
-    </div>
+    <div id="sidebarSections"></div>
+    <div class="nav-add-quarter edit-only" onclick="openAddQuarterModal()">＋ Add Quarter Roadmap</div>
   </div>
 
   <div class="main">
@@ -855,8 +851,9 @@ async function loadFromSupabase(){
       items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
     }
     if(!e2&&metaRows){
-      metaRows.forEach(r=>{if(roadmapMeta[r.section])roadmapMeta[r.section]={...roadmapMeta[r.section],...r.data};});
+      metaRows.forEach(r=>{roadmapMeta[r.section]=roadmapMeta[r.section]?{...roadmapMeta[r.section],...r.data}:r.data;});
     }
+    renderSidebarSections();
     refreshHome();
     if(curItem){const found=items.find(i=>i.id===curItem.id);if(found){curItem=found;syncActions();renderItemHeader();buildOverview();}}
   }catch(e){console.warn('Supabase load:',e.message);}
@@ -879,16 +876,18 @@ async function loadFromSupabase(){
 // ── ROADMAP META (editable titles) ───────────────────────────────────────────
 /* META_DATA_START */
 let roadmapMeta={
-  roadmap:{navName:'Q3/26 Roadmap',heading:'✦ Galaxsys Q3/26 Roadmap',subtitle:'May 2026 – Feb 2027 · All committed projects',sectionTitle:'All Projects'},
-  tech:{navName:'Q3/26 Technical Roadmap',heading:'⚙ Galaxsys Q3/26 Technical Roadmap',subtitle:'Technical projects & infrastructure',sectionTitle:'All Projects'}
+  roadmap:{navName:'Q3/26 Roadmap',heading:'✦ Galaxsys Q3/26 Roadmap',subtitle:'May 2026 – Feb 2027 · All committed projects',sectionTitle:'All Projects',color:'#a78bfa',order:0},
+  tech:{navName:'Q3/26 Technical Roadmap',heading:'⚙ Galaxsys Q3/26 Technical Roadmap',subtitle:'Technical projects & infrastructure',sectionTitle:'All Projects',color:'#f6a623',order:1}
 };
+const QUARTER_PALETTE=['#3BA2E7','#EA8A1E','#27ae60','#e74c3c','#9b59b6','#16a085','#0068FF','#c0392b'];
+let openSections=new Set(['roadmap']);
+function sectionKeys(){return Object.keys(roadmapMeta).filter(k=>!k.startsWith('_')).sort((a,b)=>(roadmapMeta[a].order||0)-(roadmapMeta[b].order||0));}
 /* META_DATA_END */
 function saveRoadmapData(section){try{localStorage.setItem('gx_roadmap_meta_v1',JSON.stringify({...roadmapMeta,_savedAt:Date.now()}));}catch(e){}if(section)markMetaDirty(section);}
 function saveRoadmapMeta(section,field,val){if(!val||!roadmapMeta[section]||_currentRole!=='editor')return;roadmapMeta[section][field]=val;if(section===activeSection&&field==='navName'){document.getElementById('topTitle').textContent=val;document.getElementById('homeBCText').textContent=val;}saveRoadmapData(section);}
 function renameRoadmapNav(section){
   if(_currentRole!=='editor')return;
-  const labelId=section==='tech'?'navTechParentLabel':'navParentLabel';
-  const el=document.getElementById(labelId);
+  const el=document.getElementById('navLabel-'+section);
   if(!el)return;
   el.contentEditable='true';
   el.style.cssText+='outline:1px solid #a78bfa;border-radius:4px;padding:1px 5px;min-width:20px;';
@@ -924,7 +923,7 @@ function renameRoadmapNav(section){
   el.addEventListener('blur',commit,{once:true});
   el.addEventListener('keydown',onKey);
 }
-(function loadRoadmapMeta(){try{const raw=localStorage.getItem('gx_roadmap_meta_v1');if(!raw)return;const p=JSON.parse(raw);const savedAt=p._savedAt||0;if(BAKED_AT>0&&savedAt<=BAKED_AT)return;Object.keys(roadmapMeta).forEach(k=>{if(p[k])roadmapMeta[k]={...roadmapMeta[k],...p[k]};});}catch(e){}})();
+(function loadRoadmapMeta(){try{const raw=localStorage.getItem('gx_roadmap_meta_v1');if(!raw)return;const p=JSON.parse(raw);const savedAt=p._savedAt||0;if(BAKED_AT>0&&savedAt<=BAKED_AT)return;Object.keys(p).forEach(k=>{if(k.startsWith('_'))return;roadmapMeta[k]=roadmapMeta[k]?{...roadmapMeta[k],...p[k]}:p[k];});}catch(e){}})();
 // Supabase load is triggered after successful auth in initSupabase()
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
@@ -970,19 +969,85 @@ let curItem=null,navOpen=true,navTechOpen=false,activeSection='roadmap';
 let _hiddenIds=new Set(),_deleteItemId=null; // delete state — in-memory only, cleared on refresh
 // Ensure every item has a section tag (default to 'roadmap')
 items.forEach(it=>{if(!it.section)it.section='roadmap';});
-function renderNav(){
-  function buildNavList(containerId, sectionKey){
-    const nl=document.getElementById(containerId);nl.innerHTML='';
-    items.filter(i=>i.section===sectionKey&&!_hiddenIds.has(i.id)).forEach(item=>{
-      const d=document.createElement('div');d.className='nav-item';d.id='nav-'+item.id;d.onclick=()=>showItem(item.id);
-      d.innerHTML=`<div class="dot" style="background:${item.color}"></div><span style="flex:1">${item.icon} <span id="nav-name-${item.id}">${item.name}</span></span>${item.released?'<span style="font-size:9px;background:#27ae60;color:#fff;padding:1px 5px;border-radius:8px;margin-left:2px">✓</span>':''}<span class="nav-eb edit-only" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(${item.id})">✎</span><span class="nav-del edit-only" style="opacity:0;font-size:11px;color:#e74c3c;margin-left:2px;cursor:pointer" onclick="event.stopPropagation();openDeleteModal(${item.id})">🗑</span>`;
-      d.onmouseenter=()=>{d.querySelector('.nav-eb').style.opacity='1';d.querySelector('.nav-del').style.opacity='1';};
-      d.onmouseleave=()=>{d.querySelector('.nav-eb').style.opacity='0';d.querySelector('.nav-del').style.opacity='0';};
-      nl.appendChild(d);
-    });
-  }
-  buildNavList('navList','roadmap');
-  buildNavList('navTechList','tech');
+function buildNavList(containerId, sectionKey){
+  const nl=document.getElementById(containerId);if(!nl)return;nl.innerHTML='';
+  items.filter(i=>(i.section||'roadmap')===sectionKey&&!_hiddenIds.has(i.id)).forEach(item=>{
+    const d=document.createElement('div');d.className='nav-item';d.id='nav-'+item.id;d.onclick=()=>showItem(item.id);
+    d.innerHTML=`<div class="dot" style="background:${item.color}"></div><span style="flex:1">${item.icon} <span id="nav-name-${item.id}">${item.name}</span></span>${item.released?'<span style="font-size:9px;background:#27ae60;color:#fff;padding:1px 5px;border-radius:8px;margin-left:2px">✓</span>':''}<span class="nav-eb edit-only" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(${item.id})">✎</span><span class="nav-del edit-only" style="opacity:0;font-size:11px;color:#e74c3c;margin-left:2px;cursor:pointer" onclick="event.stopPropagation();openDeleteModal(${item.id})">🗑</span>`;
+    d.onmouseenter=()=>{d.querySelector('.nav-eb').style.opacity='1';d.querySelector('.nav-del').style.opacity='1';};
+    d.onmouseleave=()=>{d.querySelector('.nav-eb').style.opacity='0';d.querySelector('.nav-del').style.opacity='0';};
+    nl.appendChild(d);
+  });
+}
+function renderNav(){sectionKeys().forEach(k=>buildNavList('navList-'+k,k));}
+// ── DYNAMIC SIDEBAR (Workspace quarters) ────────────────────────────────────
+function renderSidebarSections(){
+  const container=document.getElementById('sidebarSections');if(!container)return;
+  const keys=sectionKeys();
+  container.innerHTML=keys.map(key=>{
+    const meta=roadmapMeta[key];
+    const isOpen=openSections.has(key);
+    const isActive=activeSection===key;
+    const isDefault=(key==='roadmap'||key==='tech');
+    return `<div class="nav-parent ${isActive?'active':''} ${isOpen?'open':''}" id="navParent-${key}" onclick="toggleSection('${key}')" onmouseenter="_navHover('${key}',1)" onmouseleave="_navHover('${key}',0)">
+      <div style="width:8px;height:8px;border-radius:2px;background:${meta.color||'#a78bfa'};flex-shrink:0"></div>
+      <span id="navLabel-${key}" style="flex:1">${meta.navName}</span>
+      <span id="navEdit-${key}" class="edit-only" style="opacity:0;font-size:11px;color:${meta.color||'#a78bfa'};cursor:pointer;padding:2px 4px;border-radius:4px;transition:opacity .15s" onclick="event.stopPropagation();renameRoadmapNav('${key}')">✎</span>
+      ${isDefault?'':`<span id="navDelQ-${key}" class="edit-only nav-del-quarter" onclick="event.stopPropagation();deleteQuarter('${key}')">🗑</span>`}
+      <span class="chevron ${isOpen?'open':''}">▶</span>
+    </div>
+    <div class="nav-children ${isOpen?'open':''}" id="navChildren-${key}">
+      <div id="navList-${key}"></div>
+      <div class="nav-add edit-only" onclick="openModal('${key}')">＋ Add project</div>
+    </div>`;
+  }).join('');
+  renderNav();
+}
+function _navHover(key,on){
+  const e=document.getElementById('navEdit-'+key);if(e)e.style.opacity=on?'1':'0';
+  const d=document.getElementById('navDelQ-'+key);if(d)d.style.opacity=on?'1':'0';
+}
+function toggleSection(key){
+  if(openSections.has(key))openSections.delete(key);else openSections.add(key);
+  renderSidebarSections();
+  if(openSections.has(key))showHome(key);
+}
+function openAddQuarterModal(){
+  if(_currentRole!=='editor')return;
+  document.getElementById('q-name').value='';
+  const usedColors=sectionKeys().length;
+  document.getElementById('q-color').value=QUARTER_PALETTE[usedColors%QUARTER_PALETTE.length];
+  document.getElementById('addQuarterModal').style.display='flex';
+  setTimeout(()=>document.getElementById('q-name').focus(),50);
+}
+function closeAddQuarterModal(){document.getElementById('addQuarterModal').style.display='none';}
+function saveNewQuarter(){
+  if(_currentRole!=='editor')return;
+  const name=document.getElementById('q-name').value.trim();
+  if(!name)return;
+  const color=document.getElementById('q-color').value||'#3BA2E7';
+  const key='q'+Date.now();
+  const maxOrder=Math.max(0,...sectionKeys().map(k=>roadmapMeta[k].order||0));
+  roadmapMeta[key]={navName:name,heading:`✦ Galaxsys ${name}`,subtitle:'New quarter roadmap',sectionTitle:'All Projects',color,order:maxOrder+1};
+  closeAddQuarterModal();
+  openSections.add(key);
+  renderSidebarSections();
+  saveRoadmapData(key);
+  showHome(key);
+}
+function deleteQuarter(key){
+  if(_currentRole!=='editor'||key==='roadmap'||key==='tech')return;
+  const meta=roadmapMeta[key];if(!meta)return;
+  const hasItems=items.some(i=>(i.section||'roadmap')===key);
+  if(hasItems&&!confirm(`"${meta.navName}" still has projects in it. Delete this quarter anyway? Its projects will remain but become hidden until reassigned.`))return;
+  else if(!hasItems&&!confirm(`Delete "${meta.navName}"?`))return;
+  delete roadmapMeta[key];
+  openSections.delete(key);
+  if(activeSection===key)activeSection='roadmap';
+  renderSidebarSections();
+  saveRoadmapData();
+  if(_sb&&_currentRole==='editor'){_sb.from('roadmap_meta').delete().eq('section',key).then(()=>{}).catch(()=>{});}
+  if(activeSection==='roadmap')showHome('roadmap');
 }
 let activeFilter=null;
 function renderHomeStats(){
@@ -1042,6 +1107,7 @@ function renderCards(){
   });
 }
 function refreshHome(){renderNav();renderHomeStats();renderCards();renderJiraHomeSection().catch(()=>{});}
+renderSidebarSections(); // build sidebar quarter list from roadmapMeta
 showHome('roadmap'); // initialise all titles + sidebar labels from roadmapMeta on load
 
 function renameItem(id){
@@ -1072,8 +1138,6 @@ function renameItem(id){
   el.addEventListener('blur',commit,{once:true});
   el.addEventListener('keydown',onKey);
 }
-function toggleParent(){navOpen=!navOpen;document.getElementById('navParent').classList.toggle('open',navOpen);document.getElementById('navChildren').classList.toggle('open',navOpen);if(navOpen)showHome('roadmap');}
-function toggleTechParent(){navTechOpen=!navTechOpen;document.getElementById('navTechParent').classList.toggle('open',navTechOpen);document.getElementById('navTechChildren').classList.toggle('open',navTechOpen);if(navTechOpen)showHome('tech');}
 function setNav(id){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));if(id!=null&&document.getElementById('nav-'+id))document.getElementById('nav-'+id).classList.add('active');}
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
 function showHome(section){
@@ -1097,10 +1161,9 @@ function showHome(section){
   document.getElementById('homeSectionTitle').innerHTML=_isEd
     ?`<span contenteditable="true" spellcheck="false" style="${tStyle}" onfocus="this.style.borderBottomColor='#aab0c6'" onblur="this.style.borderBottomColor='transparent';saveRoadmapMeta('${section}','sectionTitle',this.textContent.trim())">${meta.sectionTitle}</span>`
     :`<span style="display:inline">${meta.sectionTitle}</span>`;
-  document.getElementById('navParentLabel').textContent=roadmapMeta.roadmap.navName;
-  document.getElementById('navTechParentLabel').textContent=roadmapMeta.tech.navName;
-  document.getElementById('navParent').classList.toggle('active',section==='roadmap');
-  document.getElementById('navTechParent').classList.toggle('active',section==='tech');
+  sectionKeys().forEach(k=>{
+    const np=document.getElementById('navParent-'+k);if(np)np.classList.toggle('active',k===section);
+  });
   setNav(null);curItem=null;activeFilter=null;refreshHome();
 }
 function showItem(id,tab){
