@@ -989,12 +989,12 @@ function renderSidebarSections(){
     const isOpen=openSections.has(key);
     const isActive=activeSection===key;
     const isDefault=(key==='roadmap'||key==='tech');
-    return `<div class="nav-parent ${isActive?'active':''} ${isOpen?'open':''}" id="navParent-${key}" onclick="toggleSection('${key}')" onmouseenter="_navHover('${key}',1)" onmouseleave="_navHover('${key}',0)">
+    return `<div class="nav-parent ${isActive?'active':''} ${isOpen?'open':''}" id="navParent-${key}" onclick="goToSection('${key}')" onmouseenter="_navHover('${key}',1)" onmouseleave="_navHover('${key}',0)">
       <div style="width:8px;height:8px;border-radius:2px;background:${meta.color||'#a78bfa'};flex-shrink:0"></div>
       <span id="navLabel-${key}" style="flex:1">${meta.navName}</span>
       <span id="navEdit-${key}" class="edit-only" style="opacity:0;font-size:11px;color:${meta.color||'#a78bfa'};cursor:pointer;padding:2px 4px;border-radius:4px;transition:opacity .15s" onclick="event.stopPropagation();renameRoadmapNav('${key}')">✎</span>
       ${isDefault?'':`<span id="navDelQ-${key}" class="edit-only nav-del-quarter" onclick="event.stopPropagation();deleteQuarter('${key}')">🗑</span>`}
-      <span class="chevron ${isOpen?'open':''}">▶</span>
+      <span class="chevron ${isOpen?'open':''}" onclick="event.stopPropagation();toggleSection('${key}')">▶</span>
     </div>
     <div class="nav-children ${isOpen?'open':''}" id="navChildren-${key}">
       <div id="navList-${key}"></div>
@@ -1007,10 +1007,16 @@ function _navHover(key,on){
   const e=document.getElementById('navEdit-'+key);if(e)e.style.opacity=on?'1':'0';
   const d=document.getElementById('navDelQ-'+key);if(d)d.style.opacity=on?'1':'0';
 }
+// Navigate to a section — always expands it, never collapses
+function goToSection(key){
+  if(!openSections.has(key))openSections.add(key);
+  showHome(key);
+  renderSidebarSections();
+}
+// Chevron only — toggles collapse without triggering navigation
 function toggleSection(key){
   if(openSections.has(key))openSections.delete(key);else openSections.add(key);
   renderSidebarSections();
-  if(openSections.has(key))showHome(key);
 }
 function openAddQuarterModal(){
   if(_currentRole!=='editor')return;
