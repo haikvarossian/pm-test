@@ -2574,7 +2574,7 @@ async function renderJiraHomeSection(){
         <span class="jira-staleness${isStale?' stale':''}">${timeSince(d.fetched_at)}${isStale?' ⚠':''}</span>
         ${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)" style="margin-left:6px">↻</button>`:''}
       </td>
-      <td style="text-align:center">${hasDisc?`<button class="jira-expand-btn" id="${expBtnId}" onclick="toggleDiscRow('${expId}','${expBtnId}')" title="Show discipline breakdown">▶</button>`:''}</td>
+      <td style="text-align:center"><button class="jira-expand-btn${hasDisc?' ':' disabled-disc'}" id="${expBtnId}" onclick="toggleDiscRow('${expId}','${expBtnId}')" title="${hasDisc?'Show discipline breakdown':'No discipline data — run Sync first'}" ${hasDisc?'':'style="opacity:.3;cursor:default;pointer-events:none"'}>▶</button></td>
     </tr>`;
   }
 
