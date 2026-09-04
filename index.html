@@ -414,8 +414,13 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
 .jira-disc-count{font-size:11px;color:#7a80a0;margin-bottom:4px}
 .jira-disc-bar{height:4px;background:#f0f2ff;border-radius:2px;overflow:hidden}
 .jira-disc-bar div{height:100%;border-radius:2px;transition:width .3s}
-.jira-expand-btn{background:none;border:1px solid #e0e4ef;border-radius:6px;width:22px;height:22px;cursor:pointer;font-size:10px;color:#aab0c6;line-height:1;transition:all .15s;padding:0;font-family:inherit}
-.jira-expand-btn:hover,.jira-expand-btn.open{border-color:#7b68ee;color:#7b68ee;background:#f0f2ff}
+.jira-expand-btn{display:inline-flex;align-items:center;justify-content:center;background:none;border:1px solid #e0e4ef;border-radius:6px;width:24px;height:24px;font-size:9px;color:#c4b5fd;transition:all .2s;flex-shrink:0;user-select:none}
+.jira-row-clickable:hover .jira-expand-btn,.jira-expand-btn.open{border-color:#7b68ee;color:#7b68ee;background:#f0f2ff}
+/* Over-budget row highlighting */
+.jira-table-wrap tr.jira-over-budget>td{border-top:1px solid #fecdd3}
+.jira-table-wrap tr.jira-over-budget>td:first-child{border-left:3px solid #e74c3c}
+.td-over{background:#fff5f5;font-weight:700;color:#e74c3c!important}
+.over-badge{display:inline-flex;align-items:center;gap:4px;background:#fff0f0;border:1px solid #fca5a5;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;color:#e74c3c;white-space:nowrap}
 .jira-no-epic{background:#f8f9ff;border:1.5px dashed #c4b5fd;border-radius:14px;padding:32px;text-align:center}
 .jira-no-epic h4{font-size:15px;font-weight:700;color:#7b68ee;margin-bottom:8px}
 .jira-no-epic p{font-size:12px;color:#7a80a0}
@@ -2563,12 +2568,12 @@ async function renderJiraHomeSection(){
     const isStale=Date.now()-new Date(d.fetched_at).getTime()>JIRA_SYNC_TTL_MS;
     const hasDisc=d.discipline_breakdown&&Object.values(d.discipline_breakdown).some(v=>v.issues>0||v.estimate>0);
     const rowClick=hasDisc?`onclick="if(!event.target.closest('a,button'))toggleDiscRow('${expId}','${expBtnId}','${mainRowId}')"`:'';
-    return`<tr id="${mainRowId}" ${hasDisc?'class="jira-row-clickable"':''} ${rowClick}>
+    return`<tr id="${mainRowId}" class="${hasDisc?'jira-row-clickable':''} ${isOver?'jira-over-budget':''}" ${rowClick}>
       <td style="font-weight:600">${item.icon} ${item.name}</td>
       <td><a href="${url}" target="_blank" class="epic-link" onclick="event.stopPropagation()">${item.epicId}</a></td>
       <td><span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span></td>
       <td>${fmtHours(est)}</td>
-      <td class="${isOver?'jira-pct over':''}">${fmtHours(spent)}</td>
+      <td class="${isOver?'td-over':''}">${isOver?`<span class="over-badge">⚠ ${fmtHours(spent)}</span>`:fmtHours(spent)}</td>
       <td>${pct!==null?`<div class="jira-mini-bar-wrap">
         <div class="jira-mini-bar"><div style="width:${Math.min(pct,100)}%;background:${barColor}"></div></div>
         <span class="jira-pct${isOver?' over':''}">${pct}%</span>
