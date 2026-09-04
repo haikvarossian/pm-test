@@ -403,6 +403,17 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
 .jira-issues-table td{padding:10px 14px;border-bottom:1px solid #f5f6ff;vertical-align:middle}
 .jira-issues-table tr:last-child td{border-bottom:none}
 .jira-empty{text-align:center;padding:40px;color:#aab0c6;font-size:13px}
+.jira-table-wrap tr.jira-disc-row>td{padding:0;background:#fafbff}
+.jira-disc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#e8eaf0;border-top:1px solid #e8eaf0}
+.jira-disc-cell{background:#fff;padding:10px 14px}
+.jira-disc-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.jira-disc-time{font-size:12px;color:#1a1a2e;font-weight:600;margin-bottom:2px}
+.jira-disc-time span{color:#aab0c6;font-weight:400;font-size:11px}
+.jira-disc-count{font-size:11px;color:#7a80a0;margin-bottom:4px}
+.jira-disc-bar{height:4px;background:#f0f2ff;border-radius:2px;overflow:hidden}
+.jira-disc-bar div{height:100%;border-radius:2px;transition:width .3s}
+.jira-expand-btn{background:none;border:1px solid #e0e4ef;border-radius:6px;width:22px;height:22px;cursor:pointer;font-size:10px;color:#aab0c6;line-height:1;transition:all .15s;padding:0;font-family:inherit}
+.jira-expand-btn:hover,.jira-expand-btn.open{border-color:#7b68ee;color:#7b68ee;background:#f0f2ff}
 .jira-no-epic{background:#f8f9ff;border:1.5px dashed #c4b5fd;border-radius:14px;padding:32px;text-align:center}
 .jira-no-epic h4{font-size:15px;font-weight:700;color:#7b68ee;margin-bottom:8px}
 .jira-no-epic p{font-size:12px;color:#7a80a0}
@@ -989,12 +1000,12 @@ function renderSidebarSections(){
     const isOpen=openSections.has(key);
     const isActive=activeSection===key;
     const isDefault=(key==='roadmap'||key==='tech');
-    return `<div class="nav-parent ${isActive?'active':''} ${isOpen?'open':''}" id="navParent-${key}" onclick="goToSection('${key}')" onmouseenter="_navHover('${key}',1)" onmouseleave="_navHover('${key}',0)">
+    return `<div class="nav-parent ${isActive?'active':''} ${isOpen?'open':''}" id="navParent-${key}" onclick="toggleSection('${key}')" onmouseenter="_navHover('${key}',1)" onmouseleave="_navHover('${key}',0)">
       <div style="width:8px;height:8px;border-radius:2px;background:${meta.color||'#a78bfa'};flex-shrink:0"></div>
       <span id="navLabel-${key}" style="flex:1">${meta.navName}</span>
       <span id="navEdit-${key}" class="edit-only" style="opacity:0;font-size:11px;color:${meta.color||'#a78bfa'};cursor:pointer;padding:2px 4px;border-radius:4px;transition:opacity .15s" onclick="event.stopPropagation();renameRoadmapNav('${key}')">✎</span>
       ${isDefault?'':`<span id="navDelQ-${key}" class="edit-only nav-del-quarter" onclick="event.stopPropagation();deleteQuarter('${key}')">🗑</span>`}
-      <span class="chevron ${isOpen?'open':''}" onclick="event.stopPropagation();toggleSection('${key}')">▶</span>
+      <span class="chevron ${isOpen?'open':''}">▶</span>
     </div>
     <div class="nav-children ${isOpen?'open':''}" id="navChildren-${key}">
       <div id="navList-${key}"></div>
@@ -1007,16 +1018,10 @@ function _navHover(key,on){
   const e=document.getElementById('navEdit-'+key);if(e)e.style.opacity=on?'1':'0';
   const d=document.getElementById('navDelQ-'+key);if(d)d.style.opacity=on?'1':'0';
 }
-// Navigate to a section — always expands it, never collapses
-function goToSection(key){
-  if(!openSections.has(key))openSections.add(key);
-  showHome(key);
-  renderSidebarSections();
-}
-// Chevron only — toggles collapse without triggering navigation
 function toggleSection(key){
   if(openSections.has(key))openSections.delete(key);else openSections.add(key);
   renderSidebarSections();
+  if(openSections.has(key))showHome(key);
 }
 function openAddQuarterModal(){
   if(_currentRole!=='editor')return;
@@ -2505,10 +2510,78 @@ async function renderJiraHomeSection(){
   el.style.display='block';
   const keys=sectionItems.map(i=>i.epicId);
   const{data}=await _sb.from('jira_sync')
-    .select('epic_key,fetched_at,epic_status,epic_status_cat,total_issues,done_issues,original_estimate,time_spent')
+    .select('epic_key,fetched_at,epic_status,epic_status_cat,total_issues,done_issues,original_estimate,time_spent,discipline_breakdown')
     .in('epic_key',keys);
   const byKey=Object.fromEntries((data||[]).map(r=>[r.epic_key,r]));
   const canSync=_currentRole==='editor';
+
+  const DISC_COLORS={FE:'#7b68ee',BE:'#27ae60',UI:'#0077b6',QA:'#f6a623',Other:'#aab0c6'};
+
+  function discSubRow(epicId,db){
+    if(!db)return'';
+    const discs=['FE','BE','UI','QA','Other'];
+    const cells=discs.map(disc=>{
+      const d=db[disc]||{issues:0,done:0,estimate:0,spent:0};
+      if(!d.issues&&!d.estimate)return`<div class="jira-disc-cell"><div class="jira-disc-label" style="color:${DISC_COLORS[disc]}">${disc}</div><div class="jira-disc-count" style="color:#ddd">—</div></div>`;
+      const pct=d.estimate>0?Math.min(Math.round((d.spent/d.estimate)*100),100):0;
+      const barColor=pct>100?'#e74c3c':pct>75?'#f6a623':DISC_COLORS[disc];
+      const isOver=d.estimate>0&&d.spent>d.estimate;
+      return`<div class="jira-disc-cell">
+        <div class="jira-disc-label" style="color:${DISC_COLORS[disc]}">${disc}</div>
+        <div class="jira-disc-time">${fmtHours(d.estimate)} <span>est</span> · <span class="${isOver?'jira-pct over':''}">${fmtHours(d.spent)}</span> <span>logged</span></div>
+        <div class="jira-disc-count">${d.done}/${d.issues} done</div>
+        <div class="jira-disc-bar"><div style="width:${pct}%;background:${barColor}"></div></div>
+      </div>`;
+    }).join('');
+    return`<tr class="jira-disc-row" id="disc-row-${epicId.replace(/[^a-z0-9]/gi,'_')}" style="display:none">
+      <td colspan="9"><div class="jira-disc-grid">${cells}</div></td>
+    </tr>`;
+  }
+
+  function mainRow(item,d){
+    const url=item.epicUrl||`https://dg-group.atlassian.net/browse/${item.epicId}`;
+    const safeId=item.epicId.replace(/[^a-z0-9]/gi,'_');
+    const btnId=`hs-sync-${safeId}`;
+    const expId=`disc-row-${safeId}`;
+    const expBtnId=`exp-btn-${safeId}`;
+    if(!d)return`<tr>
+      <td style="font-weight:600">${item.icon} ${item.name}</td>
+      <td><a href="${url}" target="_blank" class="epic-link">${item.epicId}</a></td>
+      <td colspan="5" style="color:#aab0c6;font-size:11px">Not synced</td>
+      <td>${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)">↻ Sync</button>`:'—'}</td>
+      <td></td>
+    </tr>`;
+    const est=d.original_estimate||0;
+    const spent=d.time_spent||0;
+    const pct=est>0?Math.round((spent/est)*100):null;
+    const isOver=pct>100;
+    const barColor=isOver?'#e74c3c':pct>75?'#f6a623':'#27ae60';
+    const donePct=d.total_issues>0?Math.round((d.done_issues/d.total_issues)*100):0;
+    const isStale=Date.now()-new Date(d.fetched_at).getTime()>JIRA_SYNC_TTL_MS;
+    const hasDisc=d.discipline_breakdown&&Object.values(d.discipline_breakdown).some(v=>v.issues>0||v.estimate>0);
+    return`<tr>
+      <td style="font-weight:600">${item.icon} ${item.name}</td>
+      <td><a href="${url}" target="_blank" class="epic-link">${item.epicId}</a></td>
+      <td><span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span></td>
+      <td>${fmtHours(est)}</td>
+      <td class="${isOver?'jira-pct over':''}">${fmtHours(spent)}</td>
+      <td>${pct!==null?`<div class="jira-mini-bar-wrap">
+        <div class="jira-mini-bar"><div style="width:${Math.min(pct,100)}%;background:${barColor}"></div></div>
+        <span class="jira-pct${isOver?' over':''}">${pct}%</span>
+      </div>`:'—'}</td>
+      <td>${d.done_issues}/${d.total_issues} <span style="color:#aab0c6">(${donePct}%)</span></td>
+      <td>
+        <span class="jira-staleness${isStale?' stale':''}">${timeSince(d.fetched_at)}${isStale?' ⚠':''}</span>
+        ${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)" style="margin-left:6px">↻</button>`:''}
+      </td>
+      <td style="text-align:center">${hasDisc?`<button class="jira-expand-btn" id="${expBtnId}" onclick="toggleDiscRow('${expId}','${expBtnId}')" title="Show discipline breakdown">▶</button>`:''}</td>
+    </tr>`;
+  }
+
+  const rows=sectionItems.map(item=>{
+    const d=byKey[item.epicId];
+    return mainRow(item,d)+(d?discSubRow(item.epicId,d.discipline_breakdown):'');
+  }).join('');
 
   el.innerHTML=`<div class="jira-home-wrap">
     <div class="jira-home-title">
@@ -2520,49 +2593,20 @@ async function renderJiraHomeSection(){
         <thead><tr>
           <th>Project</th><th>Epic</th><th>Status</th>
           <th>Orig. Estimate</th><th>Logged</th><th>Budget</th>
-          <th>Issues</th><th>Last synced</th>
+          <th>Issues</th><th>Last synced</th><th></th>
         </tr></thead>
-        <tbody>
-          ${sectionItems.map(item=>{
-            const d=byKey[item.epicId];
-            const url=item.epicUrl||`https://dg-group.atlassian.net/browse/${item.epicId}`;
-            const btnId=`hs-sync-${item.epicId.replace(/[^a-z0-9]/gi,'_')}`;
-            if(!d)return`<tr>
-              <td>${item.icon} ${item.name}</td>
-              <td><a href="${url}" target="_blank" class="epic-link">${item.epicId}</a></td>
-              <td colspan="5" style="color:#aab0c6;font-size:11px">Not synced</td>
-              <td>${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)">↻ Sync</button>`:'—'}</td>
-            </tr>`;
-            const est=d.original_estimate||0;
-            const spent=d.time_spent||0;
-            const pct=est>0?Math.round((spent/est)*100):null;
-            const isOver=pct>100;
-            const barColor=isOver?'#e74c3c':pct>75?'#f6a623':'#27ae60';
-            const donePct=d.total_issues>0?Math.round((d.done_issues/d.total_issues)*100):0;
-            const isStale=Date.now()-new Date(d.fetched_at).getTime()>JIRA_SYNC_TTL_MS;
-            return`<tr>
-              <td style="font-weight:600">${item.icon} ${item.name}</td>
-              <td><a href="${url}" target="_blank" class="epic-link">${item.epicId}</a></td>
-              <td><span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span></td>
-              <td>${fmtHours(est)}</td>
-              <td class="${isOver?'jira-pct over':''}">${fmtHours(spent)}</td>
-              <td>
-                ${pct!==null?`<div class="jira-mini-bar-wrap">
-                  <div class="jira-mini-bar"><div style="width:${Math.min(pct,100)}%;background:${barColor}"></div></div>
-                  <span class="jira-pct${isOver?' over':''}">${pct}%</span>
-                </div>`:'—'}
-              </td>
-              <td>${d.done_issues}/${d.total_issues} <span style="color:#aab0c6">(${donePct}%)</span></td>
-              <td>
-                <span class="jira-staleness${isStale?' stale':''}">${timeSince(d.fetched_at)}${isStale?' ⚠':''}</span>
-                ${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)" style="margin-left:6px">↻</button>`:''}
-              </td>
-            </tr>`;
-          }).join('')}
-        </tbody>
+        <tbody>${rows}</tbody>
       </table>
     </div>
   </div>`;
+}
+function toggleDiscRow(rowId,btnId){
+  const row=document.getElementById(rowId);
+  const btn=document.getElementById(btnId);
+  if(!row)return;
+  const open=row.style.display!=='none';
+  row.style.display=open?'none':'table-row';
+  if(btn){btn.textContent=open?'▶':'▼';btn.classList.toggle('open',!open);}
 }
 
 async function syncAllJira(btnEl){
