@@ -2516,18 +2516,19 @@ async function renderJiraHomeSection(){
   const canSync=_currentRole==='editor';
 
   const DISC_COLORS={FE:'#7b68ee',BE:'#27ae60',UI:'#0077b6',QA:'#f6a623',Other:'#aab0c6'};
+  const DISC_LABELS={FE:'FE',BE:'BE',UI:'UI',QA:'QA / Test',Other:'Other'};
 
   function discSubRow(epicId,db){
     if(!db)return'';
     const discs=['FE','BE','UI','QA','Other'];
     const cells=discs.map(disc=>{
       const d=db[disc]||{issues:0,done:0,estimate:0,spent:0};
-      if(!d.issues&&!d.estimate)return`<div class="jira-disc-cell"><div class="jira-disc-label" style="color:${DISC_COLORS[disc]}">${disc}</div><div class="jira-disc-count" style="color:#ddd">—</div></div>`;
+      if(!d.issues&&!d.estimate)return`<div class="jira-disc-cell"><div class="jira-disc-label" style="color:${DISC_COLORS[disc]}">${DISC_LABELS[disc]}</div><div class="jira-disc-count" style="color:#ddd">—</div></div>`;
       const pct=d.estimate>0?Math.min(Math.round((d.spent/d.estimate)*100),100):0;
       const barColor=pct>100?'#e74c3c':pct>75?'#f6a623':DISC_COLORS[disc];
       const isOver=d.estimate>0&&d.spent>d.estimate;
       return`<div class="jira-disc-cell">
-        <div class="jira-disc-label" style="color:${DISC_COLORS[disc]}">${disc}</div>
+        <div class="jira-disc-label" style="color:${DISC_COLORS[disc]}">${DISC_LABELS[disc]}</div>
         <div class="jira-disc-time">${fmtHours(d.estimate)} <span>est</span> · <span class="${isOver?'jira-pct over':''}">${fmtHours(d.spent)}</span> <span>logged</span></div>
         <div class="jira-disc-count">${d.done}/${d.issues} done</div>
         <div class="jira-disc-bar"><div style="width:${pct}%;background:${barColor}"></div></div>
