@@ -403,7 +403,9 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
 .jira-issues-table td{padding:10px 14px;border-bottom:1px solid #f5f6ff;vertical-align:middle}
 .jira-issues-table tr:last-child td{border-bottom:none}
 .jira-empty{text-align:center;padding:40px;color:#aab0c6;font-size:13px}
-.jira-table-wrap tr.jira-disc-row>td{padding:0;background:#fafbff}
+.jira-table-wrap tr.jira-row-expanded>td{background:#f0f2ff!important}
+.jira-table-wrap tr.jira-row-expanded:hover>td{background:#eceeff!important}
+.jira-table-wrap tr.jira-row-clickable{cursor:pointer}
 .jira-disc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#e8eaf0;border-top:1px solid #e8eaf0}
 .jira-disc-cell{background:#fff;padding:10px 14px}
 .jira-disc-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
@@ -2544,7 +2546,8 @@ async function renderJiraHomeSection(){
     const btnId=`hs-sync-${safeId}`;
     const expId=`disc-row-${safeId}`;
     const expBtnId=`exp-btn-${safeId}`;
-    if(!d)return`<tr>
+    const mainRowId=`main-row-${safeId}`;
+    if(!d)return`<tr id="${mainRowId}">
       <td style="font-weight:600">${item.icon} ${item.name}</td>
       <td><a href="${url}" target="_blank" class="epic-link">${item.epicId}</a></td>
       <td colspan="5" style="color:#aab0c6;font-size:11px">Not synced</td>
@@ -2559,9 +2562,10 @@ async function renderJiraHomeSection(){
     const donePct=d.total_issues>0?Math.round((d.done_issues/d.total_issues)*100):0;
     const isStale=Date.now()-new Date(d.fetched_at).getTime()>JIRA_SYNC_TTL_MS;
     const hasDisc=d.discipline_breakdown&&Object.values(d.discipline_breakdown).some(v=>v.issues>0||v.estimate>0);
-    return`<tr>
+    const rowClick=hasDisc?`onclick="if(!event.target.closest('a,button'))toggleDiscRow('${expId}','${expBtnId}','${mainRowId}')"`:'';
+    return`<tr id="${mainRowId}" ${hasDisc?'class="jira-row-clickable"':''} ${rowClick}>
       <td style="font-weight:600">${item.icon} ${item.name}</td>
-      <td><a href="${url}" target="_blank" class="epic-link">${item.epicId}</a></td>
+      <td><a href="${url}" target="_blank" class="epic-link" onclick="event.stopPropagation()">${item.epicId}</a></td>
       <td><span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span></td>
       <td>${fmtHours(est)}</td>
       <td class="${isOver?'jira-pct over':''}">${fmtHours(spent)}</td>
@@ -2572,9 +2576,9 @@ async function renderJiraHomeSection(){
       <td>${d.done_issues}/${d.total_issues} <span style="color:#aab0c6">(${donePct}%)</span></td>
       <td>
         <span class="jira-staleness${isStale?' stale':''}">${timeSince(d.fetched_at)}${isStale?' ⚠':''}</span>
-        ${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)" style="margin-left:6px">↻</button>`:''}
+        ${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="event.stopPropagation();triggerJiraSync('${item.epicId}',this)" style="margin-left:6px">↻</button>`:''}
       </td>
-      <td style="text-align:center"><button class="jira-expand-btn${hasDisc?' ':' disabled-disc'}" id="${expBtnId}" onclick="toggleDiscRow('${expId}','${expBtnId}')" title="${hasDisc?'Show discipline breakdown':'No discipline data — run Sync first'}" ${hasDisc?'':'style="opacity:.3;cursor:default;pointer-events:none"'}>▶</button></td>
+      <td style="text-align:center;width:28px">${hasDisc?`<span class="jira-expand-btn" id="${expBtnId}" style="pointer-events:none">▶</span>`:''}</td>
     </tr>`;
   }
 
@@ -2600,13 +2604,15 @@ async function renderJiraHomeSection(){
     </div>
   </div>`;
 }
-function toggleDiscRow(rowId,btnId){
+function toggleDiscRow(rowId,btnId,parentRowId){
   const row=document.getElementById(rowId);
   const btn=document.getElementById(btnId);
+  const parentRow=document.getElementById(parentRowId);
   if(!row)return;
   const open=row.style.display!=='none';
   row.style.display=open?'none':'table-row';
   if(btn){btn.textContent=open?'▶':'▼';btn.classList.toggle('open',!open);}
+  if(parentRow)parentRow.classList.toggle('jira-row-expanded',!open);
 }
 
 async function syncAllJira(btnEl){
