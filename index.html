@@ -408,6 +408,7 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
 .jira-table-wrap tr.jira-row-clickable{cursor:pointer}
 .jira-disc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#e8eaf0;border-top:1px solid #e8eaf0}
 .jira-disc-cell{background:#fff;padding:10px 14px}
+.jira-disc-cell.over-disc{background:#fff8f8;border-top:2px solid #fca5a5}
 .jira-disc-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
 .jira-disc-time{font-size:12px;color:#1a1a2e;font-weight:600;margin-bottom:2px}
 .jira-disc-time span{color:#aab0c6;font-weight:400;font-size:11px}
@@ -2533,9 +2534,9 @@ async function renderJiraHomeSection(){
       if(!d.issues&&!d.estimate)return`<div class="jira-disc-cell"><div class="jira-disc-label" style="color:${DISC_COLORS[disc]}">${DISC_LABELS[disc]}</div><div class="jira-disc-count" style="color:#ddd">—</div></div>`;
       const pct=d.estimate>0?Math.min(Math.round((d.spent/d.estimate)*100),100):0;
       const isOver=d.estimate>0&&d.spent>d.estimate;
-      return`<div class="jira-disc-cell">
+      return`<div class="jira-disc-cell${isOver?' over-disc':''}">
         <div class="jira-disc-label" style="color:${DISC_COLORS[disc]}">${DISC_LABELS[disc]}</div>
-        <div class="jira-disc-time">${fmtHours(d.estimate)} <span>est</span> · <span class="${isOver?'jira-pct over':''}">${fmtHours(d.spent)}</span> <span>logged</span></div>
+        <div class="jira-disc-time">${fmtHours(d.estimate)} <span>est</span> · ${isOver?`<span class="over-badge" style="font-size:10px;padding:1px 6px">⚠ ${fmtHours(d.spent)}</span>`:`<span>${fmtHours(d.spent)}</span> <span>logged</span>`}</div>
         <div class="jira-disc-count">${d.done}/${d.issues} done</div>
         <div class="jira-disc-bar"><div style="width:${pct}%;background:${DISC_COLORS[disc]}"></div></div>
       </div>`;
