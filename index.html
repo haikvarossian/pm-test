@@ -406,7 +406,7 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
 .jira-table-wrap tr.jira-row-expanded>td{background:#f0f2ff!important}
 .jira-table-wrap tr.jira-row-expanded:hover>td{background:#eceeff!important}
 .jira-table-wrap tr.jira-row-clickable{cursor:pointer}
-.jira-disc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#e8eaf0;border-top:1px solid #e8eaf0}
+.jira-disc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:#e8eaf0;border-top:1px solid #e8eaf0}
 .jira-disc-cell{background:#fff;padding:10px 14px}
 .jira-disc-cell.over-disc{background:#fff8f8;border-top:2px solid #fca5a5}
 .jira-disc-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
@@ -2523,12 +2523,12 @@ async function renderJiraHomeSection(){
   const byKey=Object.fromEntries((data||[]).map(r=>[r.epic_key,r]));
   const canSync=_currentRole==='editor';
 
-  const DISC_COLORS={FE:'#7b68ee',BE:'#27ae60',UI:'#0077b6',QA:'#f6a623',Other:'#aab0c6'};
-  const DISC_LABELS={FE:'FE',BE:'BE',UI:'UI',QA:'QA / Test',Other:'Other'};
+  const DISC_COLORS={FE:'#7b68ee',BE:'#27ae60',UI:'#0077b6',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
+  const DISC_LABELS={FE:'FE',BE:'BE',UI:'UI',QA:'QA / Test',AQA:'AQA',Other:'Other'};
 
   function discSubRow(epicId,db){
     if(!db)return'';
-    const discs=['FE','BE','UI','QA','Other'];
+    const discs=['FE','BE','UI','QA','AQA','Other'];
     const cells=discs.map(disc=>{
       const d=db[disc]||{issues:0,done:0,estimate:0,spent:0};
       if(!d.issues&&!d.estimate)return`<div class="jira-disc-cell"><div class="jira-disc-label" style="color:${DISC_COLORS[disc]}">${DISC_LABELS[disc]}</div><div class="jira-disc-count" style="color:#ddd">—</div></div>`;
