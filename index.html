@@ -403,6 +403,30 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
 .jira-issues-table td{padding:10px 14px;border-bottom:1px solid #f5f6ff;vertical-align:middle}
 .jira-issues-table tr:last-child td{border-bottom:none}
 .jira-empty{text-align:center;padding:40px;color:#aab0c6;font-size:13px}
+/* Issues modal */
+.im-hdr{background:linear-gradient(135deg,#1a1a2e,#2d2b6b);color:#fff;padding:18px 24px;display:flex;align-items:center;gap:12px}
+.im-hdr h2{font-size:16px;font-weight:800;margin:0}
+.im-hdr .im-meta{font-size:11px;color:#ffffffaa;margin-top:2px}
+.im-hdr .im-meta a{color:#a78bfa;text-decoration:none}.im-hdr .im-meta a:hover{text-decoration:underline}
+.im-close{margin-left:auto;background:none;border:none;color:#ffffffaa;font-size:20px;cursor:pointer;line-height:1;padding:0 4px;transition:color .15s}.im-close:hover{color:#fff}
+.im-stats{display:flex;border-bottom:1px solid #e0e4ef;background:#fff;flex-shrink:0}
+.im-stat{flex:1;padding:12px 18px;border-right:1px solid #f0f2ff}.im-stat:last-child{border-right:none}
+.im-sl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#aab0c6;margin-bottom:3px}
+.im-sv{font-size:18px;font-weight:800;color:#1a1a2e}.im-sv.over{color:#e74c3c}
+.im-table{overflow-x:hidden}
+.im-table table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+.im-table col.c-key{width:90px}.im-table col.c-type{width:76px}.im-table col.c-sum{width:auto}
+.im-table col.c-status{width:120px}.im-table col.c-asgn{width:120px}
+.im-table col.c-est{width:76px}.im-table col.c-log{width:90px}.im-table col.c-pri{width:76px}
+.im-table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#aab0c6;background:#fafbff;border-bottom:1px solid #f0f2ff;cursor:pointer;user-select:none;white-space:nowrap;overflow:hidden}
+.im-table th:hover,.im-table th.s{color:#7b68ee}
+.im-table td{padding:9px 12px;border-bottom:1px solid #f5f6ff;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.im-table tr:last-child td{border-bottom:none}.im-table tr:hover td{background:#fafbff}
+.im-kl{color:#7b68ee;font-weight:700;text-decoration:none;font-size:11px}.im-kl:hover{text-decoration:underline}
+.im-sub{font-size:9px;background:#f0f2ff;color:#7b68ee;padding:1px 5px;border-radius:4px;margin-left:3px}
+.im-muted{color:#7a80a0}.im-pri-high{color:#f6a623;font-weight:700}.im-pri-highest,.im-pri-critical{color:#e74c3c;font-weight:700}.im-pri-low{color:#aab0c6}
+.im-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:#aab0c6;font-size:13px}
+.im-empty{text-align:center;padding:60px;color:#aab0c6;font-size:13px}
 .jira-table-wrap tr.jira-row-expanded>td{background:#f0f2ff!important}
 .jira-table-wrap tr.jira-row-expanded:hover>td{background:#eceeff!important}
 .jira-table-wrap tr.jira-row-clickable{cursor:pointer}
@@ -513,6 +537,12 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
   <span>🔄 The roadmap was just published with new changes.</span>
   <button onclick="applyLiveUpdate()">Refresh now</button>
   <button class="lub-dismiss" onclick="dismissLiveUpdate()">✕</button>
+</div>
+
+<div id="issuesModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1500;display:none;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeIssuesModal()">
+  <div style="background:#fff;border-radius:20px;width:96vw;max-width:1280px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.35);overflow:hidden">
+    <div id="issuesModalContent" style="overflow-y:auto;flex:1;min-height:0"></div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="userModal" style="display:none" onclick="if(event.target===this)closeUserModal()">
@@ -2640,33 +2670,38 @@ async function syncAllJira(btnEl){
   }
 }
 
-// ── Discipline Issues Viewer (opens in a new browser tab) ────────────────────
+// ── Discipline Issues Viewer (modal) ─────────────────────────────────────────
 async function openDisciplineIssues(epicId,disc,discLabel,projectName,jiraBase){
   if(!_sb){alert('Not connected to Supabase.');return;}
   const color={FE:'#7b68ee',BE:'#27ae60',UI:'#0077b6',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'}[disc]||'#7b68ee';
-  // Open synchronously so popup blockers don't interfere
-  const tab=window.open('about:blank','_blank');
-  if(!tab){alert('Please allow pop-ups for this page to view issues in a new tab.');return;}
-  tab.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Loading…</title>
-    <style>body{font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f8f9ff;color:#7a80a0}
-    .spin{width:40px;height:40px;border:3px solid #f0f2ff;border-top-color:${color};border-radius:50%;animation:s .7s linear infinite;margin:0 auto 16px}
-    @keyframes s{to{transform:rotate(360deg)}}</style></head>
-    <body><div style="text-align:center"><div class="spin"></div>
-    <p>Loading <strong>${discLabel}</strong> issues for <strong>${projectName}</strong>…</p></div></body></html>`);
+  const modal=document.getElementById('issuesModal');
+  const content=document.getElementById('issuesModalContent');
+  content.innerHTML=`<div class="im-loading"><div class="spin" style="border-top-color:${color}"></div><p>Loading <strong>${discLabel}</strong> issues for <strong>${projectName}</strong>…</p></div>`;
+  modal.style.display='flex';
   try{
     const{data,error}=await _sb.functions.invoke('sync-jira',{body:{action:'query',epicKey:epicId,discipline:disc}});
     if(error)throw new Error(error.message);
-    tab.document.open();
-    tab.document.write(buildIssuesHTML(data,discLabel,projectName,epicId,color,jiraBase));
-    tab.document.close();
+    content.innerHTML=buildIssuesModalContent(data,discLabel,projectName,epicId,color,jiraBase);
   }catch(e){
-    tab.document.open();
-    tab.document.write(`<!DOCTYPE html><html><body style="font-family:sans-serif;padding:40px;color:#e74c3c"><h2>Error</h2><p>${e.message}</p></body></html>`);
-    tab.document.close();
+    content.innerHTML=`<div style="padding:40px;color:#e74c3c;font-size:13px"><strong>Error:</strong> ${e.message}</div>`;
   }
 }
-
-function buildIssuesHTML(d,discLabel,projectName,epicId,color,jiraBase){
+function closeIssuesModal(){
+  document.getElementById('issuesModal').style.display='none';
+}
+function sortIssuesTable(th,col){
+  const tbody=document.querySelector('#issuesModal tbody');
+  if(!tbody)return;
+  const asc=th.dataset.a!=='1';
+  document.querySelectorAll('#issuesModal th').forEach(t=>{t.classList.remove('s');delete t.dataset.a;});
+  th.classList.add('s');th.dataset.a=asc?'1':'0';
+  Array.from(tbody.rows).sort((a,b)=>{
+    const av=a.cells[col]?.textContent?.trim()||'';
+    const bv=b.cells[col]?.textContent?.trim()||'';
+    return asc?av.localeCompare(bv,undefined,{numeric:true}):bv.localeCompare(av,undefined,{numeric:true});
+  }).forEach(r=>tbody.appendChild(r));
+}
+function buildIssuesModalContent(d,discLabel,projectName,epicId,color,jiraBase){
   const base=jiraBase||'https://dg-group.atlassian.net/browse/';
   const fmtH=s=>s>0?(s/3600<10?(s/3600).toFixed(1):Math.round(s/3600))+'h':'—';
   const isOver=(d.totalEst>0)&&(d.totalSpent>d.totalEst);
@@ -2674,82 +2709,50 @@ function buildIssuesHTML(d,discLabel,projectName,epicId,color,jiraBase){
   const rows=(d.issues||[]).map(i=>{
     const over=i.estimate>0&&i.spent>i.estimate;
     const sc=i.statusCat==='done'?'done':i.statusCat==='indeterminate'?'inprog':'todo';
+    const priCls=i.priority?'im-pri-'+(i.priority||'').toLowerCase().replace(' ',''):'';
     return`<tr>
-      <td><a href="${base}${i.key}" target="_blank" class="kl">${i.key}</a>${i.isSubIssue?'<span class="sub">sub</span>':''}</td>
-      <td class="muted">${i.type}</td>
-      <td class="sum" title="${(i.summary||'').replace(/"/g,'&quot;')}">${i.summary||''}</td>
-      <td><span class="pill ${sc}">${i.status}</span></td>
-      <td class="muted">${i.assignee||'—'}</td>
+      <td><a href="${base}${i.key}" target="_blank" class="im-kl">${i.key}</a>${i.isSubIssue?'<span class="im-sub">sub</span>':''}</td>
+      <td class="im-muted">${i.type}</td>
+      <td title="${(i.summary||'').replace(/"/g,'&quot;')}">${i.summary||''}</td>
+      <td><span class="jira-status-pill ${jiraStatusClass(i.statusCat)}">${i.status}</span></td>
+      <td class="im-muted">${i.assignee||'—'}</td>
       <td>${fmtH(i.estimate)}</td>
-      <td>${over?`<span class="ob">⚠ ${fmtH(i.spent)}</span>`:fmtH(i.spent)}</td>
-      <td class="pri ${(i.priority||'').toLowerCase()}">${i.priority||'—'}</td>
+      <td>${over?`<span class="over-badge" style="font-size:10px;padding:1px 7px">⚠ ${fmtH(i.spent)}</span>`:fmtH(i.spent)}</td>
+      <td class="${priCls}">${i.priority||'—'}</td>
     </tr>`;
   }).join('');
-  return`<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>${discLabel} Issues — ${projectName}</title>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Segoe UI',sans-serif;background:#f8f9ff;color:#1a1a2e}
-    .hdr{background:linear-gradient(135deg,#1a1a2e,#2d2b6b);color:#fff;padding:20px 32px;display:flex;align-items:center;gap:14px}
-    .dot{width:12px;height:12px;border-radius:3px;background:${color};flex-shrink:0}
-    .hdr h1{font-size:18px;font-weight:800}
-    .meta{font-size:12px;color:#ffffffaa;margin-top:3px}
-    .meta a{color:#a78bfa;text-decoration:none}.meta a:hover{text-decoration:underline}
-    .stats{display:flex;background:#fff;border-bottom:1px solid #e0e4ef}
-    .stat{flex:1;padding:16px 24px;border-right:1px solid #f0f2ff}
-    .stat:last-child{border-right:none}
-    .sl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#aab0c6;margin-bottom:4px}
-    .sv{font-size:22px;font-weight:800}.sv.over{color:#e74c3c}
-    .wrap{margin:24px 32px;background:#fff;border-radius:16px;border:1px solid #e0e4ef;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-    table{width:100%;border-collapse:collapse;font-size:12px}
-    th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#aab0c6;background:#fafbff;border-bottom:1px solid #f0f2ff;cursor:pointer;user-select:none;white-space:nowrap}
-    th:hover,th.s{color:#7b68ee}
-    td{padding:10px 14px;border-bottom:1px solid #f5f6ff;vertical-align:middle}
-    tr:last-child td{border-bottom:none}tr:hover td{background:#fafbff}
-    .kl{color:#7b68ee;font-weight:700;text-decoration:none;font-size:11px}
-    .kl:hover{text-decoration:underline}
-    .sub{font-size:9px;background:#f0f2ff;color:#7b68ee;padding:1px 5px;border-radius:4px;margin-left:4px;vertical-align:middle}
-    .muted{color:#7a80a0;font-size:11px}
-    .sum{max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .pill{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}
-    .done{background:#f0fff4;color:#27ae60}.inprog{background:#fff7e6;color:#f6a623}.todo{background:#f0f2ff;color:#7b68ee}
-    .ob{background:#fff0f0;border:1px solid #fca5a5;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;color:#e74c3c;white-space:nowrap}
-    .pri{font-size:11px;font-weight:600}
-    .pri.highest,.pri.critical{color:#e74c3c}.pri.high{color:#f6a623}.pri.medium{color:#7b68ee}.pri.low,.pri.lowest{color:#aab0c6}
-    .empty{text-align:center;padding:60px;color:#aab0c6;font-size:13px}
-  </style></head><body>
-  <div class="hdr"><div class="dot"></div><div>
-    <h1>${discLabel} Issues</h1>
-    <div class="meta">${projectName} · Epic <a href="${base}${epicId}" target="_blank">${epicId}</a> · ${d.total||0} issues</div>
-  </div></div>
-  <div class="stats">
-    <div class="stat"><div class="sl">Total</div><div class="sv">${d.total||0}</div></div>
-    <div class="stat"><div class="sl">Done</div><div class="sv">${d.done||0}</div></div>
-    <div class="stat"><div class="sl">In Progress</div><div class="sv">${inProg}</div></div>
-    <div class="stat"><div class="sl">Estimate</div><div class="sv">${fmtH(d.totalEst||0)}</div></div>
-    <div class="stat"><div class="sl">Logged</div><div class="sv${isOver?' over':''}">${fmtH(d.totalSpent||0)}</div></div>
+  return`<div class="im-hdr">
+    <div style="width:12px;height:12px;border-radius:3px;background:${color};flex-shrink:0"></div>
+    <div><h2>${discLabel} Issues</h2>
+      <div class="im-meta">${projectName} · Epic <a href="${base}${epicId}" target="_blank">${epicId}</a> · ${d.total||0} issues</div>
+    </div>
+    <button class="im-close" onclick="closeIssuesModal()">✕</button>
   </div>
-  <div class="wrap">${d.total?`<table>
+  <div class="im-stats">
+    <div class="im-stat"><div class="im-sl">Total</div><div class="im-sv">${d.total||0}</div></div>
+    <div class="im-stat"><div class="im-sl">Done</div><div class="im-sv">${d.done||0}</div></div>
+    <div class="im-stat"><div class="im-sl">In Progress</div><div class="im-sv">${inProg}</div></div>
+    <div class="im-stat"><div class="im-sl">Estimate</div><div class="im-sv">${fmtH(d.totalEst||0)}</div></div>
+    <div class="im-stat"><div class="im-sl">Logged</div><div class="im-sv${isOver?' over':''}">${fmtH(d.totalSpent||0)}</div></div>
+  </div>
+  <div class="im-table">${d.total?`<table>
+    <colgroup>
+      <col class="c-key"><col class="c-type"><col class="c-sum">
+      <col class="c-status"><col class="c-asgn"><col class="c-est"><col class="c-log"><col class="c-pri">
+    </colgroup>
     <thead><tr>
-      <th onclick="srt(this,0)">Key</th><th onclick="srt(this,1)">Type</th>
-      <th onclick="srt(this,2)">Summary</th><th onclick="srt(this,3)">Status</th>
-      <th onclick="srt(this,4)">Assignee</th><th onclick="srt(this,5)">Estimate</th>
-      <th onclick="srt(this,6)">Logged</th><th onclick="srt(this,7)">Priority</th>
+      <th onclick="sortIssuesTable(this,0)">Key</th>
+      <th onclick="sortIssuesTable(this,1)">Type</th>
+      <th onclick="sortIssuesTable(this,2)">Summary</th>
+      <th onclick="sortIssuesTable(this,3)">Status</th>
+      <th onclick="sortIssuesTable(this,4)">Assignee</th>
+      <th onclick="sortIssuesTable(this,5)">Estimate</th>
+      <th onclick="sortIssuesTable(this,6)">Logged</th>
+      <th onclick="sortIssuesTable(this,7)">Priority</th>
     </tr></thead>
     <tbody>${rows}</tbody></table>`
-    :`<div class="empty">No ${discLabel} issues found for this epic.</div>`}
-  </div>
-  <script>function srt(th,c){
-    const tb=document.querySelector('tbody');if(!tb)return;
-    const asc=th.dataset.a!=='1';
-    document.querySelectorAll('th').forEach(t=>{t.classList.remove('s');delete t.dataset.a;});
-    th.classList.add('s');th.dataset.a=asc?'1':'0';
-    Array.from(tb.rows).sort((a,b)=>{
-      const av=a.cells[c]?.textContent?.trim()||'';
-      const bv=b.cells[c]?.textContent?.trim()||'';
-      return asc?av.localeCompare(bv,undefined,{numeric:true}):bv.localeCompare(av,undefined,{numeric:true});
-    }).forEach(r=>tb.appendChild(r));
-  }<\/script></body></html>`;
+    :`<div class="im-empty">No ${discLabel} issues found for this epic.</div>`}
+  </div>`;
 }
 
 function goBack(){showHome(curItem?curItem.section:activeSection);}
