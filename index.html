@@ -608,6 +608,92 @@ body.q4-theme{--bg:#0A0C13;--surface:rgba(255,255,255,.035);--surface-2:rgba(255
 .q4-theme .panel-title::before{content:'';width:3px;height:15px;border-radius:2px;background:var(--accent);flex:none}
 .q4-theme .gantt-top h3{display:flex;align-items:center;gap:10px;font-size:14px}
 .q4-theme .gantt-top h3::before{content:'';width:3px;height:15px;border-radius:2px;background:var(--accent)}
+/* progress bars */
+.q4-theme .progress-bar,.q4-theme .comp-bar,.q4-theme .ph-pct-bar{background:rgba(255,255,255,.08);border-radius:999px;height:6px}
+.q4-theme .progress-fill,.q4-theme .comp-fill,.q4-theme .ph-pct-fill{border-radius:999px;background-image:none}
+/* item tabs */
+.q4-theme .tab-bar{display:flex;width:fit-content;max-width:100%;background:var(--surface);border:1px solid var(--stroke);border-radius:14px;box-shadow:none;padding:5px;gap:2px;margin-bottom:28px}
+.q4-theme .tab{border-radius:10px;padding:9px 14px;color:var(--muted);font-weight:500;font-size:12.5px;transition:background .15s,color .15s}
+.q4-theme .tab:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.q4-theme .tab.active{background:rgba(255,255,255,.1);color:#fff;box-shadow:inset 0 0 0 1px var(--stroke-2)}
+/* surfaces */
+.q4-theme .panel,.q4-theme .completion-bar-wrap,.q4-theme .gantt-wrap,.q4-theme .risk-table,.q4-theme .placeholder-panel,.q4-theme .phases-legend{background:var(--surface);border:1px solid var(--stroke);border-radius:16px;box-shadow:none}
+.q4-theme .placeholder-panel{border-style:dashed}
+.q4-theme .ic-label,.q4-theme .field-label,.q4-theme .ph-date-field label,.q4-theme .ph-comments label,.q4-theme .ph-subtasks-header label,.q4-theme .action-form-field label,.q4-theme .modal-field label{font-size:12px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted)}
+.q4-theme .ic-val,.q4-theme .ic-edit,.q4-theme .comp-label,.q4-theme .rc-name,.q4-theme .lbl-name,.q4-theme .subtask-input,.q4-theme .action-td-input,.q4-theme .ph-title-input,.q4-theme .modal h2{color:var(--text)}
+.q4-theme .epic-link{color:var(--accent-text)}
+/* inputs */
+.q4-theme .desc-box,.q4-theme .kickoff-input,.q4-theme .team-add-form input,.q4-theme .risk-add-row input,.q4-theme .risk-add-row select,.q4-theme .action-form-field input,.q4-theme .action-form-field select,.q4-theme .action-form-field textarea,.q4-theme .modal-field input,.q4-theme .modal-field select,.q4-theme .modal-field textarea,.q4-theme .ph-comments textarea,.q4-theme .ph-date-field input[type=date],.q4-theme .icon-search-in{background:rgba(255,255,255,.045);border:1px solid var(--stroke);border-radius:10px;color:var(--text);transition:border-color .15s,box-shadow .15s}
+.q4-theme .desc-box:focus,.q4-theme .kickoff-input:focus,.q4-theme .team-add-form input:focus,.q4-theme .ph-comments textarea:focus,.q4-theme .ph-date-field input[type=date]:focus,.q4-theme .modal-field input:focus,.q4-theme .modal-field select:focus,.q4-theme .action-form-field input:focus,.q4-theme .action-form-field select:focus,.q4-theme .action-form-field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,108,255,.22)}
+.q4-theme .ic-edit:focus,.q4-theme .ph-title-input:focus,.q4-theme .lbl-name:focus,.q4-theme .action-td-input:focus,.q4-theme .inline-input:focus{border-bottom-color:var(--accent)}
+.q4-theme select{-webkit-appearance:none;appearance:none;padding-right:32px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239DA3B8' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.q4-theme select option{background:#161926;color:var(--text)}
+/* team */
+.q4-theme .rc-role{color:var(--accent-text);letter-spacing:.06em}
+.q4-theme .rc-pos{color:var(--muted)}
+.q4-theme .del-btn,.q4-theme .phase-del-btn,.q4-theme .subtask-del,.q4-theme .risk-del{color:var(--muted-2)}
+/* gantt */
+.q4-theme .gantt-wrap{overflow:hidden}
+.q4-theme .gantt-top,.q4-theme .gantt-controls,.q4-theme .add-row-btn{background:rgba(255,255,255,.025);border-color:var(--stroke)}
+.q4-theme .add-row-btn{color:var(--accent-text);border-top:1px solid var(--stroke)}
+.q4-theme .add-row-btn:hover{background:var(--surface-2)}
+.q4-theme .gantt-window-label{background:var(--surface-2);color:var(--text);border-radius:999px;font-weight:600}
+.q4-theme .gantt-table th{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);color:var(--muted-2)}
+.q4-theme .gantt-table th.th-sprint{background:rgba(124,108,255,.12);color:var(--accent-text);border-bottom:2px solid rgba(124,108,255,.5)}
+.q4-theme .gantt-table th.th-today{background:rgba(245,181,68,.14);color:var(--gold);border-left:2px solid var(--gold)!important;border-right:2px solid var(--gold)!important}
+.q4-theme .gantt-table th.th-label{background:#10131C;border-right:1px solid var(--stroke)}
+.q4-theme .gantt-table td{border:1px solid rgba(255,255,255,.05)}
+.q4-theme .gantt-table td.td-label{background:#0E111A;border-right:1px solid var(--stroke)}
+.q4-theme .lbl-sub{color:var(--muted)}
+.q4-theme .cell-empty{background:transparent}
+.q4-theme .cell-active{background:var(--teal)}.q4-theme .cell-past{background:rgba(45,212,168,.4)}
+.q4-theme .cell-done{background:var(--gold)}.q4-theme .cell-delay{background:rgba(245,181,68,.5)}
+.q4-theme .cell-overrun{background:var(--coral)}.q4-theme .cell-blocked{background:rgba(255,107,107,.5)}
+.q4-theme .la-btn:hover{background:rgba(255,107,107,.14)}
+.q4-theme .phases-legend{padding:11px 16px;border-radius:12px}
+.q4-theme .ph-leg{color:var(--muted);font-size:12px}
+/* overview grid layout */
+.q4-theme #tc-overview:not([style*="none"]){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.q4-theme #tc-overview>*{margin:0!important;min-width:0}
+.q4-theme #tc-overview>#overviewGrid,.q4-theme #tc-overview>.panel:not(#projectHealthPanel){grid-column:1/-1}
+@media(max-width:1000px){.q4-theme #tc-overview:not([style*="none"]){grid-template-columns:1fr}}
+/* ── CATCH-ALL: override hardcoded inline colours inside .main ──────── */
+/* These selectors target elements that use inline style="background:#fff" etc. */
+/* and remap them to dark theme variables, enabling full dark coverage     */
+/* without rewriting every rendering function.                             */
+.q4-theme .main :not(.report-editor *)[style*="background:#fff"],
+.q4-theme .main :not(.report-editor *)[style*="background:#f8f9ff"],
+.q4-theme .main :not(.report-editor *)[style*="background:#fafbff"],
+.q4-theme .main :not(.report-editor *)[style*="background:#f5f3ff"]{background:var(--surface)!important}
+.q4-theme .main :not(.report-editor *)[style*="background:#f0f2ff"],
+.q4-theme .main :not(.report-editor *)[style*="background:#e0e4ef"]{background:rgba(255,255,255,.08)!important}
+.q4-theme .main :not(.report-editor *)[style*="linear-gradient(135deg,#f8f9ff"]{background:var(--surface)!important}
+.q4-theme .main :not(.report-editor *)[style*="linear-gradient(90deg,#7b68ee"]{background:var(--accent)!important}
+.q4-theme .main :not(.report-editor *)[style*="linear-gradient(90deg,#27ae60"]{background:var(--teal)!important}
+.q4-theme .main :not(.report-editor *)[style*="linear-gradient(90deg,#f6a623"]{background:var(--gold)!important}
+.q4-theme .main :not(.report-editor *)[style*="box-shadow:0 2px 6px rgba(123,104,238"]{box-shadow:none!important}
+.q4-theme .main :not(.report-editor *)[style*="color:#1a1a2e"]{color:var(--text)!important}
+.q4-theme .main :not(.report-editor *)[style*="color:#4a4f6a"],
+.q4-theme .main :not(.report-editor *)[style*="color:#7a80a0"],
+.q4-theme .main :not(.report-editor *)[style*="color:#888"],
+.q4-theme .main :not(.report-editor *)[style*="color:#555"]{color:var(--muted)!important}
+.q4-theme .main :not(.report-editor *)[style*="color:#aab0c6"],
+.q4-theme .main :not(.report-editor *)[style*="color:#ccc"]{color:var(--muted-2)!important}
+.q4-theme .main :not(.report-editor *)[style*="color:#7b68ee"],
+.q4-theme .main :not(.report-editor *)[style*="color:#a78bfa"]{color:var(--accent-text)!important}
+.q4-theme .main :not(.report-editor *)[style*="color:#27ae60"],
+.q4-theme .main :not(.report-editor *)[style*="color:#16a085"]{color:var(--teal)!important}
+.q4-theme .main :not(.report-editor *)[style*="color:#e74c3c"],
+.q4-theme .main :not(.report-editor *)[style*="color:#c0392b"]{color:var(--coral)!important}
+.q4-theme .main :not(.report-editor *)[style*="color:#f6a623"],
+.q4-theme .main :not(.report-editor *)[style*="color:#d48806"]{color:var(--gold)!important}
+.q4-theme .main :not(.report-editor *)[style*="border:1px solid #e0e4ef"],
+.q4-theme .main :not(.report-editor *)[style*="border:1px solid #e8eaf0"]{border-color:var(--stroke)!important}
+.q4-theme .main :not(.report-editor *)[style*="background:#f0fff4"]{background:rgba(45,212,168,.12)!important}
+.q4-theme .main :not(.report-editor *)[style*="background:#fff0f0"],
+.q4-theme .main :not(.report-editor *)[style*="background:#fff0f6"]{background:rgba(255,107,107,.12)!important}
+.q4-theme svg circle[stroke="#f0f2ff"]{stroke:rgba(255,255,255,.1)}
+.q4-theme svg circle[stroke="#7b68ee"]{stroke:var(--accent)}
 </style>
 </head>
 <body>
@@ -1394,9 +1480,10 @@ function renderItemHeader(){
   const _bcLabel=(roadmapMeta[curItem.section||'roadmap']||roadmapMeta.roadmap).navName;
   document.getElementById('itemBC').innerHTML=`<span class="bc-link" onclick="showHome('${curItem.section||'roadmap'}')">${_bcLabel}</span><span class="bc-sep">›</span><span style="color:#1a1a2e;font-weight:600">${curItem.name}</span>`;
   const _isEd2=_currentRole==='editor';
+  const _iconHtml=curItem.section==='q4'?gameIcon(curItem,44):curItem.icon;
   document.getElementById('itemTitle').innerHTML=_isEd2
-    ?`${curItem.icon} <span contenteditable="true" spellcheck="false" style="outline:none;border-bottom:2px solid transparent;transition:border-color .2s" onfocus="this.style.borderBottomColor='#a78bfa'" onblur="this.style.borderBottomColor='transparent';curItem.name=this.textContent.trim();refreshHome();schedSave()">${curItem.name}</span>`
-    :`${curItem.icon} <span>${curItem.name}</span>`;
+    ?`${_iconHtml} <span contenteditable="true" spellcheck="false" style="outline:none;border-bottom:2px solid transparent;transition:border-color .2s" onfocus="this.style.borderBottomColor='#a78bfa'" onblur="this.style.borderBottomColor='transparent';curItem.name=this.textContent.trim();refreshHome();schedSave()">${curItem.name}</span>`
+    :`${_iconHtml} <span>${curItem.name}</span>`;
   document.getElementById('itemMeta').innerHTML=`${curItem.type} · ${curItem.status} · Size ${curItem.size}${curItem.epicId?` · <a href="${curItem.epicUrl}" target="_blank" class="epic-link">🔗 ${curItem.epicId}</a>`:''}`;
   document.getElementById('releaseToggle').innerHTML=curItem.released
     ?`<span class="released-badge"${_isEd2?' onclick="toggleReleased()"':''}>✓ RELEASED${curItem.releaseDate?' · '+fmtDate(curItem.releaseDate):''}</span>`
@@ -1430,7 +1517,7 @@ function buildOverview(){
   const startEntries=curItem.phases.filter(p=>p.startVal).map(p=>({v:p.startVal,d:parseDate(p.startVal)}));
   const endEntries=curItem.phases.filter(p=>p.endVal).map(p=>({v:p.endVal,d:parseDate(p.endVal)}));
   const fs=startEntries.length?startEntries.reduce((a,b)=>b.d<a.d?b:a).v:'';
-  const ls=endEntries.length?endEntries.reduce((a,b)=>b.d>a.d?b:a).v:'';
+  const ls=curItem.section==='q4'?((lastPhaseEnd(curItem)||{}).date||''):(endEntries.length?endEntries.reduce((a,b)=>b.d>a.d?b:a).v:'');
   const pct=overallPct(curItem);
   // Duration: exact weeks between Project Start and Project End (same fs/ls used by the two adjacent cards)
   const durLabel=(()=>{
