@@ -415,7 +415,7 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
 .im-sv{font-size:18px;font-weight:800;color:#1a1a2e}.im-sv.over{color:#e74c3c}
 .im-table{overflow-x:hidden}
 .im-table table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
-.im-table col.c-key{width:90px}.im-table col.c-type{width:76px}.im-table col.c-sum{width:auto}
+.im-table col.c-key{width:140px}.im-table col.c-type{width:90px}.im-table col.c-sum{width:auto}
 .im-table col.c-status{width:120px}.im-table col.c-asgn{width:120px}
 .im-table col.c-est{width:76px}.im-table col.c-log{width:90px}.im-table col.c-pri{width:76px}
 .im-table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#aab0c6;background:#fafbff;border-bottom:1px solid #f0f2ff;cursor:pointer;user-select:none;white-space:nowrap;overflow:hidden}
@@ -2670,6 +2670,28 @@ async function syncAllJira(btnEl){
   }
 }
 
+// ── Issue type icons (Jira-style) ────────────────────────────────────────────
+function issueTypeIcon(type){
+  // Colors match Jira's palette exactly
+  const cfg={
+    'Story'   :{bg:'#22a06b', d:'M3 1h10a1 1 0 011 1v11.5l-5.5-2.5L3 13.5V2a1 1 0 010-1z'},
+    'Bug'     :{bg:'#ef5c48', d:'M8 3a5 5 0 100 10A5 5 0 008 3zm-2 3.5h4m-4 2h4'},
+    'Task'    :{bg:'#4bade8', d:'M3 8.5l3.5 3.5 6.5-7'},
+    'Sub-task':{bg:'#4bade8', d:'M4 8.5l2.5 2.5 5-5.5'},
+    'Subtask' :{bg:'#4bade8', d:'M4 8.5l2.5 2.5 5-5.5'},
+    'Epic'    :{bg:'#904ee2', d:'M9.5 1.5L5.5 8h3.5l-4 6.5L14 7H10l2-5.5z'},
+    'Test'    :{bg:'#1ba1a5', d:'M5.5 2h5v7l2.5 5h-10L5.5 9V2z M4.5 4.5h7'},
+    'Spike'   :{bg:'#7b68ee', d:'M8 2l1.5 4.5H14L10 9l1.5 5L8 11.5 4.5 14 6 9 2 6.5h4.5z'},
+    'AQA'     :{bg:'#14b8a6', d:'M8 2l1.5 4.5H14L10 9l1.5 5L8 11.5 4.5 14 6 9 2 6.5h4.5z'},
+  };
+  const c=cfg[type];
+  if(!c){
+    // Unknown type: colored square with first letter
+    return `<span style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:2px;background:#aab0c6;color:#fff;font-size:8px;font-weight:800;vertical-align:middle;flex-shrink:0">${(type||'?')[0]}</span>`;
+  }
+  return `<svg viewBox="0 0 16 16" width="14" height="14" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;background:${c.bg};flex-shrink:0" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="${c.d}"/></svg>`;
+}
+
 // ── Discipline Issues Viewer (modal) ─────────────────────────────────────────
 async function openDisciplineIssues(epicId,disc,discLabel,projectName,jiraBase){
   if(!_sb){alert('Not connected to Supabase.');return;}
@@ -2706,13 +2728,19 @@ function buildIssuesModalContent(d,discLabel,projectName,epicId,color,jiraBase){
   const fmtH=s=>s>0?(s/3600<10?(s/3600).toFixed(1):Math.round(s/3600))+'h':'—';
   const isOver=(d.totalEst>0)&&(d.totalSpent>d.totalEst);
   const inProg=(d.issues||[]).filter(i=>i.statusCat==='indeterminate').length;
+  const TYPE_COLORS={'Story':'#22a06b','Bug':'#ef5c48','Task':'#4bade8','Sub-task':'#4bade8','Subtask':'#4bade8','Epic':'#904ee2','Test':'#1ba1a5','Spike':'#7b68ee','AQA':'#14b8a6'};
   const rows=(d.issues||[]).map(i=>{
     const over=i.estimate>0&&i.spent>i.estimate;
     const sc=i.statusCat==='done'?'done':i.statusCat==='indeterminate'?'inprog':'todo';
     const priCls=i.priority?'im-pri-'+(i.priority||'').toLowerCase().replace(' ',''):'';
+    const typeColor=TYPE_COLORS[i.type]||'#aab0c6';
     return`<tr>
-      <td><a href="${base}${i.key}" target="_blank" class="im-kl">${i.key}</a>${i.isSubIssue?'<span class="im-sub">sub</span>':''}</td>
-      <td class="im-muted">${i.type}</td>
+      <td style="overflow:hidden"><span style="display:flex;align-items:center;gap:5px">
+        ${issueTypeIcon(i.type)}
+        <a href="${base}${i.key}" target="_blank" class="im-kl" style="overflow:hidden;text-overflow:ellipsis">${i.key}</a>
+        ${i.isSubIssue?'<span class="im-sub">sub</span>':''}
+      </span></td>
+      <td style="color:${typeColor};font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis">${i.type}</td>
       <td title="${(i.summary||'').replace(/"/g,'&quot;')}">${i.summary||''}</td>
       <td><span class="jira-status-pill ${jiraStatusClass(i.statusCat)}">${i.status}</span></td>
       <td class="im-muted">${i.assignee||'—'}</td>
@@ -2741,7 +2769,7 @@ function buildIssuesModalContent(d,discLabel,projectName,epicId,color,jiraBase){
       <col class="c-status"><col class="c-asgn"><col class="c-est"><col class="c-log"><col class="c-pri">
     </colgroup>
     <thead><tr>
-      <th onclick="sortIssuesTable(this,0)">Key</th>
+      <th onclick="sortIssuesTable(this,0)">Issue</th>
       <th onclick="sortIssuesTable(this,1)">Type</th>
       <th onclick="sortIssuesTable(this,2)">Summary</th>
       <th onclick="sortIssuesTable(this,3)">Status</th>
