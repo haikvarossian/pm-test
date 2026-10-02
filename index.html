@@ -2749,7 +2749,7 @@ function buildIssuesHTML(d,discLabel,projectName,epicId,color,jiraBase){
       const bv=b.cells[c]?.textContent?.trim()||'';
       return asc?av.localeCompare(bv,undefined,{numeric:true}):bv.localeCompare(av,undefined,{numeric:true});
     }).forEach(r=>tb.appendChild(r));
-  }</script></body></html>`;
+  }<\/script></body></html>`;
 }
 
 function goBack(){showHome(curItem?curItem.section:activeSection);}
