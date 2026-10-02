@@ -2526,16 +2526,18 @@ async function renderJiraHomeSection(){
   const DISC_COLORS={FE:'#7b68ee',BE:'#27ae60',UI:'#0077b6',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
   const DISC_LABELS={FE:'FE',BE:'BE',UI:'UI',QA:'QA / Test',AQA:'AQA',Other:'Other'};
 
-  function discSubRow(epicId,db){
+  function discSubRow(epicId,db,projectName,jiraBase){
     if(!db)return'';
     const discs=['FE','BE','UI','QA','AQA','Other'];
     const cells=discs.map(disc=>{
       const d=db[disc]||{issues:0,done:0,estimate:0,spent:0};
-      if(!d.issues&&!d.estimate)return`<div class="jira-disc-cell"><div class="jira-disc-label" style="color:${DISC_COLORS[disc]}">${DISC_LABELS[disc]}</div><div class="jira-disc-count" style="color:#ddd">—</div></div>`;
+      const hasData=d.issues>0||d.estimate>0;
+      const clickAttr=hasData?`onclick="openDisciplineIssues('${epicId}','${disc}','${DISC_LABELS[disc]}','${(projectName||'').replace(/'/g,"\\'")}','${jiraBase||''}')" style="color:${DISC_COLORS[disc]};cursor:pointer" title="View ${DISC_LABELS[disc]} issues in new tab"`:`style="color:${DISC_COLORS[disc]}"`;
+      if(!d.issues&&!d.estimate)return`<div class="jira-disc-cell"><div class="jira-disc-label" ${clickAttr}>${DISC_LABELS[disc]}</div><div class="jira-disc-count" style="color:#ddd">—</div></div>`;
       const pct=d.estimate>0?Math.min(Math.round((d.spent/d.estimate)*100),100):0;
       const isOver=d.estimate>0&&d.spent>d.estimate;
       return`<div class="jira-disc-cell${isOver?' over-disc':''}">
-        <div class="jira-disc-label" style="color:${DISC_COLORS[disc]}">${DISC_LABELS[disc]}</div>
+        <div class="jira-disc-label" ${clickAttr}>${DISC_LABELS[disc]}${hasData?' ↗':''}</div>
         <div class="jira-disc-time">${fmtHours(d.estimate)} <span>est</span> · ${isOver?`<span class="over-badge" style="font-size:10px;padding:1px 6px">⚠ ${fmtHours(d.spent)}</span> <span>logged</span>`:`<span>${fmtHours(d.spent)}</span> <span>logged</span>`}</div>
         <div class="jira-disc-count">${d.done}/${d.issues} done</div>
         <div class="jira-disc-bar"><div style="width:${pct}%;background:${DISC_COLORS[disc]}"></div></div>
@@ -2590,7 +2592,8 @@ async function renderJiraHomeSection(){
 
   const rows=sectionItems.map(item=>{
     const d=byKey[item.epicId];
-    return mainRow(item,d)+(d?discSubRow(item.epicId,d.discipline_breakdown):'');
+    const jiraBase=(item.epicUrl||'').replace(/\/[^/]+$/,'/');
+    return mainRow(item,d)+(d?discSubRow(item.epicId,d.discipline_breakdown,item.name,jiraBase):'');
   }).join('');
 
   el.innerHTML=`<div class="jira-home-wrap">
@@ -2635,6 +2638,118 @@ async function syncAllJira(btnEl){
   }finally{
     if(btnEl){btnEl.disabled=false;btnEl.textContent='↻ Sync all';}
   }
+}
+
+// ── Discipline Issues Viewer (opens in a new browser tab) ────────────────────
+async function openDisciplineIssues(epicId,disc,discLabel,projectName,jiraBase){
+  if(!_sb){alert('Not connected to Supabase.');return;}
+  const color={FE:'#7b68ee',BE:'#27ae60',UI:'#0077b6',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'}[disc]||'#7b68ee';
+  // Open synchronously so popup blockers don't interfere
+  const tab=window.open('about:blank','_blank');
+  if(!tab){alert('Please allow pop-ups for this page to view issues in a new tab.');return;}
+  tab.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Loading…</title>
+    <style>body{font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f8f9ff;color:#7a80a0}
+    .spin{width:40px;height:40px;border:3px solid #f0f2ff;border-top-color:${color};border-radius:50%;animation:s .7s linear infinite;margin:0 auto 16px}
+    @keyframes s{to{transform:rotate(360deg)}}</style></head>
+    <body><div style="text-align:center"><div class="spin"></div>
+    <p>Loading <strong>${discLabel}</strong> issues for <strong>${projectName}</strong>…</p></div></body></html>`);
+  try{
+    const{data,error}=await _sb.functions.invoke('sync-jira',{body:{action:'query',epicKey:epicId,discipline:disc}});
+    if(error)throw new Error(error.message);
+    tab.document.open();
+    tab.document.write(buildIssuesHTML(data,discLabel,projectName,epicId,color,jiraBase));
+    tab.document.close();
+  }catch(e){
+    tab.document.open();
+    tab.document.write(`<!DOCTYPE html><html><body style="font-family:sans-serif;padding:40px;color:#e74c3c"><h2>Error</h2><p>${e.message}</p></body></html>`);
+    tab.document.close();
+  }
+}
+
+function buildIssuesHTML(d,discLabel,projectName,epicId,color,jiraBase){
+  const base=jiraBase||'https://dg-group.atlassian.net/browse/';
+  const fmtH=s=>s>0?(s/3600<10?(s/3600).toFixed(1):Math.round(s/3600))+'h':'—';
+  const isOver=(d.totalEst>0)&&(d.totalSpent>d.totalEst);
+  const inProg=(d.issues||[]).filter(i=>i.statusCat==='indeterminate').length;
+  const rows=(d.issues||[]).map(i=>{
+    const over=i.estimate>0&&i.spent>i.estimate;
+    const sc=i.statusCat==='done'?'done':i.statusCat==='indeterminate'?'inprog':'todo';
+    return`<tr>
+      <td><a href="${base}${i.key}" target="_blank" class="kl">${i.key}</a>${i.isSubIssue?'<span class="sub">sub</span>':''}</td>
+      <td class="muted">${i.type}</td>
+      <td class="sum" title="${(i.summary||'').replace(/"/g,'&quot;')}">${i.summary||''}</td>
+      <td><span class="pill ${sc}">${i.status}</span></td>
+      <td class="muted">${i.assignee||'—'}</td>
+      <td>${fmtH(i.estimate)}</td>
+      <td>${over?`<span class="ob">⚠ ${fmtH(i.spent)}</span>`:fmtH(i.spent)}</td>
+      <td class="pri ${(i.priority||'').toLowerCase()}">${i.priority||'—'}</td>
+    </tr>`;
+  }).join('');
+  return`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>${discLabel} Issues — ${projectName}</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Segoe UI',sans-serif;background:#f8f9ff;color:#1a1a2e}
+    .hdr{background:linear-gradient(135deg,#1a1a2e,#2d2b6b);color:#fff;padding:20px 32px;display:flex;align-items:center;gap:14px}
+    .dot{width:12px;height:12px;border-radius:3px;background:${color};flex-shrink:0}
+    .hdr h1{font-size:18px;font-weight:800}
+    .meta{font-size:12px;color:#ffffffaa;margin-top:3px}
+    .meta a{color:#a78bfa;text-decoration:none}.meta a:hover{text-decoration:underline}
+    .stats{display:flex;background:#fff;border-bottom:1px solid #e0e4ef}
+    .stat{flex:1;padding:16px 24px;border-right:1px solid #f0f2ff}
+    .stat:last-child{border-right:none}
+    .sl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#aab0c6;margin-bottom:4px}
+    .sv{font-size:22px;font-weight:800}.sv.over{color:#e74c3c}
+    .wrap{margin:24px 32px;background:#fff;border-radius:16px;border:1px solid #e0e4ef;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#aab0c6;background:#fafbff;border-bottom:1px solid #f0f2ff;cursor:pointer;user-select:none;white-space:nowrap}
+    th:hover,th.s{color:#7b68ee}
+    td{padding:10px 14px;border-bottom:1px solid #f5f6ff;vertical-align:middle}
+    tr:last-child td{border-bottom:none}tr:hover td{background:#fafbff}
+    .kl{color:#7b68ee;font-weight:700;text-decoration:none;font-size:11px}
+    .kl:hover{text-decoration:underline}
+    .sub{font-size:9px;background:#f0f2ff;color:#7b68ee;padding:1px 5px;border-radius:4px;margin-left:4px;vertical-align:middle}
+    .muted{color:#7a80a0;font-size:11px}
+    .sum{max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pill{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}
+    .done{background:#f0fff4;color:#27ae60}.inprog{background:#fff7e6;color:#f6a623}.todo{background:#f0f2ff;color:#7b68ee}
+    .ob{background:#fff0f0;border:1px solid #fca5a5;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;color:#e74c3c;white-space:nowrap}
+    .pri{font-size:11px;font-weight:600}
+    .pri.highest,.pri.critical{color:#e74c3c}.pri.high{color:#f6a623}.pri.medium{color:#7b68ee}.pri.low,.pri.lowest{color:#aab0c6}
+    .empty{text-align:center;padding:60px;color:#aab0c6;font-size:13px}
+  </style></head><body>
+  <div class="hdr"><div class="dot"></div><div>
+    <h1>${discLabel} Issues</h1>
+    <div class="meta">${projectName} · Epic <a href="${base}${epicId}" target="_blank">${epicId}</a> · ${d.total||0} issues</div>
+  </div></div>
+  <div class="stats">
+    <div class="stat"><div class="sl">Total</div><div class="sv">${d.total||0}</div></div>
+    <div class="stat"><div class="sl">Done</div><div class="sv">${d.done||0}</div></div>
+    <div class="stat"><div class="sl">In Progress</div><div class="sv">${inProg}</div></div>
+    <div class="stat"><div class="sl">Estimate</div><div class="sv">${fmtH(d.totalEst||0)}</div></div>
+    <div class="stat"><div class="sl">Logged</div><div class="sv${isOver?' over':''}">${fmtH(d.totalSpent||0)}</div></div>
+  </div>
+  <div class="wrap">${d.total?`<table>
+    <thead><tr>
+      <th onclick="srt(this,0)">Key</th><th onclick="srt(this,1)">Type</th>
+      <th onclick="srt(this,2)">Summary</th><th onclick="srt(this,3)">Status</th>
+      <th onclick="srt(this,4)">Assignee</th><th onclick="srt(this,5)">Estimate</th>
+      <th onclick="srt(this,6)">Logged</th><th onclick="srt(this,7)">Priority</th>
+    </tr></thead>
+    <tbody>${rows}</tbody></table>`
+    :`<div class="empty">No ${discLabel} issues found for this epic.</div>`}
+  </div>
+  <script>function srt(th,c){
+    const tb=document.querySelector('tbody');if(!tb)return;
+    const asc=th.dataset.a!=='1';
+    document.querySelectorAll('th').forEach(t=>{t.classList.remove('s');delete t.dataset.a;});
+    th.classList.add('s');th.dataset.a=asc?'1':'0';
+    Array.from(tb.rows).sort((a,b)=>{
+      const av=a.cells[c]?.textContent?.trim()||'';
+      const bv=b.cells[c]?.textContent?.trim()||'';
+      return asc?av.localeCompare(bv,undefined,{numeric:true}):bv.localeCompare(av,undefined,{numeric:true});
+    }).forEach(r=>tb.appendChild(r));
+  }</script></body></html>`;
 }
 
 function goBack(){showHome(curItem?curItem.section:activeSection);}
