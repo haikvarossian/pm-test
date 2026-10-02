@@ -460,6 +460,154 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
 ::-webkit-scrollbar-corner{background:transparent}
 /* Firefox */
 *{scrollbar-width:thin;scrollbar-color:#c4b5fd transparent}
+
+/* ── Phase category subtabs ─────────────────────────────────────────── */
+.phase-subtabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.phase-subtab{padding:9px 18px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;background:#fff;border:1px solid var(--border);transition:all .18s var(--ease)}
+.phase-subtab:hover{color:#16a085;border-color:#16a08555}
+.phase-subtab.active{color:#fff;background:#16a085;border-color:transparent}
+/* ── Game icon badge ─────────────────────────────────────────────────── */
+.gico{display:inline-flex;align-items:center;justify-content:center;flex:none;vertical-align:middle}
+.nav-item.modern .dot{display:none}
+/* ═══ Q4 Product Roadmap — dark theme, scoped to body.q4-theme ═══════ */
+body.q4-theme{--bg:#0A0C13;--surface:rgba(255,255,255,.035);--surface-2:rgba(255,255,255,.065);--stroke:rgba(255,255,255,.08);--stroke-2:rgba(255,255,255,.16);
+  --text:#F4F5F9;--muted:#9DA3B8;--muted-2:#6C7289;--accent:#7C6CFF;--accent-text:#B0A6FF;--teal:#2DD4A8;--gold:#F5B544;--coral:#FF6B6B;--slate:#7A8196;
+  --card:var(--surface);--border:var(--stroke);--light:var(--surface-2);--purple:var(--accent-text);--green:var(--teal);--red:var(--coral);--orange:var(--gold);--blue:var(--accent-text);
+  background-color:var(--bg);background-image:radial-gradient(900px 520px at 8% -8%,rgba(124,108,255,.16),transparent 60%),radial-gradient(760px 480px at 100% 0,rgba(45,212,168,.08),transparent 60%);background-attachment:fixed;
+  color:var(--text);font-family:'Geist','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;color-scheme:dark;letter-spacing:-.003em}
+.q4-theme ::selection{background:rgba(124,108,255,.45)}
+.q4-theme ::-webkit-scrollbar{width:10px;height:10px}
+.q4-theme ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+.q4-theme ::-webkit-scrollbar-track{background:transparent}
+.q4-theme input,.q4-theme select,.q4-theme textarea,.q4-theme button{font-family:inherit}
+.q4-theme .topbar{background:rgba(10,12,19,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:none;border-bottom:1px solid var(--stroke)}
+.q4-theme .logo{font-size:13px;font-weight:600;letter-spacing:.1em;color:var(--text)}
+.q4-theme .logo::first-letter{color:var(--accent-text)}
+.q4-theme .divider{background:var(--stroke)}
+.q4-theme .top-title{color:var(--muted);font-size:13px;font-weight:500}
+.q4-theme .back-btn,.q4-theme .undo-btn,.q4-theme .login-topbar-btn,.q4-theme .signout-btn{background:var(--surface);border:1px solid var(--stroke);color:var(--text);border-radius:10px;padding:6px 14px;font-weight:500;box-shadow:none;transition:all .15s}
+.q4-theme .back-btn:hover,.q4-theme .undo-btn:hover,.q4-theme .login-topbar-btn:hover,.q4-theme .signout-btn:hover{background:var(--surface-2);border-color:var(--stroke-2)}
+.q4-theme .publish-btn{background:var(--accent);color:#fff;border-radius:10px;box-shadow:none;font-weight:600}
+.q4-theme .sidebar{background:rgba(255,255,255,.018);border-right:1px solid var(--stroke);padding:18px 12px;width:256px}
+.q4-theme .sidebar-section,.q4-theme .sidebar-section.modern{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);padding:16px 12px 8px;border-top:none;margin-top:0}
+.q4-theme .nav-parent,.q4-theme .nav-parent.modern{margin:0 0 2px;border-radius:10px;padding:9px 12px;gap:10px;color:var(--muted);font-weight:500;font-size:13px;border-left:none;transition:background .15s,color .15s}
+.q4-theme .nav-parent:hover,.q4-theme .nav-parent.modern:hover{background:var(--surface);color:var(--text);border-left:none}
+.q4-theme .nav-parent.active,.q4-theme .nav-parent.modern.active{background:var(--surface-2);color:var(--text);border-left:none}
+.q4-theme .nav-parent .chevron,.q4-theme .nav-parent.modern .chevron{color:var(--muted-2)}
+.q4-theme .nav-parent.open{box-shadow:inset 0 0 0 1px var(--stroke)}
+.q4-theme .nav-parent.open:not(.active){background:var(--surface)}
+.q4-theme .nav-children,.q4-theme .nav-children.modern{margin:2px 0 6px 18px;padding:0 0 0 8px;border-left:1px solid var(--stroke)}
+.q4-theme .nav-item,.q4-theme .nav-item.modern{margin:1px 0;border-radius:8px;padding:7px 10px;color:var(--muted-2);border-left:none;font-size:12.5px;transition:background .15s,color .15s}
+.q4-theme .nav-item:hover,.q4-theme .nav-item.modern:hover{background:var(--surface);color:var(--text);border-left:none}
+.q4-theme .nav-item.active,.q4-theme .nav-item.modern.active{background:var(--surface-2);color:var(--text);font-weight:500;border-left:none}
+.q4-theme .nav-add,.q4-theme .nav-add.modern{margin:2px 0 0;border-radius:8px;padding:7px 10px;color:var(--accent-text);opacity:.9}
+.q4-theme .nav-add.modern:hover,.q4-theme .nav-add:hover{background:var(--surface)}
+.q4-theme .main{max-width:1340px;margin:0 auto;padding:36px 44px 90px;background:transparent}
+.q4-theme .page-header h1{font-size:34px;font-weight:650;line-height:1.12;letter-spacing:-.03em;color:var(--text);margin-bottom:8px}
+.q4-theme .page-header p{color:var(--muted);font-size:14.5px}
+.q4-theme .breadcrumb,.q4-theme .breadcrumb *{color:var(--muted)!important;font-weight:500;font-size:12.5px}
+.q4-theme .breadcrumb .bc-link:hover{color:var(--text)!important}
+.q4-theme #page-home .page-header{margin-bottom:30px}
+.q4-theme #page-home .breadcrumb{display:none}
+.q4-theme #page-home .page-header-text::before{content:"Q4 · Product Roadmap";display:inline-block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:16px;padding:5px 13px 5px 28px;border:1px solid var(--stroke);border-radius:999px;background:radial-gradient(circle,var(--teal) 3.5px,transparent 4px) no-repeat 12px 50%/8px 8px,var(--surface)}
+.q4-theme .add-btn,.q4-theme .btn-save,.q4-theme .btn-submit,.q4-theme .add-subtask-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;box-shadow:none;font-weight:600;transition:background .15s}
+.q4-theme .add-btn:hover,.q4-theme .btn-save:hover,.q4-theme .btn-submit:hover,.q4-theme .add-subtask-btn:hover{background:#8B7DFF;box-shadow:none;transform:none}
+.q4-theme .add-subtask-btn{border-radius:999px}
+.q4-theme .btn-cancel,.q4-theme .btn-cancel-sm,.q4-theme .scroll-btn{background:var(--surface);border:1px solid var(--stroke);color:var(--text);border-radius:10px;font-weight:500}
+.q4-theme .btn-cancel:hover,.q4-theme .btn-cancel-sm:hover,.q4-theme .scroll-btn:hover{background:var(--surface-2);border-color:var(--stroke-2);color:var(--text)}
+.q4-theme .btn-delete{background:var(--coral);color:#fff;border-radius:10px;box-shadow:none}
+.q4-theme .release-btn{background:rgba(45,212,168,.1);color:var(--teal);border:1px solid rgba(45,212,168,.35);border-radius:999px}
+.q4-theme .released-badge,.q4-theme .card-released{background:rgba(45,212,168,.14);color:var(--teal);border-radius:999px;box-shadow:none;font-weight:600}
+.q4-theme .summary-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:38px}
+.q4-theme .stat{background:var(--surface);border:1px solid var(--stroke);border-radius:16px;padding:18px 20px;box-shadow:none!important;transition:border-color .15s,background .15s;display:flex;flex-direction:column}
+.q4-theme .stat:hover{border-color:var(--stroke-2);background:var(--surface-2)}
+.q4-theme .stat::before{display:none}
+.q4-theme .stat .s-val{order:1;font-size:32px;font-weight:600;letter-spacing:-.03em;line-height:1;margin-top:0;color:var(--text);font-variant-numeric:tabular-nums}
+.q4-theme .stat .s-lbl{order:2;font-size:13px;letter-spacing:0;text-transform:none;color:var(--muted);margin-top:10px;font-weight:500}
+.q4-theme .stat.c2 .s-val{color:var(--teal)}.q4-theme .stat.c3 .s-val{color:var(--gold)}.q4-theme .stat.c4 .s-val{color:var(--coral)}.q4-theme .stat.c5 .s-val{color:var(--accent-text)}
+.q4-theme .stat[style*="border-color:#a78bfa"]{border-color:var(--accent)!important;background:rgba(124,108,255,.1)!important;transform:none!important}
+.q4-theme .stat>div[style*="position:absolute"]{display:none}
+.q4-theme .section-title{display:flex;align-items:center;gap:14px;font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+.q4-theme .section-title::after{content:'';flex:1;height:1px;background:var(--stroke)}
+.q4-theme .cards-grid{gap:16px;background:none;border:none;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.q4-theme .card{background:var(--surface);border:1px solid var(--stroke);border-radius:18px;padding:22px 20px 18px;box-shadow:none;transition:background .2s,border-color .2s,transform .2s,box-shadow .2s}
+.q4-theme .card:hover{background:var(--surface-2);border-color:var(--stroke-2);transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.4)}
+.q4-theme .card-accent{left:20px;right:auto;width:34px;height:3px;border-radius:0 0 6px 6px}
+.q4-theme .card h3{font-size:16px;font-weight:600;letter-spacing:-.015em;color:var(--text)}
+.q4-theme .card p,.q4-theme .progress-label{color:var(--muted)}
+.q4-theme .badge{border-radius:999px;font-weight:600;font-size:11px;padding:3px 10px}
+.q4-theme .badge-committed{background:rgba(45,212,168,.13);color:var(--teal)}
+.q4-theme .badge-slot{background:rgba(124,108,255,.16);color:var(--accent-text)}
+.q4-theme .badge-fastgame{background:rgba(245,181,68,.14);color:var(--gold)}
+.q4-theme .badge-bo{background:rgba(122,129,150,.2);color:#B4BACB}
+.q4-theme .badge-promo{background:rgba(255,107,107,.14);color:var(--coral)}
+.q4-theme .info-card{background:var(--surface);border:1px solid var(--stroke);border-radius:14px;box-shadow:none}
+.q4-theme .info-card:hover{border-color:var(--stroke-2)}
+.q4-theme .info-grid{display:flex;flex-wrap:wrap;gap:12px}
+.q4-theme .info-grid>.info-card{flex:0 0 auto;width:auto;min-width:120px}
+.q4-theme .info-grid>div:not(.info-card){flex:0 0 100%}
+.q4-theme .info-card .ic-edit{width:auto;min-width:4ch;field-sizing:content}
+.q4-theme .ic-label{margin-bottom:8px}
+.q4-theme .role-card{background:var(--surface);border:1px solid var(--stroke);border-radius:14px;box-shadow:none}
+.q4-theme .role-card:hover{border-color:var(--stroke-2);box-shadow:none}
+.q4-theme .phase-card{background:var(--surface);border:1px solid var(--stroke);border-left:1px solid var(--stroke);border-radius:16px;box-shadow:inset 3px 0 0 var(--slate);margin-bottom:12px;transition:border-color .15s}
+.q4-theme .phase-card:hover{border-color:var(--stroke-2)}
+.q4-theme .phase-card.s-done{box-shadow:inset 3px 0 0 var(--teal)}.q4-theme .phase-card.s-inprogress{box-shadow:inset 3px 0 0 var(--gold)}
+.q4-theme .phase-card.s-blocked{box-shadow:inset 3px 0 0 var(--coral)}.q4-theme .phase-card.s-notstarted{box-shadow:inset 3px 0 0 var(--slate)}
+.q4-theme .phase-card-header{background:transparent;padding:16px 22px}
+.q4-theme .phase-card-header:hover{background:rgba(255,255,255,.025)}
+.q4-theme .phase-card-body{background:transparent;border-top:1px solid var(--stroke);padding:0 22px 22px}
+.q4-theme .ph-num{width:34px;height:34px;border-radius:10px;background:var(--surface-2);border:none;color:var(--muted);font-weight:600}
+.q4-theme .ph-num.done{background:rgba(45,212,168,.16);color:var(--teal)}
+.q4-theme .ph-num.inprogress{background:rgba(245,181,68,.16);color:var(--gold)}
+.q4-theme .ph-num.blocked{background:rgba(255,107,107,.16);color:var(--coral)}
+.q4-theme .ph-subtitle-input{color:var(--muted)}
+.q4-theme .phase-toggle-arrow{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--stroke);border-radius:8px;font-size:9px;color:var(--muted);transition:all .15s}
+.q4-theme .phase-card-header:hover .phase-toggle-arrow{border-color:var(--stroke-2);color:var(--text)}
+.q4-theme .status-select{border-radius:999px;border:1px solid transparent;padding:6px 30px 6px 12px;font-size:11.5px;font-weight:600;letter-spacing:.01em;transition:filter .15s}
+.q4-theme .status-select:hover{filter:brightness(1.15)}
+.q4-theme .ss-notstarted{background-color:rgba(122,129,150,.2);color:#B4BACB}
+.q4-theme .ss-inprogress{background-color:rgba(245,181,68,.15);color:var(--gold)}
+.q4-theme .ss-done{background-color:rgba(45,212,168,.15);color:var(--teal)}
+.q4-theme .ss-blocked{background-color:rgba(255,107,107,.15);color:var(--coral)}
+.q4-theme .subtask-row{border-bottom:1px solid var(--stroke)}
+.q4-theme .subtask-cb{accent-color:var(--accent)}
+.q4-theme .add-phase-card-btn,.q4-theme .add-action-row-btn{background:transparent;border:1px dashed var(--stroke-2);border-radius:14px;color:var(--muted);font-weight:500;transition:all .15s}
+.q4-theme .add-phase-card-btn:hover,.q4-theme .add-action-row-btn:hover{background:var(--surface);border-color:var(--accent);color:var(--text)}
+.q4-theme .ph-dates-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:16px 18px;margin:12px 0 0;border:1px solid var(--stroke);border-radius:12px;background:rgba(255,255,255,.02)}
+.q4-theme .ph-dates-row+.ph-dates-row{margin-top:10px}
+.q4-theme .ph-date-field input[type=date]{width:100%}
+.q4-theme .ph-comments{margin-top:18px}
+.q4-theme .ph-subtasks{margin-top:18px;padding-top:16px;border-top:1px solid var(--stroke)}
+.q4-theme .date-err-msg{color:var(--coral)}
+.q4-theme .ovw-date-chip{background:rgba(255,255,255,.05);border-radius:10px}
+.q4-theme .ovw-date-input{color:var(--text)}
+.q4-theme .action-phase-title{background:var(--surface-2);border:1px solid var(--stroke);border-radius:14px 14px 0 0;color:var(--text);font-weight:600}
+.q4-theme .action-items-table{background:var(--surface);border:1px solid var(--stroke);border-top:none;border-radius:0 0 14px 14px}
+.q4-theme .action-items-table th,.q4-theme .risk-table th{background:rgba(255,255,255,.03);color:var(--muted-2);font-size:12px;font-weight:500;letter-spacing:0;text-transform:none;border-bottom:1px solid var(--stroke)}
+.q4-theme .action-items-table td,.q4-theme .risk-table td{color:var(--muted);border-bottom:1px solid var(--stroke)}
+.q4-theme .action-items-table tr:hover td,.q4-theme .risk-table tr:hover td{background:rgba(255,255,255,.025)}
+.q4-theme .action-add-form{background:var(--surface);border:1px solid var(--stroke);border-top:none;border-radius:0 0 14px 14px}
+.q4-theme .inline-input{color:var(--muted)}
+.q4-theme .rpill{border-radius:999px;font-weight:600}
+.q4-theme .rp-high{background:rgba(255,107,107,.15);color:var(--coral)}.q4-theme .rp-medium{background:rgba(245,181,68,.15);color:var(--gold)}.q4-theme .rp-low{background:rgba(45,212,168,.15);color:var(--teal)}
+.q4-theme .rp-open{background:rgba(124,108,255,.16);color:var(--accent-text)}.q4-theme .rp-mitigated{background:rgba(122,129,150,.2);color:#B4BACB}.q4-theme .rp-closed{background:rgba(45,212,168,.15);color:var(--teal)}
+.q4-theme .placeholder-panel h3{color:var(--text)}
+.q4-theme .modal-overlay{background:rgba(5,6,10,.62);backdrop-filter:blur(8px)}
+.q4-theme .modal{background:#12151F;border:1px solid var(--stroke-2);border-radius:20px;box-shadow:0 28px 70px rgba(0,0,0,.55)}
+.q4-theme .icon-popover{background:#12151F;border:1px solid var(--stroke-2);border-radius:14px;box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.q4-theme .ibtn:hover,.q4-theme .ibtn.ipicked{background:var(--surface-2)}
+.q4-theme .phase-subtabs{display:inline-flex;gap:2px;padding:4px;margin-bottom:18px;background:var(--surface);border:1px solid var(--stroke);border-radius:12px;width:fit-content;max-width:100%}
+.q4-theme .phase-subtab{background:transparent;border:none;border-radius:9px;color:var(--muted);padding:8px 16px;font-size:12.5px;font-weight:500;box-shadow:none;transition:background .15s,color .15s}
+.q4-theme .phase-subtab:hover{color:var(--text);background:rgba(255,255,255,.05);border-color:transparent}
+.q4-theme .phase-subtab.active{background:var(--accent);color:#fff;box-shadow:0 2px 10px rgba(124,108,255,.35)}
+.q4-theme .gantt-table td.td-cell[style*="250, 251, 255"],.q4-theme .gantt-table td.td-cell[style*="#fafbff"]{background:transparent!important}
+.q4-theme .gantt-table td.td-cell{border-color:rgba(255,255,255,.05)}
+.q4-theme .panel{padding:24px}
+.q4-theme .panel-title{margin:0 -24px 22px;padding:16px 24px;border-bottom:1px solid var(--stroke);font-size:14px;font-weight:600;letter-spacing:-.005em;display:flex;align-items:center;gap:10px}
+.q4-theme .panel-title::before{content:'';width:3px;height:15px;border-radius:2px;background:var(--accent);flex:none}
+.q4-theme .gantt-top h3{display:flex;align-items:center;gap:10px;font-size:14px}
+.q4-theme .gantt-top h3::before{content:'';width:3px;height:15px;border-radius:2px;background:var(--accent)}
 </style>
 </head>
 <body>
@@ -718,6 +866,11 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
       </div>
 
       <div id="tc-phases" style="display:none">
+        <div class="phase-subtabs" id="phaseSubtabs" style="display:none">
+          <div class="phase-subtab active" data-cat="algorithm" onclick="switchPhaseCat('algorithm')">⚙️ Algorithm</div>
+          <div class="phase-subtab" data-cat="design" onclick="switchPhaseCat('design')">🎨 Design</div>
+          <div class="phase-subtab" data-cat="development" onclick="switchPhaseCat('development')">💻 Development</div>
+        </div>
         <div class="phases-legend">
           <div class="ph-leg"><div class="ph-leg-dot" style="background:#aab0c6"></div>Not started</div>
           <div class="ph-leg"><div class="ph-leg-dot" style="background:#f6a623"></div>In progress</div>
@@ -926,7 +1079,8 @@ async function loadFromSupabase(){
 /* META_DATA_START */
 let roadmapMeta={
   roadmap:{navName:'Q3/26 Roadmap',heading:'✦ Galaxsys Q3/26 Roadmap',subtitle:'May 2026 – Feb 2027 · All committed projects',sectionTitle:'All Projects',color:'#a78bfa',order:0},
-  tech:{navName:'Q3/26 Technical Roadmap',heading:'⚙ Galaxsys Q3/26 Technical Roadmap',subtitle:'Technical projects & infrastructure',sectionTitle:'All Projects',color:'#f6a623',order:1}
+  tech:{navName:'Q3/26 Technical Roadmap',heading:'⚙ Galaxsys Q3/26 Technical Roadmap',subtitle:'Technical projects & infrastructure',sectionTitle:'All Projects',color:'#f6a623',order:1},
+  q4:{navName:'Q4/26 Roadmap',heading:'Q4/26 Product Roadmap',subtitle:'Oct 2026 – Jan 2027 · Slot & Fast Game pipeline',sectionTitle:'All Projects',color:'#16a085',order:2,theme:'q4'}
 };
 const QUARTER_PALETTE=['#3BA2E7','#EA8A1E','#27ae60','#e74c3c','#9b59b6','#16a085','#0068FF','#c0392b'];
 let openSections=new Set(['roadmap']);
@@ -1021,8 +1175,8 @@ items.forEach(it=>{if(!it.section)it.section='roadmap';});
 function buildNavList(containerId, sectionKey){
   const nl=document.getElementById(containerId);if(!nl)return;nl.innerHTML='';
   items.filter(i=>(i.section||'roadmap')===sectionKey&&!_hiddenIds.has(i.id)).forEach(item=>{
-    const d=document.createElement('div');d.className='nav-item';d.id='nav-'+item.id;d.onclick=()=>showItem(item.id);
-    d.innerHTML=`<div class="dot" style="background:${item.color}"></div><span style="flex:1">${item.icon} <span id="nav-name-${item.id}">${item.name}</span></span>${item.released?'<span style="font-size:9px;background:#27ae60;color:#fff;padding:1px 5px;border-radius:8px;margin-left:2px">✓</span>':''}<span class="nav-eb edit-only" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(${item.id})">✎</span><span class="nav-del edit-only" style="opacity:0;font-size:11px;color:#e74c3c;margin-left:2px;cursor:pointer" onclick="event.stopPropagation();openDeleteModal(${item.id})">🗑</span>`;
+    const d=document.createElement('div');d.className=(sectionKey==='q4'?'nav-item modern':'nav-item');d.id='nav-'+item.id;d.onclick=()=>showItem(item.id);
+    d.innerHTML=`<div class="dot" style="background:${item.color}"></div><span style="flex:1;display:flex;align-items:center;gap:7px">${gameIcon(item,20)} <span id="nav-name-${item.id}">${item.name}</span></span>${item.released?'<span style="font-size:9px;background:#27ae60;color:#fff;padding:1px 5px;border-radius:8px;margin-left:2px">✓</span>':''}<span class="nav-eb edit-only" style="opacity:0;font-size:11px;color:#a78bfa;margin-left:4px;cursor:pointer" onclick="event.stopPropagation();renameItem(${item.id})">✎</span><span class="nav-del edit-only" style="opacity:0;font-size:11px;color:#e74c3c;margin-left:2px;cursor:pointer" onclick="event.stopPropagation();openDeleteModal(${item.id})">🗑</span>`;
     d.onmouseenter=()=>{d.querySelector('.nav-eb').style.opacity='1';d.querySelector('.nav-del').style.opacity='1';};
     d.onmouseleave=()=>{d.querySelector('.nav-eb').style.opacity='0';d.querySelector('.nav-del').style.opacity='0';};
     nl.appendChild(d);
@@ -1100,11 +1254,12 @@ function deleteQuarter(key){
 }
 let activeFilter=null;
 function renderHomeStats(){
+  normalizeTypes();
   const si=items.filter(i=>i.section===activeSection&&!_hiddenIds.has(i.id));
   const filters=[
     {v:si.length,l:'All',c:'c1',f:null},
     {v:si.filter(i=>i.status==='Committed').length,l:'Committed',c:'c2',f:'Committed'},
-    {v:si.filter(i=>i.type==='Slot Game').length,l:'Slot Games',c:'c3',f:'Slot Game'},
+    {v:si.filter(i=>isSlotType(i.type)).length,l:'Slot Games',c:'c3',f:'Slot Game'},
     {v:si.filter(i=>i.type==='Fast Game').length,l:'Fast Games',c:'c4',f:'Fast Game'},
     {v:si.filter(i=>i.type==='BO').length,l:'BO',c:'c5',f:'BO'},
     {v:si.filter(i=>i.released).length,l:'Released',c:'c1',f:'released'},
@@ -1122,12 +1277,14 @@ function setFilter(f){
   renderCards();
 }
 function renderCards(){
+  normalizeTypes();
   const g=document.getElementById('cardsGrid');g.innerHTML='';
   const sectionItems=items.filter(i=>i.section===activeSection&&!_hiddenIds.has(i.id));
   const filtered=sectionItems.filter(item=>{
     if(!activeFilter||activeFilter==='null')return true;
     if(activeFilter==='released')return item.released;
-    if(['Slot Game','Fast Game','BO','Promo Tool'].includes(activeFilter))return item.type===activeFilter;
+    if(activeFilter==='Slot Game')return isSlotType(item.type);
+    if(['Fast Game','BO','Promo Tool'].includes(activeFilter))return item.type===activeFilter;
     return item.status===activeFilter;
   });
   if(!filtered.length){g.innerHTML='<div style="color:#aab0c6;font-size:14px;padding:32px;grid-column:1/-1;text-align:center">No projects match this filter.</div>';return;}
@@ -1136,19 +1293,22 @@ function renderCards(){
     const rb=item.released?`<span class="card-released">✓ Released${item.releaseDate?' '+fmtDate(item.releaseDate):''}</span>`:'';
     const pct=overallPct(item);
     const fs=item.phases.find(p=>p.startVal)?.startVal||'';
+    const _le=item.section==='q4'?lastPhaseEnd(item):null;
     const ls=[...item.phases].reverse().find(p=>p.endVal)?.endVal||'';
     const statusColors={'Committed':'background:#f0fff4;color:#27ae60','Planning':'background:#f0f2ff;color:#7b68ee','Done':'background:#e6f7ff;color:#0077b6'};
     const sc=statusColors[item.status]||'background:#f5f5f5;color:#888';
     c.innerHTML=`<div class="card-accent" style="background:${item.color}"></div>
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-top:10px">
-        <div style="font-size:22px">${item.icon}</div>
+        <div style="font-size:22px">${gameIcon(item,40)}</div>
         <span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;${sc}">${item.status}</span>
       </div>
       <h3 style="margin-top:8px;margin-bottom:2px">${item.name} ${rb}</h3>
       <p style="font-size:11px;color:#7a80a0;margin-bottom:8px">${item.type} · Size ${item.size}</p>
-      ${fs||ls?`<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+      ${fs||ls||_le?`<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
         ${fs?`<span style="font-size:10px;font-weight:700;background:#f0f2ff;color:#7b68ee;padding:3px 8px;border-radius:8px">▶ ${fmtDate(fs)}</span>`:''}
-        ${ls?`<span style="font-size:10px;font-weight:700;background:#fff0f6;color:#c0392b;padding:3px 8px;border-radius:8px">■ ${fmtDate(ls)}</span>`:''}
+        ${item.section==='q4'
+          ?(_le?`<span title="${_le.actual?'Actual':'Planned'} end of ${String(_le.label||'last phase').replace(/"/g,'&quot;')}" style="font-size:10px;font-weight:700;background:#f0fff4;color:#27ae60;padding:3px 8px;border-radius:8px">■ ${fmtDate(_le.date)}</span>`:'')
+          :(ls?`<span style="font-size:10px;font-weight:700;background:#fff0f6;color:#c0392b;padding:3px 8px;border-radius:8px">■ ${fmtDate(ls)}</span>`:'')}
       </div>`:''}
       <div class="progress-wrap"><div class="progress-label"><span style="font-size:10px;color:#aab0c6">Completion</span><span style="font-weight:700;color:var(--purple);font-size:11px">${pct}%</span></div>
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${item.color}"></div></div></div>`;
@@ -1192,6 +1352,7 @@ function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.
 function showHome(section){
   section=section||'roadmap';
   activeSection=section;
+  document.body.classList.toggle('q4-theme',section==='q4');
   const meta=roadmapMeta[section];
   const eStyle='outline:none;border-bottom:2px solid transparent;transition:border-color .2s;cursor:text;display:inline';
   const sStyle='outline:none;border-bottom:1px dashed transparent;transition:border-color .2s;cursor:text';
@@ -1217,9 +1378,12 @@ function showHome(section){
 }
 function showItem(id,tab){
   curItem=items.find(i=>i.id===id);tab=tab||'overview';
+  document.body.classList.toggle('q4-theme',curItem.section==='q4');
+  activePhaseCat='algorithm';
   syncActions();showPage('page-item');
   document.getElementById('backBtn').style.display='block';
   document.getElementById('topTitle').textContent=curItem.name;
+  document.getElementById('phaseSubtabs').style.display=curItem.section==='q4'?'flex':'none';
   setNav(id);renderItemHeader();buildOverview();buildTeam();buildGantt(true);buildPhases();buildActions();buildRisk();switchTab(tab);
 }
 function syncActions(){
@@ -1626,7 +1790,10 @@ function selCls(k){return{done:'ss-done',inprogress:'ss-inprogress',blocked:'ss-
 
 function buildPhases(){
   const c=document.getElementById('phasesContainer');c.innerHTML='';
-  sortedPhaseOrder().forEach((pi,displayIdx)=>{
+  const _isQ4ph=curItem&&curItem.section==='q4';
+  const _phOrder=_isQ4ph?sortedPhaseOrder().filter(pi=>phaseCat(curItem.phases[pi])===activePhaseCat):sortedPhaseOrder();
+  if(_isQ4ph&&!_phOrder.length){c.innerHTML='<div style="color:#aab0c6;font-size:13px;padding:28px;text-align:center;background:#fff;border-radius:12px;border:1px solid var(--border)">No phases in this category yet.</div>';return;}
+  _phOrder.forEach((pi,displayIdx)=>{
     const phase=curItem.phases[pi];
     const pct=phasePct(phase);
     const card=document.createElement('div');card.className=`phase-card ${phCardCls(phase.statusKey)}`;card.id=`pc-${pi}`;
@@ -1661,9 +1828,14 @@ function buildPhases(){
         </div>
         <div class="ph-dates-row">
           <div class="ph-date-field"><label>Planned Start</label><input type="date" value="${phase.startVal}" onchange="if(validStart(${pi},this.value,this)){curItem.phases[${pi}].startVal=this.value;buildGantt(true);buildPhases();buildOverview();schedSave();}"></div>
-          <div class="ph-date-field"><label>Planned End</label><input type="date" value="${phase.endVal}" onchange="if(validEnd(${pi},this.value,this)){curItem.phases[${pi}].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>
+          ${_isQ4ph?`<div class="ph-date-field"><label>Actual Start ${phase.statusKey!=='notstarted'?'✓':''}</label>
+            <input type="date" value="${phase.actualStartVal||''}" onchange="if(validActualStart(${pi},this.value,this)){curItem.phases[${pi}].actualStartVal=this.value;buildGantt(true);schedSave();}" style="${phase.actualStartVal&&phase.startVal&&parseDate(phase.actualStartVal)>parseDate(phase.startVal)?'border-color:#f6a623':phase.actualStartVal?'border-color:#27ae60':''}">
+          </div>`:'<div class="ph-date-field"><label>Planned End</label><input type="date" value="${phase.endVal}" onchange="if(validEnd(${pi},this.value,this)){curItem.phases[${pi}].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>'}
+        </div>
+        <div class="ph-dates-row">
+          ${_isQ4ph?`<div class="ph-date-field"><label>Planned End</label><input type="date" value="${phase.endVal}" onchange="if(validEnd(${pi},this.value,this)){curItem.phases[${pi}].endVal=this.value;buildGantt(true);buildOverview();schedSave();}"></div>`:''}
           <div class="ph-date-field"><label>Actual End ${phase.statusKey==='done'?'✓':''}</label>
-            <input type="date" value="${phase.actualEndVal||''}" onchange="if(validActualEnd(${pi},this.value,this)){curItem.phases[${pi}].actualEndVal=this.value;buildGantt(true);schedSave();}" style="${phase.actualEndVal&&parseDate(phase.actualEndVal)>parseDate(phase.endVal)?'border-color:#f6a623':phase.actualEndVal?'border-color:#27ae60':''}">
+            <input type="date" value="${phase.actualEndVal||''}" onchange="if(validActualEnd(${pi},this.value,this)){curItem.phases[${pi}].actualEndVal=this.value;buildGantt(true);${_isQ4ph?'':'buildOverview();'}schedSave();}" style="${phase.actualEndVal&&parseDate(phase.actualEndVal)>parseDate(phase.endVal)?'border-color:#f6a623':phase.actualEndVal?'border-color:#27ae60':''}">
           </div>
         </div>
         <div class="ph-comments"><label>Comments</label><textarea placeholder="Owner, blockers, risks..." onchange="curItem.phases[${pi}].comments=this.value;schedSave()">${phase.comments}</textarea></div>
@@ -1696,7 +1868,7 @@ function changePhaseStatus(pi,val){
 }
 function addPhaseCard(){
   pushUndo(JSON.parse(JSON.stringify(curItem.phases)));
-  curItem.phases.push({label:'New Phase',sub:'Responsible',startVal:'',endVal:'',actualEndVal:'',color:'#7b68ee',icon:'📌',statusKey:'notstarted',comments:'',subtasks:[]});
+  curItem.phases.push({label:'New Phase',sub:'Responsible',startVal:'',endVal:'',actualEndVal:'',actualStartVal:'',color:'#7b68ee',icon:'📌',statusKey:'notstarted',comments:'',subtasks:[],...(curItem.section==='q4'?{category:activePhaseCat}:{})});
   syncActions();buildPhases();buildGantt();buildActions();schedSave();
 }
 function delPhaseCard(pi){
@@ -2019,8 +2191,8 @@ function closeModal(){document.getElementById('addModal').style.display='none';r
 function saveNewItem(){
   const name=document.getElementById('m-name').value.trim();if(!name)return;
   const eid=document.getElementById('m-epic').value.trim();
-  const phases=defPhases();
   const _sec=document.getElementById('addModal').dataset.targetSection||activeSection;
+  const phases=_sec==='q4'?defPhasesQ4():defPhases();
   const newId=Date.now();
   items.push({id:newId,name,type:document.getElementById('m-type').value,color:document.getElementById('m-color').value,icon:document.getElementById('m-icon').value||'🎮',status:'Committed',size:document.getElementById('m-size').value,epicId:eid,epicUrl:eid?`https://dg-group.atlassian.net/browse/${eid}`:'',desc:document.getElementById('m-desc').value,scope:'',kickoff:{date:'',facilitator:'',attendees:'',notes:''},released:false,releaseDate:'',team:[],risks:[],phases,actions:mkActions(phases),section:_sec});
   closeModal();refreshHome();['m-name','m-epic','m-desc'].forEach(id=>document.getElementById(id).value='');resetIconPicker();
@@ -2782,6 +2954,81 @@ function buildIssuesModalContent(d,discLabel,projectName,epicId,color,jiraBase){
     <tbody>${rows}</tbody></table>`
     :`<div class="im-empty">No ${discLabel} issues found for this epic.</div>`}
   </div>`;
+}
+
+
+// ── Q4 GAME ICONS ─────────────────────────────────────────────────────────────
+const GAME_ICON_SVG={
+  crescent:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path d="M18 3v4M16 5h4"/>',
+  fish:'<path d="M2 12C5 7 11 6 15.5 8.5L21 5.5v13l-5.5-3C11 18 5 17 2 12Z"/><circle cx="7" cy="11.2" r=".9" fill="currentColor" stroke="none"/>',
+  bull:'<path d="M8 9c-3 0-5-2-5-5"/><path d="M16 9c3 0 5-2 5-5"/><path d="M8 9l1 8q3 4 6 0l1-8Z"/><circle cx="10.2" cy="12" r=".8" fill="currentColor" stroke="none"/><circle cx="13.8" cy="12" r=".8" fill="currentColor" stroke="none"/>',
+  bolt:'<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/>',
+  gem:'<path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M2 9h20M12 22 8 9l4-6 4 6-4 13"/>',
+  snow:'<path d="M12 2v20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1M2 12h20"/><path d="M9.5 4.5 12 7l2.5-2.5M9.5 19.5 12 17l2.5 2.5M4.5 9.5 7 12l-2.5 2.5M19.5 9.5 17 12l2.5 2.5"/>',
+  shield:'<path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5Z"/><path d="M12 7v9"/>',
+  castle:'<path d="M4 21V5h3v3h3V5h4v3h3V5h3v16Z"/><path d="M10 21v-4a2 2 0 0 1 4 0v4"/>'
+};
+const GAME_ICON_BY_NAME={
+  'Ottoman Legends':'crescent','Ice Fish game':'fish','Buffalo Fury':'bull',
+  'Gangsteritos: Versus Battle':'bolt','Golden Stakes: Merge&Win':'gem',
+  'Coin Rush: Ice Age':'snow','Coin Rush: Iron Age':'shield','Kingdom Siege':'castle'
+};
+function _lighten(hex,t){const h=(hex||'#7b68ee').replace('#','');if(h.length!==6)return hex;const c=[0,2,4].map(i=>parseInt(h.substr(i,2),16));return'#'+c.map(v=>Math.round(v+(255-v)*t).toString(16).padStart(2,'0')).join('');}
+function gameIcon(item,size){
+  const key=item&&item.section==='q4'?(item.iconKey||GAME_ICON_BY_NAME[item.name]):null;
+  if(!key||!GAME_ICON_SVG[key])return item?item.icon:'';
+  const col=item.color||'#7b68ee',fg=_lighten(col,.4),sz=size||36,ic=Math.round(sz*.56);
+  return`<span class="gico" style="width:${sz}px;height:${sz}px;border-radius:${Math.round(sz*.28)}px;background:${col}2b;box-shadow:inset 0 0 0 1px ${col}55;color:${fg}"><svg width="${ic}" height="${ic}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${GAME_ICON_SVG[key]}</svg></span>`;
+}
+
+// ── Q4 PHASE STRUCTURE ────────────────────────────────────────────────────────
+function defPhasesQ4(){return[
+  {label:'Algorithm',sub:'',startVal:'',endVal:'',actualEndVal:'',actualStartVal:'',color:'#aab0c6',icon:'⚙️',statusKey:'notstarted',comments:'',subtasks:[],category:'algorithm'},
+  {label:'Concept research',sub:'',startVal:'',endVal:'',actualEndVal:'',actualStartVal:'',color:'#16a085',icon:'🔎',statusKey:'notstarted',comments:'',subtasks:[],category:'design',subcat:'concept'},
+  {label:'Game illustrations',sub:'',startVal:'',endVal:'',actualEndVal:'',actualStartVal:'',color:'#16a085',icon:'🖼️',statusKey:'notstarted',comments:'',subtasks:[],category:'design',subcat:'illustrations'},
+  {label:'Game UI',sub:'',startVal:'',endVal:'',actualEndVal:'',actualStartVal:'',color:'#16a085',icon:'🎨',statusKey:'notstarted',comments:'',subtasks:[],category:'design',subcat:'ui'},
+  {label:'Game animations',sub:'',startVal:'',endVal:'',actualEndVal:'',actualStartVal:'',color:'#16a085',icon:'✨',statusKey:'notstarted',comments:'',subtasks:[],category:'design',subcat:'animations'},
+  {label:'BE Development',sub:'',startVal:'',endVal:'',actualEndVal:'',actualStartVal:'',color:'#27ae60',icon:'🛠️',statusKey:'notstarted',comments:'',subtasks:[],category:'development'},
+  {label:'FE Development',sub:'',startVal:'',endVal:'',actualEndVal:'',actualStartVal:'',color:'#27ae60',icon:'💻',statusKey:'notstarted',comments:'',subtasks:[],category:'development'},
+  {label:'QA',sub:'',startVal:'',endVal:'',actualEndVal:'',actualStartVal:'',color:'#f6a623',icon:'🔍',statusKey:'notstarted',comments:'',subtasks:[],category:'development'},
+  {label:'Infosec',sub:'',startVal:'',endVal:'',actualEndVal:'',actualStartVal:'',color:'#f6a623',icon:'🚀',statusKey:'notstarted',comments:'',subtasks:[],category:'development'},
+];}
+
+// ── Q4 TYPE HELPERS ───────────────────────────────────────────────────────────
+function isSlotType(t){return t==='Slot Game'||t==='Slot';}
+function normalizeTypes(){items.forEach(i=>{if(i.section==='q4'&&(!String(i.type||'').trim()||i.type==='Slot Game'))i.type='Slot';});}
+
+// ── Q4 PHASE CATEGORY FILTERING ───────────────────────────────────────────────
+function guessPhaseCategory(label){
+  const l=(label||'').toLowerCase();
+  if(l.includes('algorithm'))return'algorithm';
+  if(l==='ui design'||l.includes('illustration')||l.includes('animation')||l.includes('concept')||l.includes('graphic')||l.includes('art')||l.includes('ui')||l.includes('design'))return'design';
+  return'development';
+}
+function phaseCat(phase){return phase.category||guessPhaseCategory(phase.label);}
+let activePhaseCat='algorithm';
+function switchPhaseCat(cat){
+  activePhaseCat=cat;
+  document.querySelectorAll('.phase-subtab').forEach(el=>el.classList.toggle('active',el.dataset.cat===cat));
+  buildPhases();
+}
+
+// ── Q4 DATE HELPERS ───────────────────────────────────────────────────────────
+function lastPhaseEnd(item){
+  let best=null,bd=null;
+  (item.phases||[]).forEach(p=>{
+    const k=p.actualEndVal||p.endVal;if(!k)return;
+    const d=parseDate(k);
+    if(!best||d>=bd){best=p;bd=d;}
+  });
+  if(!best)return null;
+  return{date:best.actualEndVal||best.endVal,actual:!!best.actualEndVal,label:best.label};
+}
+function validActualStart(pi,val,el){
+  if(!val){clearDateErr(el);return true;}
+  const p=curItem.phases[pi];
+  if(p.endVal&&parseDate(val)>parseDate(p.endVal)){showDateErr(el,"Actual start can't be after the phase end date.");return false;}
+  clearDateErr(el);return true;
 }
 
 function goBack(){showHome(curItem?curItem.section:activeSection);}
