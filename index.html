@@ -773,8 +773,11 @@ body.q4-theme{--chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200
 /* Disc breakdown row dark background */
 .q4-theme .jira-table-wrap tr.jira-disc-row>td{background:var(--surface-2)!important;padding:0}
 /* Expanded main row */
-.q4-theme .jira-row-expanded>td{background:rgba(124,108,255,.08)!important;color:var(--text)!important}
-.q4-theme .jira-row-expanded:hover>td{background:rgba(124,108,255,.12)!important}
+body.q4-theme .jira-row-expanded>td{background:rgba(255,255,255,.07)!important;color:var(--text)!important}
+body.q4-theme .jira-row-expanded:hover>td{background:rgba(255,255,255,.1)!important}
+body.q4-theme .over-badge{background:rgba(255,107,107,.18)!important;border-color:rgba(255,107,107,.55)!important;color:var(--coral)!important}
+body.q4-theme .td-over{background:rgba(255,107,107,.1)!important;color:var(--coral)!important}
+body.q4-theme .jira-over-budget>td:first-child{border-left-color:var(--coral)!important}
 /* All td text visible in Q4 */
 .q4-theme .jira-table-wrap td,.q4-theme .jira-table-wrap tr>td{color:var(--text)}
 .q4-theme .jira-staleness{color:var(--muted-2)}
@@ -804,7 +807,7 @@ body.q4-theme{--chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200
 .q4-theme .im-sub{background:rgba(124,108,255,.2)!important;color:var(--accent-text)!important}
 .q4-theme .jira-expand-btn{border-color:var(--stroke);color:var(--muted-2)}
 .q4-theme .jira-row-clickable:hover .jira-expand-btn,.q4-theme .jira-expand-btn.open{border-color:var(--accent);color:var(--accent-text);background:rgba(124,108,255,.1)}
-.q4-theme .jira-row-expanded>td{background:rgba(124,108,255,.08)!important;color:var(--text)!important}
+/* expanded row — see body.q4-theme rule above */
 .q4-theme .jira-stat{background:var(--surface);border-color:var(--stroke)}
 .q4-theme .jira-stat .js-label{color:var(--muted-2)}
 .q4-theme .jira-stat .js-value{color:var(--text)}
