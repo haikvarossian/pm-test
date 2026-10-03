@@ -751,6 +751,57 @@ body.q4-theme{--chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200
 .q4-theme .main :not(.report-editor *)[style*="background:#fff0f0"],.q4-theme .main :not(.report-editor *)[style*="background:#fff0f6"]{background:rgba(255,107,107,.12)!important}
 .q4-theme svg circle[stroke="#f0f2ff"]{stroke:rgba(255,255,255,.1)}
 .q4-theme svg circle[stroke="#7b68ee"]{stroke:var(--accent)}
+/* Q4 dark overrides for Jira integration elements */
+.q4-theme .jira-table-wrap{background:var(--surface);border-color:var(--stroke)}
+.q4-theme .jira-table-wrap th{background:rgba(255,255,255,.025);color:var(--muted-2);border-bottom-color:var(--stroke)}
+.q4-theme .jira-table-wrap td{color:var(--text);border-bottom-color:var(--stroke)}
+.q4-theme .jira-table-wrap tr:hover td{background:var(--surface-2)}
+.q4-theme .jira-disc-grid{background:var(--stroke)}
+.q4-theme .jira-disc-cell{background:var(--surface)}
+.q4-theme .jira-disc-cell.over-disc{background:rgba(255,107,107,.08);border-top-color:rgba(255,107,107,.5)}
+.q4-theme .jira-disc-time{color:var(--text)}
+.q4-theme .jira-disc-time span:not(.over-badge){color:var(--muted-2)}
+.q4-theme .jira-disc-count{color:var(--muted)}
+.q4-theme .jira-disc-bar{background:rgba(255,255,255,.08)}
+.q4-theme .jira-expand-btn{border-color:var(--stroke);color:var(--muted-2)}
+.q4-theme .jira-row-clickable:hover .jira-expand-btn,.q4-theme .jira-expand-btn.open{border-color:var(--accent);color:var(--accent-text);background:rgba(124,108,255,.1)}
+.q4-theme .jira-row-expanded>td{background:rgba(124,108,255,.06)!important}
+.q4-theme .jira-stat{background:var(--surface);border-color:var(--stroke)}
+.q4-theme .jira-stat .js-label{color:var(--muted-2)}
+.q4-theme .jira-stat .js-value{color:var(--text)}
+.q4-theme .jira-budget-bar{background:var(--surface);border-color:var(--stroke)}
+.q4-theme .jira-budget-bar .bar-track{background:rgba(255,255,255,.08)}
+.q4-theme .jira-breakdown{background:var(--surface);border-color:var(--stroke)}
+.q4-theme .jira-breakdown h4{color:var(--muted-2)}
+.q4-theme .jira-type-row .type-bar-track{background:rgba(255,255,255,.08)}
+.q4-theme .jira-issues-table{background:var(--surface);border-color:var(--stroke)}
+.q4-theme .jira-issues-table h4{color:var(--muted-2);border-bottom-color:var(--stroke)}
+.q4-theme .jira-issues-table th{background:rgba(255,255,255,.025);color:var(--muted-2);border-bottom-color:var(--stroke)}
+.q4-theme .jira-issues-table td{border-bottom-color:var(--stroke)}
+.q4-theme .jira-issues-table tr:hover td{background:var(--surface-2)}
+.q4-theme .jira-sync-btn{color:var(--accent-text);border-color:rgba(124,108,255,.4)}
+.q4-theme .jira-sync-btn:hover{background:rgba(124,108,255,.12)}
+.q4-theme .jira-no-epic{background:var(--surface);border-color:rgba(124,108,255,.4)}
+.q4-theme .jira-no-epic h4{color:var(--accent-text)}
+.q4-theme .jira-no-epic p{color:var(--muted)}
+.q4-theme .jira-status-pill.done{background:rgba(45,212,168,.14);color:var(--teal)}
+.q4-theme .jira-status-pill.indeterminate{background:rgba(245,181,68,.14);color:var(--gold)}
+.q4-theme .jira-status-pill.new{background:rgba(124,108,255,.15);color:var(--accent-text)}
+.q4-theme .bar-track{background:rgba(255,255,255,.08)}
+.q4-theme .phase-subtab{background:var(--surface);border-color:var(--stroke);color:var(--muted)}
+.q4-theme .phase-subtab:hover{color:var(--teal);border-color:rgba(45,212,168,.35)}
+.q4-theme .phase-subtab.active{background:var(--accent);color:#fff;border-color:transparent}
+/* Extra catch-all for Q3 date-banner gradients not in the original 028 set */
+.q4-theme .main [style*="linear-gradient(135deg,#f0f2ff"]{background:var(--surface)!important}
+.q4-theme .main [style*="linear-gradient(135deg,#fff0f6"]{background:var(--surface)!important}
+.q4-theme .main [style*="linear-gradient(135deg,#f0fff4"]{background:var(--surface)!important}
+.q4-theme .main [style*="linear-gradient(135deg,#f8f9ff"]{background:var(--surface)!important}
+.q4-theme .main [style*="border:1.5px solid #d8d4f5"]{border-color:var(--stroke)!important}
+.q4-theme .main [style*="border:1.5px solid #f5c6d8"]{border-color:var(--stroke)!important}
+.q4-theme .main [style*="border:1px solid #b7ebd0"]{border-color:var(--stroke)!important}
+.q4-theme .main [style*="border:3px solid #f0f2ff"]{border-color:rgba(255,255,255,.1)!important}
+.q4-theme .main [style*="color:#ddd"]{color:var(--muted-2)!important}
+.q4-theme .main [style*="color:#fff"]{color:var(--text)!important}
 
 /* ── JIRA INTEGRATION ──────────────────────────────────────────────── */
 .jira-home-wrap{margin-top:32px}
@@ -1057,14 +1108,14 @@ body.q4-theme{--chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200
         </div>
       </div>
       <div class="tab-bar">
-        <div class="tab active" id="tab-overview" onclick="switchTab('overview')">📋 Overview</div>
-        <div class="tab" id="tab-team" onclick="switchTab('team')">👥 Team & Roles</div>
-        <div class="tab" id="tab-timeline" onclick="switchTab('timeline')">📅 Timeline</div>
-        <div class="tab" id="tab-phases" onclick="switchTab('phases')">🔄 Phases</div>
-        <div class="tab" id="tab-actions" onclick="switchTab('actions')">⚡ Actions & Follow-ups</div>
-        <div class="tab" id="tab-risk" onclick="switchTab('risk')">⚠️ Risk Management</div>
-        <div class="tab" id="tab-report" onclick="switchTab('report')">📊 Project Report</div>
-        <div class="tab" id="tab-retro" onclick="switchTab('retro')">🔁 Retrospective</div>
+        <div class="tab active" id="tab-overview" onclick="switchTab('overview')">Overview</div>
+        <div class="tab" id="tab-team" onclick="switchTab('team')">Team & Roles</div>
+        <div class="tab" id="tab-timeline" onclick="switchTab('timeline')">Timeline</div>
+        <div class="tab" id="tab-phases" onclick="switchTab('phases')">Phases</div>
+        <div class="tab" id="tab-actions" onclick="switchTab('actions')">Actions & Follow-ups</div>
+        <div class="tab" id="tab-risk" onclick="switchTab('risk')">Risk Management</div>
+        <div class="tab" id="tab-report" onclick="switchTab('report')">Project Report</div>
+        <div class="tab" id="tab-retro" onclick="switchTab('retro')">Retrospective</div>
       </div>
 
       <div id="tc-overview">
