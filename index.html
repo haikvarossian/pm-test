@@ -763,9 +763,41 @@ body.q4-theme{--chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200
 .q4-theme .jira-disc-time span:not(.over-badge){color:var(--muted-2)}
 .q4-theme .jira-disc-count{color:var(--muted)}
 .q4-theme .jira-disc-bar{background:rgba(255,255,255,.08)}
+/* Disc breakdown row dark background */
+.q4-theme .jira-table-wrap tr.jira-disc-row>td{background:var(--surface-2)!important;padding:0}
+/* Expanded main row */
+.q4-theme .jira-row-expanded>td{background:rgba(124,108,255,.08)!important;color:var(--text)!important}
+.q4-theme .jira-row-expanded:hover>td{background:rgba(124,108,255,.12)!important}
+/* All td text visible in Q4 */
+.q4-theme .jira-table-wrap td,.q4-theme .jira-table-wrap tr>td{color:var(--text)}
+.q4-theme .jira-staleness{color:var(--muted-2)}
+.q4-theme .jira-staleness.stale{color:var(--gold)}
+/* Issues modal — full dark override. !important is required because the modal
+   inner div has inline style="background:#fff" which beats any CSS without it */
+.q4-theme #issuesModal>div{background:#12151F!important;border:1px solid var(--stroke-2)!important}
+.q4-theme .im-hdr{background:linear-gradient(135deg,rgba(124,108,255,.25),rgba(45,212,168,.15))!important;border-bottom:1px solid var(--stroke)!important}
+.q4-theme .im-hdr h2{color:var(--text)!important}
+.q4-theme .im-meta{color:var(--muted)!important}
+.q4-theme .im-stats{background:var(--surface)!important;border-bottom-color:var(--stroke)!important}
+.q4-theme .im-stat{background:transparent!important;border-right-color:var(--stroke)!important}
+.q4-theme .im-sl{color:var(--muted-2)!important}
+.q4-theme .im-sv{color:var(--text)!important}
+.q4-theme .im-sv.over{color:var(--coral)!important}
+.q4-theme .im-table{background:transparent!important}
+.q4-theme .im-table table{background:transparent!important}
+.q4-theme .im-table th{background:rgba(255,255,255,.025)!important;color:var(--muted-2)!important;border-bottom-color:var(--stroke)!important;border-color:var(--stroke)!important}
+.q4-theme .im-table th:hover,.q4-theme .im-table th.s{color:var(--accent-text)!important}
+.q4-theme .im-table td{background:transparent!important;border-bottom-color:var(--stroke)!important;color:var(--text)!important}
+.q4-theme .im-table tr:last-child td{border-bottom:none!important}
+.q4-theme .im-table tr:hover td{background:var(--surface-2)!important}
+.q4-theme .im-muted{color:var(--muted)!important}
+.q4-theme .im-loading,.q4-theme .im-empty{background:var(--surface)!important;color:var(--muted)!important}
+.q4-theme .im-close{color:var(--muted-2)!important}.q4-theme .im-close:hover{color:var(--text)!important}
+.q4-theme .im-kl{color:var(--accent-text)!important}
+.q4-theme .im-sub{background:rgba(124,108,255,.2)!important;color:var(--accent-text)!important}
 .q4-theme .jira-expand-btn{border-color:var(--stroke);color:var(--muted-2)}
 .q4-theme .jira-row-clickable:hover .jira-expand-btn,.q4-theme .jira-expand-btn.open{border-color:var(--accent);color:var(--accent-text);background:rgba(124,108,255,.1)}
-.q4-theme .jira-row-expanded>td{background:rgba(124,108,255,.06)!important}
+.q4-theme .jira-row-expanded>td{background:rgba(124,108,255,.08)!important;color:var(--text)!important}
 .q4-theme .jira-stat{background:var(--surface);border-color:var(--stroke)}
 .q4-theme .jira-stat .js-label{color:var(--muted-2)}
 .q4-theme .jira-stat .js-value{color:var(--text)}
@@ -3084,7 +3116,7 @@ async function renderJiraHomeSection(){
     const expBtnId=`exp-btn-${safeId}`;
     const mainRowId=`main-row-${safeId}`;
     if(!d)return`<tr id="${mainRowId}">
-      <td style="font-weight:600">${item.icon} ${item.name}</td>
+      <td style="font-weight:600"><span style="display:flex;align-items:center;gap:7px">${gameIcon(item,22)||item.icon} ${item.name}</span></td>
       <td><a href="${url}" target="_blank" class="epic-link">${item.epicId}</a></td>
       <td colspan="5" style="color:#aab0c6;font-size:11px">Not synced</td>
       <td>${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)">↻ Sync</button>`:'—'}</td>
@@ -3100,7 +3132,7 @@ async function renderJiraHomeSection(){
     const hasDisc=d.discipline_breakdown&&Object.values(d.discipline_breakdown).some(v=>v.issues>0||v.estimate>0);
     const rowClick=hasDisc?`onclick="if(!event.target.closest('a,button'))toggleDiscRow('${expId}','${expBtnId}','${mainRowId}')"`:'';
     return`<tr id="${mainRowId}" class="${hasDisc?'jira-row-clickable':''} ${isOver?'jira-over-budget':''}" ${rowClick}>
-      <td style="font-weight:600">${item.icon} ${item.name}</td>
+      <td style="font-weight:600"><span style="display:flex;align-items:center;gap:7px">${gameIcon(item,22)||item.icon} ${item.name}</span></td>
       <td><a href="${url}" target="_blank" class="epic-link" onclick="event.stopPropagation()">${item.epicId}</a></td>
       <td><span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span></td>
       <td>${fmtHours(est)}</td>
