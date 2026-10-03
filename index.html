@@ -757,8 +757,15 @@ body.q4-theme{--chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200
 .q4-theme .jira-table-wrap td{color:var(--text);border-bottom-color:var(--stroke)}
 .q4-theme .jira-table-wrap tr:hover td{background:var(--surface-2)}
 .q4-theme .jira-disc-grid{background:var(--stroke)}
-.q4-theme .jira-disc-cell{background:var(--surface)}
-.q4-theme .jira-disc-cell.over-disc{background:rgba(255,107,107,.08);border-top-color:rgba(255,107,107,.5)}
+.q4-theme .jira-disc-cell{background:var(--surface)!important}
+.q4-theme .jira-disc-cell.over-disc{background:rgba(255,107,107,.08)!important;border-top-color:rgba(255,107,107,.5)!important}
+.q4-theme .jira-disc-label{color:inherit!important}
+.q4-theme .jira-disc-time{color:var(--text)!important}
+.q4-theme .jira-disc-time span:not(.over-badge){color:var(--muted-2)!important}
+.q4-theme .jira-disc-count{color:var(--muted)!important}
+.q4-theme .jira-disc-bar{background:rgba(255,255,255,.08)!important}
+.q4-theme .jira-disc-grid{background:var(--stroke)!important}
+.q4-theme tr.jira-disc-row>td{background:var(--surface-2)!important}
 .q4-theme .jira-disc-time{color:var(--text)}
 .q4-theme .jira-disc-time span:not(.over-badge){color:var(--muted-2)}
 .q4-theme .jira-disc-count{color:var(--muted)}
@@ -1474,7 +1481,7 @@ function parseDate(s){if(!s)return null;const[y,m,d]=s.split('-');return new Dat
 // Phases without a Start Date sort to the end, keeping their original relative order.
 // Used by Overview (phase breakdown), Timeline, and Phases so all three always show the same order.
 function sortedPhaseOrder(){
-  return curItem.phases.map((p,i)=>i).sort((a,b)=>{
+  return (curItem.phases||[]).map((p,i)=>i).sort((a,b)=>{
     const sa=curItem.phases[a].startVal,sb=curItem.phases[b].startVal;
     if(!sa&&!sb)return a-b;
     if(!sa)return 1;
@@ -1622,17 +1629,21 @@ function renderCards(){
   const filtered=sectionItems.filter(item=>{
     if(!activeFilter||activeFilter==='null')return true;
     if(activeFilter==='released')return item.released;
-    if(['Slot Game','Fast Game','BO','Promo Tool'].includes(activeFilter))return item.type===activeFilter;
+    if(activeFilter==='Slot Game')return isSlotType(item.type);
+    if(['Fast Game','BO','Promo Tool'].includes(activeFilter))return item.type===activeFilter;
     return item.status===activeFilter;
   });
   if(!filtered.length){g.innerHTML='<div style="color:#aab0c6;font-size:14px;padding:32px;grid-column:1/-1;text-align:center">No projects match this filter.</div>';return;}
   filtered.forEach(item=>{
+    try{
     const c=document.createElement('div');c.className='card';c.onclick=()=>showItem(item.id);
     const rb=item.released?`<span class="card-released">✓ Released${item.releaseDate?' '+fmtDate(item.releaseDate):''}</span>`:'';
     const pct=overallPct(item);
-    const fs=item.phases.find(p=>p.startVal)?.startVal||'';
+    // Null-safe phases access: some items from Supabase may have phases:null
+    const _phases=item.phases||[];
+    const fs=_phases.find(p=>p.startVal)?.startVal||'';
     const _le=item.section==='q4'?lastPhaseEnd(item):null;
-    const ls=_le?_le.date:([...item.phases].reverse().find(p=>p.endVal)?.endVal||'');
+    const ls=_le?_le.date:([..._phases].reverse().find(p=>p.endVal)?.endVal||'');
     const statusColors={'Committed':'background:#f0fff4;color:#27ae60','Planning':'background:#f0f2ff;color:#7b68ee','Done':'background:#e6f7ff;color:#0077b6'};
     const sc=statusColors[item.status]||'background:#f5f5f5;color:#888';
     c.innerHTML=`<div class="card-accent" style="background:${item.color}"></div>
@@ -1649,6 +1660,7 @@ function renderCards(){
       <div class="progress-wrap"><div class="progress-label"><span style="font-size:10px;color:#aab0c6">Completion</span><span style="font-weight:700;color:var(--purple);font-size:11px">${pct}%</span></div>
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${item.color}"></div></div></div>`;
     g.appendChild(c);
+    }catch(err){console.warn('renderCards: failed to render card for',item?.name,err);}
   });
 }
 function refreshHome(){renderNav();renderHomeStats();renderCards();renderJiraHomeSection().catch(()=>{});}
