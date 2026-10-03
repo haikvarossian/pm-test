@@ -1657,6 +1657,7 @@ function showHome(section){
   section=section||'roadmap';
   activeSection=section;
   document.body.classList.toggle('q4-theme',(roadmapMeta[section]||{}).theme==='q4');
+  if(window.q4Chrome)window.q4Chrome();
   normalizeTypes();
   const meta=roadmapMeta[section];
   const eStyle='outline:none;border-bottom:2px solid transparent;transition:border-color .2s;cursor:text;display:inline';
@@ -1684,6 +1685,7 @@ function showHome(section){
 function showItem(id,tab){
   curItem=items.find(i=>i.id===id);tab=tab||'overview';
   document.body.classList.toggle('q4-theme',curItem.section==='q4');
+  if(window.q4Chrome)window.q4Chrome();
   activePhaseCat='algorithm';
   document.querySelectorAll('.phase-subtab').forEach(el=>el.classList.toggle('active',el.dataset.cat==='algorithm'));
   document.getElementById('phaseSubtabs').style.display=curItem.section==='q4'?'flex':'none';
@@ -3437,6 +3439,44 @@ function buildIssuesModalContent(d,discLabel,projectName,epicId,color,jiraBase){
 }
 
 function goBack(){showHome(curItem?curItem.section:activeSection);}
+
+// ── Q4 CHROME: strip leading emoji from UI text when Q4 theme is active ───────
+// Mirrors the q4Chrome / MutationObserver pattern from index028.html exactly.
+// When body.q4-theme is set, emojis are stripped from panel titles, gantt header,
+// phase-subtabs and action phase titles. When removed, original text is restored.
+(function(){
+  const EMOJI_RE=/^[\s\u200d\ufe0f]*[\u{1F000}-\u{1FAFF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\uFE0F\u200D]+\s*/u;
+  function stripLeading(el){
+    const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let n;
+    while((n=w.nextNode())){
+      if(!n.nodeValue.trim())continue;
+      if(EMOJI_RE.test(n.nodeValue)){const v=n.nodeValue.replace(EMOJI_RE,'');if(v.trim())n.nodeValue=v;else n.remove();}
+      break;
+    }
+  }
+  window.q4Chrome=function(){
+    const on=document.body.classList.contains('q4-theme');
+    // Strip/restore emojis on phase-subtabs (stored in data-orig)
+    document.querySelectorAll('.phase-subtab').forEach(el=>{
+      if(el.dataset.orig===undefined)el.dataset.orig=el.textContent;
+      const want=on?el.dataset.orig.replace(EMOJI_RE,''):el.dataset.orig;
+      if(el.textContent!==want)el.textContent=want;
+    });
+    if(!on)return;
+    // Strip leading emoji from panel titles, gantt header, action phase titles
+    document.querySelectorAll('.main .panel-title,.main .gantt-top h3,.main .action-phase-title,.main .placeholder-panel h3').forEach(stripLeading);
+  };
+  // Run automatically whenever .main content changes (covers all dynamic renders)
+  let raf=0;
+  const mo=new MutationObserver(()=>{if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(window.q4Chrome)window.q4Chrome();});});
+  // Observe once .main exists
+  function startObserver(){
+    const main=document.querySelector('.main');
+    if(main)mo.observe(main,{childList:true,subtree:true});
+    else requestAnimationFrame(startObserver);
+  }
+  startObserver();
+})();
 document.addEventListener('click',function(e){const p=document.getElementById('iconPopover');if(p&&p.classList.contains('open')&&!p.contains(e.target)&&e.target.id!=='iconTrigger')p.classList.remove('open');});
 // Kick off auth initialisation
 initSupabase();
