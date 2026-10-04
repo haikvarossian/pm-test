@@ -607,7 +607,8 @@ body.q4-theme{--bg:#0A0C13;--surface:rgba(255,255,255,.035);--surface-2:rgba(255
 .q4-theme .phase-card.s-done{box-shadow:inset 3px 0 0 var(--teal)}.q4-theme .phase-card.s-inprogress{box-shadow:inset 3px 0 0 var(--gold)}
 .q4-theme .phase-card.s-blocked{box-shadow:inset 3px 0 0 var(--coral)}.q4-theme .phase-card.s-notstarted{box-shadow:inset 3px 0 0 var(--slate)}
 .q4-theme .phase-card-header{background:transparent;padding:16px 22px}
-.q4-theme .phase-card-header:hover{background:rgba(255,255,255,.025)}
+body.q4-theme .phase-card-header{background:transparent!important}
+body.q4-theme .phase-card-header:hover{background:rgba(255,255,255,.04)!important}
 .q4-theme .phase-card-body{background:transparent;border-top:1px solid var(--stroke);padding:0 22px 22px}
 .q4-theme .ph-num{width:34px;height:34px;border-radius:10px;background:var(--surface-2);border:none;color:var(--muted);font-weight:600}
 .q4-theme .ph-num.done{background:rgba(45,212,168,.16);color:var(--teal)}
@@ -1439,6 +1440,12 @@ async function loadFromSupabase(){
     if(!e2&&metaRows){
       metaRows.forEach(r=>{roadmapMeta[r.section]=roadmapMeta[r.section]?{...roadmapMeta[r.section],...r.data}:r.data;});
     }
+    // Auto-select the last (highest order = most recent) section on first load
+    const _lastSec=sectionKeys().at(-1)||'roadmap';
+    if(_lastSec!==activeSection){
+      openSections.clear();openSections.add(_lastSec);activeSection=_lastSec;
+      document.body.classList.toggle('q4-theme',(roadmapMeta[_lastSec]||{}).theme==='q4');
+    } else { openSections.add(activeSection); }
     renderSidebarSections();
     refreshHome();
     if(curItem){const found=items.find(i=>i.id===curItem.id);if(found){curItem=found;syncActions();renderItemHeader();buildOverview();}}
@@ -1595,9 +1602,14 @@ function _navHover(key,on){
   const d=document.getElementById('navDelQ-'+key);if(d)d.style.opacity=on?'1':'0';
 }
 function toggleSection(key){
-  if(openSections.has(key))openSections.delete(key);else openSections.add(key);
+  if(openSections.has(key)){
+    openSections.delete(key);
+  } else {
+    openSections.clear(); // accordion: collapse all others
+    openSections.add(key);
+    showHome(key);
+  }
   renderSidebarSections();
-  if(openSections.has(key))showHome(key);
 }
 function openAddQuarterModal(){
   if(_currentRole!=='editor')return;
@@ -3090,7 +3102,7 @@ function renderReportPanel(el,d){
 
   // ── 3-panel view for initiatives (Design / Algorithm / Dev.) ────────────────
   const pName=(curItem.name||'').replace(/'/g,"\\'");
-  const EPIC_DISC_COLORS={Illustrations:'#B0A6FF',UI:'#0077b6',Animation:'#14b8a6',FE:'#7b68ee',BE:'#27ae60',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
+  const EPIC_DISC_COLORS={Illustrations:'#B0A6FF',UI:'#0077b6',Animation:'#14b8a6',Graphics:'#e91e8c',FE:'#7b68ee',BE:'#27ae60',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
   const EPIC_DISC_LABELS={Illustrations:'Illustrations',Animation:'Animation',QA:'QA / Test'};
 
   function epicSection(eData,type,label,color,discList){
@@ -3103,7 +3115,7 @@ function renderReportPanel(el,d){
 
     const epicHeader=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
       <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:${color}">${label}</span>
-      <span style="font-size:10px;color:#aab0c6;background:rgba(0,0,0,.04);padding:2px 7px;border-radius:4px">${ck}</span>
+      <a href="${jiraBase}${ck}" target="_blank" class="epic-link" style="font-size:10px;color:#7b68ee;background:rgba(124,108,255,.08);padding:2px 7px;border-radius:4px;text-decoration:none" onclick="event.stopPropagation()">${ck}</a>
       <span style="margin-left:auto;font-size:11px;color:#aab0c6">${fmtHours(est2)} est · ${over2?`<span class="over-badge" style="font-size:10px;padding:1px 6px">⚠ ${fmtHours(spt2)}</span>`:fmtHours(spt2)+' logged'} · ${eData.done_issues}/${eData.total_issues} done (${donePct2}%)</span>
     </div>
     <div class="jira-budget-bar" style="margin-bottom:16px">
@@ -3156,7 +3168,7 @@ function renderReportPanel(el,d){
   }
 
   el.innerHTML=`<div class="jira-report">${header}
-    ${epicSection(eb.design,    'design',      'Design',    '#B0A6FF',['Illustrations','UI','Animation'])}
+    ${epicSection(eb.design,    'design',      'Design',    '#B0A6FF',['Illustrations','UI','Animation','Graphics'])}
     ${epicSection(eb.algorithm, 'algorithm',   'Algorithm', '#2DD4A8', null)}
     ${epicSection(eb.development,'development','Dev.',      '#F5B544',['FE','BE','QA','AQA','Other'])}
   </div>`;
@@ -3207,7 +3219,7 @@ async function renderJiraHomeSection(){
     // 3-panel epic breakdown (initiatives)
     const pName=(projectName||'').replace(/'/g,"\\'");
     const jb=jiraBase||'';
-    const EPIC_DISC_COLORS={Illustrations:'#B0A6FF',UI:'#0077b6',Animation:'#14b8a6',FE:'#7b68ee',BE:'#27ae60',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
+    const EPIC_DISC_COLORS={Illustrations:'#B0A6FF',UI:'#0077b6',Animation:'#14b8a6',Graphics:'#e91e8c',FE:'#7b68ee',BE:'#27ae60',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
     const EPIC_DISC_LABELS={Illustrations:'Illust.',Animation:'Anim.',QA:'QA/Test'};
     function epicPanel(eData,type,label,color,discList){
       if(!eData)return`<div class="jira-epic-panel"><div class="jira-epic-panel-hdr"><span class="jira-epic-type" style="color:${color}">${label}</span><span class="jira-epic-done">No epic</span></div></div>`;
@@ -3242,7 +3254,7 @@ async function renderJiraHomeSection(){
       return`<div class="jira-epic-panel">
         <div class="jira-epic-panel-hdr">
           <span class="jira-epic-type" style="color:${color}">${label}</span>
-          <span class="jira-epic-key">${ck}</span>
+          <a href="${jb}${ck}" target="_blank" class="jira-epic-key epic-link" onclick="event.stopPropagation()" style="text-decoration:none">${ck}</a>
           <span class="jira-epic-done">${eData.done_issues}/${eData.total_issues} (${donePct}%)</span>
         </div>
         <div class="jira-epic-body">
@@ -3259,7 +3271,7 @@ async function renderJiraHomeSection(){
     return`<tr class="jira-disc-row" id="${rowId}" style="display:none">
       <td colspan="9">
         <div class="jira-epic-panels">
-          ${epicPanel(eb.design,    'design',      'Design',    '#B0A6FF',['Illustrations','UI','Animation'])}
+          ${epicPanel(eb.design,    'design',      'Design',    '#B0A6FF',['Illustrations','UI','Animation','Graphics'])}
           ${epicPanel(eb.algorithm, 'algorithm',   'Algorithm', '#2DD4A8', null)}
           ${epicPanel(eb.development,'development','Dev.',      '#F5B544',['FE','BE','QA','AQA','Other'])}
         </div>
