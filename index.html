@@ -987,6 +987,13 @@ body.q4-theme .jira-edr-stats{color:#6C7289!important}
 body.q4-theme .jira-alg-stat .jal{color:#6C7289!important}
 body.q4-theme .jira-alg-stat .jav{color:#F4F5F9!important}
 
+
+/* ── Phase breakdown items in buildOverview (CSS-only hover, no JS) ── */
+.phase-bd-item{background:#fafbff;border:1px solid #e8eaf0;border-radius:12px;padding:14px 16px;transition:box-shadow .2s}
+.phase-bd-item:hover{box-shadow:0 4px 12px rgba(123,104,238,.12)}
+body.q4-theme .phase-bd-item{background:var(--surface)!important;border-color:var(--stroke)!important}
+body.q4-theme .phase-bd-item:hover{background:var(--surface-2)!important;box-shadow:0 4px 12px rgba(124,108,255,.18)!important}
+
 </style>
 </head>
 <body>
@@ -1934,7 +1941,7 @@ function buildOverview(){
         const sc=statusColors[p.statusKey]||statusColors.notstarted;
         const mini_c=2*Math.PI*14;
         const mini_off=mini_c*(1-pp/100);
-        return`<div style="background:#fafbff;border:1px solid #e8eaf0;border-radius:12px;padding:14px 16px;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(123,104,238,.1)'" onmouseout="this.style.boxShadow='none'">
+        return`<div class="phase-bd-item">
           <div style="display:flex;align-items:center;gap:14px">
             <!-- mini donut -->
             <div style="position:relative;width:40px;height:40px;flex-shrink:0">
@@ -3027,7 +3034,8 @@ function buildReport(){
 function renderReportPanel(el,d){
   const epicKey=curItem.epicId;
   const epicUrl=curItem.epicUrl||`https://dg-group.atlassian.net/browse/${epicKey}`;
-  const jiraBase=(curItem.epicUrl||'').replace(/\/[^/]+$/,'/');
+  const _rawBase=(curItem.epicUrl||'').replace(/\/[^/]+$/,'/');
+  const jiraBase=(_rawBase&&_rawBase.startsWith('http'))?_rawBase:'https://dg-group.atlassian.net/browse/';
   const isStale=d&&(Date.now()-new Date(d.fetched_at).getTime())>JIRA_SYNC_TTL_MS;
   const canSync=_currentRole==='editor';
   const syncBtnId=`jira-sync-btn-${epicKey.replace(/[^a-z0-9]/gi,'_')}`;
@@ -3218,7 +3226,7 @@ async function renderJiraHomeSection(){
     }
     // 3-panel epic breakdown (initiatives)
     const pName=(projectName||'').replace(/'/g,"\\'");
-    const jb=jiraBase||'';
+    const jb=(jiraBase&&jiraBase.startsWith('http'))?jiraBase:'https://dg-group.atlassian.net/browse/';
     const EPIC_DISC_COLORS={Illustrations:'#B0A6FF',UI:'#0077b6',Animation:'#14b8a6',Graphics:'#e91e8c',FE:'#7b68ee',BE:'#27ae60',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
     const EPIC_DISC_LABELS={Illustrations:'Illust.',Animation:'Anim.',QA:'QA/Test'};
     function epicPanel(eData,type,label,color,discList){
