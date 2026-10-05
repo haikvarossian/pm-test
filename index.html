@@ -3271,7 +3271,9 @@ function jiraStatusClass(cat){
 
 async function loadJiraCache(epicKey){
   if(!_sb||!epicKey)return null;
-  const{data,error}=await _sb.from('jira_sync').select('*,epic_breakdown').eq('epic_key',epicKey).maybeSingle();
+  const{data,error}=await _sb.from('jira_sync')
+    .select('epic_key,fetched_at,epic_status,epic_status_cat,total_issues,done_issues,inprogress_issues,original_estimate,time_spent,assignee,open_issues,all_issues,discipline_breakdown,epic_breakdown,error')
+    .eq('epic_key',epicKey).maybeSingle();
   if(error||!data)return null;
   return data;
 }
