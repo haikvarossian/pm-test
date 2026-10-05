@@ -3535,11 +3535,12 @@ function buildKPIStrip(allIssues,totalIssues,doneIssues,estSec,sptSec){
   const spanDays=minD&&maxD?Math.round((new Date(maxD)-new Date(minD))/86400000):null;
   const fmt=d=>d?new Date(d).toLocaleDateString('en',{month:'short',day:'numeric'}):null;
 
-  // Median cycle time for done items
-  const doneIss=allIssues.filter(i=>i.statusCat==='done'&&i.created&&i.resolved);
-  const cycles=doneIss.map(i=>Math.round((new Date(i.resolved)-new Date(i.created))/86400000)).sort((a,b)=>a-b);
+  // Median cycle time for done items — only when we have meaningful data (≥3 items)
+  const doneIss=allIssues.filter(i=>i.statusCat==='done'&&i.created&&i.resolved&&i.created!==i.resolved);
+  // Use ceiling so <1-day tasks show as 1 day rather than 0 (date-only precision)
+  const cycles=doneIss.map(i=>Math.max(1,Math.ceil((new Date(i.resolved)-new Date(i.created))/86400000))).sort((a,b)=>a-b);
   const mid=Math.floor(cycles.length/2);
-  const medCycle=cycles.length?cycles.length%2?cycles[mid]:Math.round((cycles[mid-1]+cycles[mid])/2):null;
+  const medCycle=cycles.length>=3?(cycles.length%2?cycles[mid]:Math.round((cycles[mid-1]+cycles[mid])/2)):null;
 
   function card(label,value,sub,last){
     return`<div style="flex:1;min-width:0;padding:14px 18px${last?'':`;border-right:1px solid ${bd}`}">
@@ -3796,7 +3797,8 @@ function renderReportPanel(el,d){
              estimate:dd.estimate,spent:dd.spent,done:dd.done,total:dd.issues};
     });
     const hdr=reportHdr(epicKey,d.assignee);
-    const kpis=buildKPIStrip(allIssues,d.total_issues,d.done_issues,est,spt);
+    // Use all_issues if populated, fall back to open_issues for partial metrics (bugs, subtasks)
+    const kpis=buildKPIStrip(allIssues.length?allIssues:openIssues,d.total_issues,d.done_issues,est,spt);
     const effort=effortPanel(discRows);
     const tl=timelinePanel(discRows,allIssues);
     const team=allIssues.length?`<div class="rpt-section"><div class="rpt-h3">Team contribution</div>${buildTeamTable(allIssues)}</div>`:'';
