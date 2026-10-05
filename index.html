@@ -3558,16 +3558,31 @@ function buildKPIStrip(allIssues,totalIssues,doneIssues,estSec,sptSec){
   const timeSub=estH>0?`against ${estH}&nbsp;h estimated${diffPct!==null?` (${diffPct>=0?'+':''}${diffPct}%)`:''}`:
     (sptH>0?'no estimate set':'');
 
+  const overPct2=estSec>0?Math.round((sptSec/estSec)*100):null;
+  const overBool=overPct2!==null&&overPct2>100;
+  const barCol2=overBool?'#e74c3c':overPct2>75?'#f6a623':'#27ae60';
+  const barW2=overPct2!==null?Math.min(overPct2,100):0;
+
   const cards=[
     card('Work items',totalIssues,workSub),
-    card('Time logged',sptH>0?`${sptH}&nbsp;h`:'—',timeSub),
+    card('Estimated',estH>0?`${estH}&nbsp;h`:'—',''),
+    card('Logged',sptH>0?`${sptH}&nbsp;h`:'—',timeSub),
     ...(spanDays!==null?[card('Span',`${spanDays} days`,`first ticket ${fmt(minD)} to last close ${fmt(maxD)}`)]:[] ),
     ...(medCycle!==null?[card('Median cycle time',`${medCycle} days`,'created to resolved, Done items only')]:[] ),
     ...(bugs>0?[card('Defects',bugs,`${bugs} bug-type issue${bugs!==1?'s':''}`)]:[] ),
   ];
 
-  return`<div style="display:flex;background:${bg};border:1px solid ${bd};border-radius:14px;overflow:hidden;margin-bottom:20px">
-    ${cards.map((c,i)=>i===cards.length-1?c:c).join('')}
+  return`<div style="background:${bg};border:1px solid ${bd};border-radius:14px;overflow:hidden;margin-bottom:20px">
+    <div style="display:flex">${cards.join('')}</div>
+    <div style="padding:10px 18px 14px;border-top:1px solid ${bd}">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:${mc};margin-bottom:5px">
+        <span>Budget</span>
+        <span style="color:${barCol2};font-weight:600">${overPct2!==null?overPct2+'%':'—'}</span>
+      </div>
+      <div style="height:5px;background:${isDark?'rgba(255,255,255,.08)':'#f0f2ff'};border-radius:3px;overflow:hidden">
+        <div style="width:${barW2}%;height:100%;background:${barCol2};border-radius:3px"></div>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -3700,31 +3715,14 @@ function renderReportPanel(el,d){
   const isOver=pct!==null&&pct>100;
 
   // ── Shared header ───────────────────────────────────────────────────────────
-  function reportHdr(epicK,totalIssues,doneIssues,estH,sptH,assignee,isInit){
-    const overPct=estH>0?Math.round((sptH/estH)*100):null;
-    const over=overPct>100;
-    const barW=overPct!==null?Math.min(overPct,100):0;
-    const barCol=over?'#e74c3c':overPct>75?'#f6a623':'#27ae60';
-    return`<div style="background:${panelBg};border:1px solid ${panelBorder};border-radius:14px;padding:20px 24px;margin-bottom:20px">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-        <span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span>
-        <a href="${jiraBase}${epicK}" target="_blank" class="epic-link" style="font-weight:600">${epicK} ↗</a>
-        ${isStale?`<span style="font-size:11px;color:var(--gold,#f6a623)">⚠ Stale</span>`:''}
-        ${assignee?`<span style="font-size:12px;color:${mutedCol}">· ${assignee}</span>`:''}
-        <span style="margin-left:auto;font-size:11px;color:${mutedCol}">Synced ${timeSince(d.fetched_at)}</span>
-        ${canSync?`<button class="jira-sync-btn" id="${syncBtnId}" onclick="triggerJiraSync('${epicKey}',this)">↻ Sync</button>`:''}
-      </div>
-      <div class="rpt-kpis" style="margin-bottom:14px">
-        <div><div class="rpt-kpi-lbl">Issues</div><div class="rpt-kpi-val">${totalIssues}<small>${doneIssues} done · ${totalIssues>0?Math.round(doneIssues/totalIssues*100):0}%</small></div></div>
-        <div><div class="rpt-kpi-lbl">Estimated</div><div class="rpt-kpi-val">${fmtRH(estH)}</div></div>
-        <div><div class="rpt-kpi-lbl">Logged</div><div class="rpt-kpi-val${over?' rpt-over':''}">${fmtRH(sptH)}<small>${overPct!==null?overPct+'%':''}</small></div></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;color:${mutedCol};margin-bottom:4px">
-        <span>Budget</span><span style="color:${barCol};font-weight:600">${overPct!==null?overPct+'%':'—'}</span>
-      </div>
-      <div style="height:6px;background:${isDark?'rgba(255,255,255,.08)':'#f0f2ff'};border-radius:4px;overflow:hidden">
-        <div style="width:${barW}%;height:100%;background:${barCol};border-radius:4px"></div>
-      </div>
+  function reportHdr(epicK,assignee){
+    return`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      <span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span>
+      <a href="${jiraBase}${epicK}" target="_blank" class="epic-link" style="font-weight:600">${epicK} ↗</a>
+      ${isStale?`<span style="font-size:11px;color:var(--gold,#f6a623)">⚠ Stale</span>`:''}
+      ${assignee?`<span style="font-size:12px;color:${mutedCol}">· ${assignee}</span>`:''}
+      <span style="margin-left:auto;font-size:11px;color:${mutedCol}">Synced ${timeSince(d.fetched_at)}</span>
+      ${canSync?`<button class="jira-sync-btn" id="${syncBtnId}" onclick="triggerJiraSync('${epicKey}',this)">↻ Sync</button>`:''}
     </div>`;
   }
 
@@ -3797,7 +3795,7 @@ function renderReportPanel(el,d){
              issues:allIssues.filter(i=>i.discipline===disc),
              estimate:dd.estimate,spent:dd.spent,done:dd.done,total:dd.issues};
     });
-    const hdr=reportHdr(epicKey,d.total_issues,d.done_issues,est,spt,d.assignee,false);
+    const hdr=reportHdr(epicKey,d.assignee);
     const kpis=buildKPIStrip(allIssues,d.total_issues,d.done_issues,est,spt);
     const effort=effortPanel(discRows);
     const tl=timelinePanel(discRows,allIssues);
@@ -3850,7 +3848,7 @@ function renderReportPanel(el,d){
   }
 
   const EPIC_DISC_COLORS={Illustrations:'#B0A6FF',UI:'#0077b6',Animation:'#14b8a6',Graphics:'#e91e8c',FE:'#7b68ee',BE:'#27ae60',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
-  const hdr=reportHdr(epicKey,d.total_issues,d.done_issues,est,spt,d.assignee,true);
+  const hdr=reportHdr(epicKey,d.assignee);
   // Aggregate all_issues across all three epics for initiative-level KPI strip
   const initAllIss=[...(eb.design?.all_issues||[]),...(eb.algorithm?.all_issues||[]),...(eb.development?.all_issues||[])];
   const kpis=buildKPIStrip(initAllIss,d.total_issues,d.done_issues,est,spt);
