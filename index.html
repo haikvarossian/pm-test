@@ -1029,6 +1029,62 @@ body.q4-theme .phase-bd-item:hover{background:var(--surface-2)!important;box-sha
 .rpt-epic-sep{display:flex;align-items:center;gap:12px;margin:24px 0 16px;padding-bottom:12px;border-bottom:2px solid}
 .rpt-note{font-size:11px;color:var(--muted,#aab0c6);margin:6px 0 0}
 
+
+/* ── Q4 Jira discipline cells dark overrides ─────────────────────────── */
+body.q4-theme .jira-disc-grid{background:var(--stroke)!important}
+body.q4-theme .jira-disc-cell{background:var(--surface)!important}
+body.q4-theme .jira-disc-cell.over-disc{background:rgba(255,107,107,.08)!important;border-top-color:rgba(255,107,107,.5)!important}
+body.q4-theme .jira-disc-label{color:inherit!important}
+body.q4-theme .jira-disc-time{color:var(--text)!important}
+body.q4-theme .jira-disc-time span:not(.over-badge){color:var(--muted-2)!important}
+body.q4-theme .jira-disc-count{color:var(--muted)!important}
+body.q4-theme .jira-disc-bar{background:rgba(255,255,255,.08)!important}
+body.q4-theme tr.jira-disc-row>td{background:var(--surface-2)!important}
+body.q4-theme .jira-table-wrap{background:var(--surface)!important;border-color:var(--stroke)!important}
+body.q4-theme .jira-table-wrap th{background:rgba(255,255,255,.025)!important;color:var(--muted-2)!important;border-bottom-color:var(--stroke)!important}
+body.q4-theme .jira-table-wrap td{color:var(--text)!important;border-bottom-color:var(--stroke)!important}
+body.q4-theme .jira-table-wrap tr:hover td{background:var(--surface-2)!important}
+body.q4-theme .jira-stat{background:var(--surface)!important;border-color:var(--stroke)!important}
+body.q4-theme .jira-stat .js-label{color:var(--muted-2)!important}
+body.q4-theme .jira-stat .js-value{color:var(--text)!important}
+body.q4-theme .jira-budget-bar{background:var(--surface)!important;border-color:var(--stroke)!important}
+body.q4-theme .jira-budget-bar .bar-track{background:rgba(255,255,255,.08)!important}
+body.q4-theme .jira-breakdown{background:var(--surface)!important;border-color:var(--stroke)!important}
+body.q4-theme .jira-breakdown h4{color:var(--muted-2)!important}
+body.q4-theme .jira-type-row .type-bar-track{background:rgba(255,255,255,.08)!important}
+body.q4-theme .jira-issues-table{background:var(--surface)!important;border-color:var(--stroke)!important}
+body.q4-theme .jira-issues-table h4{color:var(--muted-2)!important;border-bottom-color:var(--stroke)!important}
+body.q4-theme .jira-issues-table th{background:rgba(255,255,255,.025)!important;color:var(--muted-2)!important;border-bottom-color:var(--stroke)!important}
+body.q4-theme .jira-issues-table td{border-bottom-color:var(--stroke)!important}
+body.q4-theme .jira-issues-table tr:hover td{background:var(--surface-2)!important}
+body.q4-theme .jira-sync-btn{color:var(--accent-text)!important;border-color:rgba(124,108,255,.4)!important}
+body.q4-theme .jira-sync-btn:hover{background:rgba(124,108,255,.12)!important}
+body.q4-theme .jira-status-pill.done{background:rgba(45,212,168,.14)!important;color:var(--teal)!important}
+body.q4-theme .jira-status-pill.indeterminate{background:rgba(245,181,68,.14)!important;color:var(--gold)!important}
+body.q4-theme .jira-status-pill.new{background:rgba(124,108,255,.15)!important;color:var(--accent-text)!important}
+/* ── Q4 issues modal dark ─────────────────────────────────────────────── */
+body.q4-theme #issuesModal>div{background:#12151F!important;border:1px solid var(--stroke-2)!important}
+body.q4-theme .im-hdr{background:linear-gradient(135deg,rgba(124,108,255,.25),rgba(45,212,168,.15))!important;border-bottom:1px solid var(--stroke)!important}
+body.q4-theme .im-hdr h2{color:var(--text)!important}
+body.q4-theme .im-meta{color:var(--muted)!important}
+body.q4-theme .im-stats{background:var(--surface)!important;border-bottom-color:var(--stroke)!important}
+body.q4-theme .im-stat{background:transparent!important;border-right-color:var(--stroke)!important}
+body.q4-theme .im-sl{color:var(--muted-2)!important}
+body.q4-theme .im-sv{color:var(--text)!important}
+body.q4-theme .im-sv.over{color:var(--coral)!important}
+body.q4-theme .im-table th{background:rgba(255,255,255,.025)!important;color:var(--muted-2)!important;border-bottom-color:var(--stroke)!important}
+body.q4-theme .im-table th:hover,.im-table th.s{color:var(--accent-text)!important}
+body.q4-theme .im-table td{background:transparent!important;border-bottom-color:var(--stroke)!important;color:var(--text)!important}
+body.q4-theme .im-table tr:hover td{background:var(--surface-2)!important}
+body.q4-theme .im-loading,.q4-theme .im-empty{background:var(--surface)!important;color:var(--muted)!important}
+body.q4-theme .im-close{color:var(--muted-2)!important}
+body.q4-theme .im-close:hover{color:var(--text)!important}
+body.q4-theme .im-kl{color:var(--accent-text)!important}
+body.q4-theme .im-sub{background:rgba(124,108,255,.2)!important;color:var(--accent-text)!important}
+body.q4-theme .bar-track{background:rgba(255,255,255,.08)!important}
+/* ── Report tab SVG text colours ─────────────────────────────────────── */
+.report-timeline{overflow:visible}
+
 </style>
 </head>
 <body>
@@ -3033,6 +3089,98 @@ let JIRA_SYNC_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours — update as needed
 const DISC_COLORS={FE:'#7b68ee',BE:'#27ae60',UI:'#0077b6',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
 const DISC_LABELS={FE:'FE',BE:'BE',UI:'UI',QA:'QA/Test',AQA:'AQA',Other:'Other'};
 
+function discSubRow(epicId,syncRow,projectName,jiraBase){
+  const eb=syncRow&&syncRow.epic_breakdown;
+  const hasEB=eb&&(eb.design||eb.algorithm||eb.development);
+  const db=syncRow&&syncRow.discipline_breakdown;
+  const rowId=`disc-row-${epicId.replace(/[^a-z0-9]/gi,'_')}`;
+  const isDark=document.body.classList.contains('q4-theme');
+
+  if(!hasEB){
+    // ── 6-column discipline grid (Q3 plain epics) ─────────────────────────────
+    if(!db)return'';
+    const discs=['FE','BE','UI','QA','AQA','Other'];
+    const cells=discs.map(disc=>{
+      const d=db[disc]||{issues:0,done:0,estimate:0,spent:0};
+      const hasData=d.issues>0||d.estimate>0;
+      const pct=d.estimate>0?Math.min(Math.round((d.spent/d.estimate)*100),100):0;
+      const isOver=d.estimate>0&&d.spent>d.estimate;
+      const clickAttr=hasData?`onclick="openDisciplineIssues('${epicId}','${disc}','${DISC_LABELS[disc]}','${(projectName||'').replace(/'/g,"\\'")}','${jiraBase||''}','development')" style="color:${DISC_COLORS[disc]};cursor:pointer" title="View ${DISC_LABELS[disc]} issues"`:`style="color:${DISC_COLORS[disc]}"`;
+      if(!d.issues&&!d.estimate)return`<div class="jira-disc-cell"><div class="jira-disc-label" ${clickAttr}>${DISC_LABELS[disc]}</div><div class="jira-disc-count" style="color:#ddd">—</div></div>`;
+      return`<div class="jira-disc-cell${isOver?' over-disc':''}">
+        <div class="jira-disc-label" ${clickAttr}>${DISC_LABELS[disc]}${hasData?' ↗':''}</div>
+        <div class="jira-disc-time">${fmtHours(d.estimate)} <span>est</span> · ${isOver?`<span class="over-badge" style="font-size:10px;padding:1px 6px">⚠ ${fmtHours(d.spent)}</span> <span>logged</span>`:`<span>${fmtHours(d.spent)}</span> <span>logged</span>`}</div>
+        <div class="jira-disc-count">${d.done}/${d.issues} done</div>
+        <div class="jira-disc-bar"><div style="width:${pct}%;background:${DISC_COLORS[disc]}"></div></div>
+      </div>`;
+    }).join('');
+    return`<tr class="jira-disc-row" id="${rowId}" style="display:none"><td colspan="9"><div class="jira-disc-grid">${cells}</div></td></tr>`;
+  }
+
+  // ── 3-panel epic breakdown (Q4 initiatives) ────────────────────────────────
+  const pName=(projectName||'').replace(/'/g,"\\'");
+  const jb=jiraBase||'';
+  const EPIC_DISC_COLORS={Illustrations:'#B0A6FF',UI:'#0077b6',Animation:'#14b8a6',Graphics:'#e91e8c',FE:'#7b68ee',BE:'#27ae60',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
+  const EPIC_DISC_LABELS={Illustrations:'Illust.',Animation:'Anim.',QA:'QA/Test'};
+
+  function epicPanel(eData,type,label,color,discList){
+    if(!eData)return`<div class="jira-epic-panel"><div class="jira-epic-panel-hdr"><span class="jira-epic-type" style="color:${color}">${label}</span><span class="jira-epic-done">No epic</span></div></div>`;
+    const ck=eData.epic_key||'',est=eData.original_estimate||0,spt=eData.time_spent||0;
+    const pct=est>0?Math.min(Math.round((spt/est)*100),100):null;
+    const over=est>0&&spt>est;
+    const barCol=over?'#e74c3c':pct>75?'#f6a623':'#27ae60';
+    const donePct=eData.total_issues>0?Math.round((eData.done_issues/eData.total_issues)*100):0;
+    const discRows=discList&&eData.disciplines?discList.map(disc=>{
+      const dd=(eData.disciplines||{})[disc]||{issues:0,done:0,estimate:0,spent:0};
+      const dPct=dd.estimate>0?Math.min(Math.round((dd.spent/dd.estimate)*100),100):0;
+      const dOver=dd.estimate>0&&dd.spent>dd.estimate;
+      const dColor=EPIC_DISC_COLORS[disc]||'#aab0c6';
+      const dLabel=EPIC_DISC_LABELS[disc]||disc;
+      const hasDD=dd.issues>0||dd.estimate>0;
+      return`<div class="jira-edr">
+        <span class="jira-edr-lbl" style="color:${dColor}"${hasDD?` onclick="openDisciplineIssues('${ck}','${disc}','${disc}','${pName}','${jb}','${type}')" title="View ${dLabel} issues"`:''}>
+          ${dLabel}${hasDD?' ↗':''}
+        </span>
+        <div class="jira-edr-bar"><div style="width:${dPct}%;background:${dColor}"></div></div>
+        <span class="jira-edr-stats">
+          ${fmtHours(dd.estimate)} / ${dOver?`<span class="over-badge" style="font-size:9px;padding:1px 4px">⚠ ${fmtHours(dd.spent)}</span>`:`${fmtHours(dd.spent)}`}
+          <span style="opacity:.6"> · ${dd.done}/${dd.issues}</span>
+        </span>
+      </div>`;
+    }).join(''):'';
+    const algBlock=type==='algorithm'?`<div class="jira-alg-grid">
+      <div class="jira-alg-stat"><div class="jal">Stories</div><div class="jav">${eData.total_issues}</div></div>
+      <div class="jira-alg-stat"><div class="jal">Done</div><div class="jav" style="color:#27ae60">${eData.done_issues}</div></div>
+      <div class="jira-alg-stat"><div class="jal">In prog.</div><div class="jav" style="color:#f6a623">${eData.inprogress_issues||0}</div></div>
+    </div>`:discRows;
+    return`<div class="jira-epic-panel">
+      <div class="jira-epic-panel-hdr">
+        <span class="jira-epic-type" style="color:${color}">${label}</span>
+        <a href="${jb}${ck}" target="_blank" class="jira-epic-key epic-link" onclick="event.stopPropagation()" style="text-decoration:none">${ck}</a>
+        <span class="jira-epic-done">${eData.done_issues}/${eData.total_issues} (${donePct}%)</span>
+      </div>
+      <div class="jira-epic-body">
+        <div class="jira-epic-times">
+          ${fmtHours(est)} <span class="jlbl">est</span> ·
+          ${over?`<span class="over-badge" style="font-size:10px;padding:1px 6px">⚠ ${fmtHours(spt)}</span>`:`${fmtHours(spt)}`}
+          <span class="jlbl">logged</span>
+        </div>
+        <div class="jira-epic-bar"><div style="width:${pct||0}%;background:${barCol}"></div></div>
+        ${algBlock}
+      </div>
+    </div>`;
+  }
+  return`<tr class="jira-disc-row" id="${rowId}" style="display:none">
+    <td colspan="9">
+      <div class="jira-epic-panels">
+        ${epicPanel(eb.design,    'design',      'Design',    '#B0A6FF',['Illustrations','UI','Animation','Graphics'])}
+        ${epicPanel(eb.algorithm, 'algorithm',   'Algorithm', '#2DD4A8', null)}
+        ${epicPanel(eb.development,'development','Dev.',      '#F5B544',['FE','BE','QA','AQA','Other'])}
+      </div>
+    </td>
+  </tr>`;
+}
+
 async function renderJiraHomeSection(){
   const el=document.getElementById('jira-home-section');
   if(!el||!_sb)return;
@@ -3169,7 +3317,6 @@ function buildReport(){
 const RPT_DISC_COLORS={FE:'#7b68ee',BE:'#27ae60',UI:'#0077b6',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6',Illustrations:'#B0A6FF',Animation:'#14b8a6',Graphics:'#e91e8c'};
 const RPT_DISC_LABELS={QA:'QA/Test'};
 function fmtRH(s){return s>0?parseFloat((s/3600).toFixed(1))+'h':'—';}
-function jiraStatusClass(cat){return cat==='done'?'done':cat==='indeterminate'?'indeterminate':'new';}
 
 function buildTimelineSVG(discRows,cW=720){
   const isDark=document.body.classList.contains('q4-theme');
@@ -3650,22 +3797,7 @@ function validActualStart(pi,val,el){
 
 
 // ── DISCIPLINE ISSUES VIEWER ─────────────────────────────────────────────────
-function issueTypeIcon(type){
-  const cfg={
-    'Story'   :{bg:'#22a06b',d:'M3 1h10a1 1 0 011 1v11.5l-5.5-2.5L3 13.5V2a1 1 0 010-1z'},
-    'Bug'     :{bg:'#ef5c48',d:'M8 3a5 5 0 100 10A5 5 0 008 3zm-2 3.5h4m-4 2h4'},
-    'Task'    :{bg:'#4bade8',d:'M3 8.5l3.5 3.5 6.5-7'},
-    'Sub-task':{bg:'#4bade8',d:'M4 8.5l2.5 2.5 5-5.5'},
-    'Subtask' :{bg:'#4bade8',d:'M4 8.5l2.5 2.5 5-5.5'},
-    'Epic'    :{bg:'#904ee2',d:'M9.5 1.5L5.5 8h3.5l-4 6.5L14 7H10l2-5.5z'},
-    'Test'    :{bg:'#1ba1a5',d:'M5.5 2h5v7l2.5 5h-10L5.5 9V2z M4.5 4.5h7'},
-    'Spike'   :{bg:'#7b68ee',d:'M8 2l1.5 4.5H14L10 9l1.5 5L8 11.5 4.5 14 6 9 2 6.5h4.5z'},
-    'AQA'     :{bg:'#14b8a6',d:'M8 2l1.5 4.5H14L10 9l1.5 5L8 11.5 4.5 14 6 9 2 6.5h4.5z'},
-  };
-  const c=cfg[type];
-  if(!c)return`<span style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:2px;background:#aab0c6;color:#fff;font-size:8px;font-weight:800;vertical-align:middle;flex-shrink:0">${(type||'?')[0]}</span>`;
-  return`<svg viewBox="0 0 16 16" width="14" height="14" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;background:${c.bg};flex-shrink:0" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="${c.d}"/></svg>`;
-}
+
 function goBack(){showHome(curItem?curItem.section:activeSection);}
 
 // ── Q4 CHROME: strip leading emoji from UI text when Q4 theme is active ───────
