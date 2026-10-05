@@ -3513,6 +3513,64 @@ function buildEffortSVG(discRows,cW=640){
   return svg;
 }
 
+// ── KPI strip (matches Wonder Forest layout) ─────────────────────────────────
+function buildKPIStrip(allIssues,totalIssues,doneIssues,estSec,sptSec){
+  const isDark=document.body.classList.contains('q4-theme');
+  const bg=isDark?'var(--surface)':'#fff';
+  const bd=isDark?'var(--stroke)':'#e0e4ef';
+  const tc=isDark?'var(--text)':'#16231C';
+  const mc=isDark?'var(--muted)':'#566559';
+
+  const estH=Math.round(estSec/3600*10)/10;
+  const sptH=Math.round(sptSec/3600*10)/10;
+  const diffPct=estSec>0?Math.round((sptSec-estSec)/estSec*100):null;
+  const wontDo=allIssues.filter(i=>i.status&&/won.?t\s*do/i.test(i.status)).length;
+  const bugs=allIssues.filter(i=>i.type&&/bug/i.test(i.type)).length;
+  const subtasks=allIssues.filter(i=>i.isSubIssue).length;
+
+  // Span from dates
+  const dts=allIssues.flatMap(i=>[i.created,i.resolved].filter(Boolean));
+  const minD=dts.length?dts.reduce((a,b)=>a<b?a:b):null;
+  const maxD=dts.length?dts.reduce((a,b)=>a>b?a:b):null;
+  const spanDays=minD&&maxD?Math.round((new Date(maxD)-new Date(minD))/86400000):null;
+  const fmt=d=>d?new Date(d).toLocaleDateString('en',{month:'short',day:'numeric'}):null;
+
+  // Median cycle time for done items
+  const doneIss=allIssues.filter(i=>i.statusCat==='done'&&i.created&&i.resolved);
+  const cycles=doneIss.map(i=>Math.round((new Date(i.resolved)-new Date(i.created))/86400000)).sort((a,b)=>a-b);
+  const mid=Math.floor(cycles.length/2);
+  const medCycle=cycles.length?cycles.length%2?cycles[mid]:Math.round((cycles[mid-1]+cycles[mid])/2):null;
+
+  function card(label,value,sub,last){
+    return`<div style="flex:1;min-width:0;padding:14px 18px${last?'':`;border-right:1px solid ${bd}`}">
+      <div style="font-size:11px;color:${mc};margin-bottom:4px">${label}</div>
+      <div style="font-size:26px;font-weight:700;color:${tc};line-height:1.1;margin-bottom:4px">${value}</div>
+      ${sub?`<div style="font-size:11px;color:${mc};line-height:1.5">${sub}</div>`:''}
+    </div>`;
+  }
+
+  const workSub=[
+    subtasks>0?`plus ${subtasks} subtasks`:'',
+    `${doneIssues} Done`,
+    wontDo>0?`${wontDo} Won't Do`:''
+  ].filter(Boolean).join('; ');
+
+  const timeSub=estH>0?`against ${estH}&nbsp;h estimated${diffPct!==null?` (${diffPct>=0?'+':''}${diffPct}%)`:''}`:
+    (sptH>0?'no estimate set':'');
+
+  const cards=[
+    card('Work items',totalIssues,workSub),
+    card('Time logged',sptH>0?`${sptH}&nbsp;h`:'—',timeSub),
+    ...(spanDays!==null?[card('Span',`${spanDays} days`,`first ticket ${fmt(minD)} to last close ${fmt(maxD)}`)]:[] ),
+    ...(medCycle!==null?[card('Median cycle time',`${medCycle} days`,'created to resolved, Done items only')]:[] ),
+    ...(bugs>0?[card('Defects',bugs,`${bugs} bug-type issue${bugs!==1?'s':''}`)]:[] ),
+  ];
+
+  return`<div style="display:flex;background:${bg};border:1px solid ${bd};border-radius:14px;overflow:hidden;margin-bottom:20px">
+    ${cards.map((c,i)=>i===cards.length-1?c:c).join('')}
+  </div>`;
+}
+
 function buildDiscIssues(issues,discLabel,color,jiraBase){
   if(!issues.length)return'';
   const sorted=[...issues].sort((a,b)=>{const o={done:0,indeterminate:1,new:2};return(o[b.statusCat]||2)-(o[a.statusCat]||2);});
@@ -3740,6 +3798,7 @@ function renderReportPanel(el,d){
              estimate:dd.estimate,spent:dd.spent,done:dd.done,total:dd.issues};
     });
     const hdr=reportHdr(epicKey,d.total_issues,d.done_issues,est,spt,d.assignee,false);
+    const kpis=buildKPIStrip(allIssues,d.total_issues,d.done_issues,est,spt);
     const effort=effortPanel(discRows);
     const tl=timelinePanel(discRows,allIssues);
     const team=allIssues.length?`<div class="rpt-section"><div class="rpt-h3">Team contribution</div>${buildTeamTable(allIssues)}</div>`:'';
@@ -3748,7 +3807,7 @@ function renderReportPanel(el,d){
     const cumulSection=cumul?`<div class="rpt-section"><div class="rpt-h3">Cumulative created and closed · direct work items</div><div style="background:${panelBg};border:1px solid ${panelBorder};border-radius:12px;padding:16px 20px;max-width:680px">${cumul}</div></div>`:'';
     const monthly=buildMonthlyTable(allIssues);
     const monthlySection=monthly?`<div class="rpt-section"><div class="rpt-h3">Items per month</div><div style="max-width:380px">${monthly}</div></div>`:'';
-    el.innerHTML=`<div class="jira-report">${hdr}${effort}${tl}${cumulSection}${monthlySection}${team}${appendix}</div>`;
+    el.innerHTML=`<div class="jira-report">${hdr}${kpis}${effort}${tl}${cumulSection}${monthlySection}${team}${appendix}</div>`;
     return;
   }
 
@@ -3792,10 +3851,13 @@ function renderReportPanel(el,d){
 
   const EPIC_DISC_COLORS={Illustrations:'#B0A6FF',UI:'#0077b6',Animation:'#14b8a6',Graphics:'#e91e8c',FE:'#7b68ee',BE:'#27ae60',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
   const hdr=reportHdr(epicKey,d.total_issues,d.done_issues,est,spt,d.assignee,true);
+  // Aggregate all_issues across all three epics for initiative-level KPI strip
+  const initAllIss=[...(eb.design?.all_issues||[]),...(eb.algorithm?.all_issues||[]),...(eb.development?.all_issues||[])];
+  const kpis=buildKPIStrip(initAllIss,d.total_issues,d.done_issues,est,spt);
   const design=epicSection(eb.design,'design','Design','#B0A6FF',['Illustrations','UI','Animation','Graphics']);
   const algo=epicSection(eb.algorithm,'algorithm','Algorithm','#2DD4A8',null);
   const dev=epicSection(eb.development,'development','Dev.','#F5B544',['FE','BE','QA','AQA','Other']);
-  el.innerHTML=`<div class="jira-report">${hdr}${design}${algo}${dev}</div>`;
+  el.innerHTML=`<div class="jira-report">${hdr}${kpis}${design}${algo}${dev}</div>`;
 }
 
 
