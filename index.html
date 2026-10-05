@@ -3318,19 +3318,116 @@ const RPT_DISC_COLORS={FE:'#7b68ee',BE:'#27ae60',UI:'#0077b6',QA:'#f6a623',AQA:'
 const RPT_DISC_LABELS={QA:'QA/Test'};
 function fmtRH(s){return s>0?parseFloat((s/3600).toFixed(1))+'h':'—';}
 
-function buildTimelineSVG(discRows,cW=720){
+// ── Cumulative created vs closed chart ──────────────────────────────────────
+function buildCumulativeChart(issues,cW=640){
+  const isDark=document.body.classList.contains('q4-theme');
+  const bgC=isDark?'rgba(255,255,255,.05)':'#f8f9ff';
+  const gridC=isDark?'rgba(255,255,255,.08)':'#e0e4ef';
+  const axisC=isDark?'#9DA3B8':'#566559';
+  const lblC=isDark?'#F4F5F9':'#16231C';
+  const createdColor='#7b68ee';
+  const closedColor='#27ae60';
+
+  const withDates=issues.filter(i=>i.created||i.resolved);
+  if(!withDates.length)return'';
+  const allD=withDates.flatMap(i=>[i.created,i.resolved].filter(Boolean));
+  const minDate=new Date(allD.reduce((a,b)=>a<b?a:b));
+  const maxDate=new Date(allD.reduce((a,b)=>a>b?a:b));
+
+  // Build month buckets
+  const months=[];
+  const mc=new Date(minDate.getFullYear(),minDate.getMonth(),1);
+  while(mc<=maxDate){months.push(new Date(mc));mc.setMonth(mc.getMonth()+1);}
+  if(!months.length)return'';
+
+  let cumCreated=0,cumClosed=0;
+  const pts=months.map(m=>{
+    const end=new Date(m.getFullYear(),m.getMonth()+1,0);
+    const endStr=end.toISOString().slice(0,10);
+    const monthCreated=withDates.filter(i=>i.created&&i.created<=endStr).length;
+    const monthClosed=withDates.filter(i=>i.resolved&&i.resolved<=endStr).length;
+    return{month:m,created:monthCreated,closed:monthClosed};
+  });
+
+  const maxVal=Math.max(...pts.map(p=>p.created),1);
+  const PL=32,PR=20,PT=16,PB=28,H=160;
+  const CW=cW-PL-PR;
+  const svgH=H+PT+PB;
+  const toX=i=>PL+i*(CW/(pts.length-1||1));
+  const toY=v=>PT+H-(v/maxVal)*H;
+
+  let svg=`<svg viewBox="0 0 ${cW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">`;
+  // Grid
+  [0,0.25,0.5,0.75,1].forEach(f=>{
+    const y=toY(f*maxVal).toFixed(0);
+    svg+=`<line x1="${PL}" y1="${y}" x2="${cW-PR}" y2="${y}" stroke="${gridC}" stroke-width="1"/>`;
+    svg+=`<text x="${PL-4}" y="${+y+3}" text-anchor="end" font-family="system-ui,sans-serif" font-size="9" fill="${axisC}">${Math.round(f*maxVal)}</text>`;
+  });
+  // Month labels (every 2nd)
+  pts.forEach((p,i)=>{
+    if(i%2!==0)return;
+    const x=toX(i).toFixed(0);
+    svg+=`<text x="${x}" y="${svgH-8}" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" fill="${axisC}">${p.month.toLocaleDateString('en',{month:'short',year:'2-digit'})}</text>`;
+  });
+  // Closed line (area)
+  const closedPts=pts.map((p,i)=>`${toX(i).toFixed(0)},${toY(p.closed).toFixed(0)}`).join(' ');
+  svg+=`<polyline points="${closedPts}" fill="none" stroke="${closedColor}" stroke-width="1.5" stroke-linejoin="round"/>`;
+  pts.forEach((p,i)=>svg+=`<circle cx="${toX(i).toFixed(0)}" cy="${toY(p.closed).toFixed(0)}" r="2.5" fill="${closedColor}"><title>${p.month.toLocaleDateString('en',{month:'short',year:'numeric'})}: ${p.closed} closed</title></circle>`);
+  // Created line
+  const createdPts=pts.map((p,i)=>`${toX(i).toFixed(0)},${toY(p.created).toFixed(0)}`).join(' ');
+  svg+=`<polyline points="${createdPts}" fill="none" stroke="${createdColor}" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="4 2"/>`;
+  pts.forEach((p,i)=>svg+=`<circle cx="${toX(i).toFixed(0)}" cy="${toY(p.created).toFixed(0)}" r="2.5" fill="${createdColor}"><title>${p.month.toLocaleDateString('en',{month:'short',year:'numeric'})}: ${p.created} cumulative created</title></circle>`);
+  // Legend
+  svg+=`<line x1="${PL}" y1="8" x2="${PL+20}" y2="8" stroke="${createdColor}" stroke-width="1.5" stroke-dasharray="4 2"/><text x="${PL+24}" y="12" font-family="system-ui,sans-serif" font-size="9" fill="${lblC}">Cumulative created</text>`;
+  svg+=`<line x1="${PL+130}" y1="8" x2="${PL+150}" y2="8" stroke="${closedColor}" stroke-width="1.5"/><text x="${PL+154}" y="12" font-family="system-ui,sans-serif" font-size="9" fill="${lblC}">Cumulative closed</text>`;
+  svg+='</svg>';
+  return svg;
+}
+
+// ── Items per month table ────────────────────────────────────────────────────
+function buildMonthlyTable(issues){
+  const withDates=issues.filter(i=>i.created||i.resolved);
+  if(!withDates.length)return'';
+  const allD=withDates.flatMap(i=>[i.created,i.resolved].filter(Boolean));
+  const minDate=new Date(allD.reduce((a,b)=>a<b?a:b));
+  const maxDate=new Date(allD.reduce((a,b)=>a>b?a:b));
+  const months=[];
+  const mc=new Date(minDate.getFullYear(),minDate.getMonth(),1);
+  while(mc<=maxDate){months.push(new Date(mc));mc.setMonth(mc.getMonth()+1);}
+
+  const rows=months.map(m=>{
+    const mStr=m.toISOString().slice(0,7); // YYYY-MM
+    const opened=withDates.filter(i=>i.created&&i.created.slice(0,7)===mStr).length;
+    const closed=withDates.filter(i=>i.resolved&&i.resolved.slice(0,7)===mStr).length;
+    return{label:m.toLocaleDateString('en',{month:'short',year:'numeric'}),opened,closed};
+  }).filter(r=>r.opened||r.closed);
+
+  if(!rows.length)return'';
+  const isDark=document.body.classList.contains('q4-theme');
+  return`<table class="rpt-table">
+    <thead><tr><th>Month</th><th class="num">Opened</th><th class="num">Closed</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr>
+      <td>${r.label}</td>
+      <td class="num">${r.opened||'—'}</td>
+      <td class="num" style="color:${r.closed>0?(isDark?'var(--teal)':'#27ae60'):''};">${r.closed||'—'}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function buildTimelineSVG(discRows,cW=640){
   const isDark=document.body.classList.contains('q4-theme');
   const gridC=isDark?'rgba(255,255,255,.1)':'#e0e4ef';
   const axisC=isDark?'#9DA3B8':'#566559';
   const lblC=isDark?'#F4F5F9':'#16231C';
   const subC=isDark?'#6C7289':'#566559';
 
-  // Only rows with at least one issue having spent>0 (log dates)
-  const rows=discRows.map(r=>({...r,logged:r.issues.filter(i=>i.spent>0||i.resolved)})).filter(r=>r.logged.length);
+  // Include issues with spent>0 OR resolved OR created — use whatever dates exist
+  const rows=discRows.map(r=>({...r,logged:r.issues.filter(i=>i.spent>0||i.resolved||i.created)})).filter(r=>r.logged.length);
   if(!rows.length) return '<p class="rpt-note">No time-log data yet.</p>';
 
-  const allD=rows.flatMap(r=>[...r.logged.map(i=>i.created),...r.logged.map(i=>i.resolved)].filter(Boolean));
-  if(!allD.length) return '<p class="rpt-note">No date data yet — re-sync to populate.</p>';
+  // Use created OR resolved — at least one must exist to draw a timeline
+  const allD=rows.flatMap(r=>r.logged.flatMap(i=>[i.created,i.resolved].filter(Boolean)));
+  if(!allD.length) return '<p class="rpt-note">No date data — ensure Edge Function includes created/resolutiondate fields and re-sync.</p>';
   const minD=new Date(allD.reduce((a,b)=>a<b?a:b));
   const maxD=new Date(allD.reduce((a,b)=>a>b?a:b));
   const totalMs=(maxD-minD)||86400000;
@@ -3356,7 +3453,7 @@ function buildTimelineSVG(discRows,cW=720){
   rows.forEach((r,i)=>{
     const y=PT+i*RH;
     const barY=y+4;
-    const starts=r.logged.map(i=>i.created).filter(Boolean).sort();
+    const starts=r.logged.map(i=>i.created||i.resolved).filter(Boolean).sort();
     const ends=r.logged.filter(i=>i.resolved).map(i=>i.resolved).filter(Boolean).sort();
     if(!starts.length)return;
 
@@ -3386,7 +3483,7 @@ function buildTimelineSVG(discRows,cW=720){
   return svg;
 }
 
-function buildEffortSVG(discRows,cW=720){
+function buildEffortSVG(discRows,cW=640){
   const isDark=document.body.classList.contains('q4-theme');
   const axisC=isDark?'#9DA3B8':'#566559';
   const lblC=isDark?'#F4F5F9':'#16231C';
@@ -3586,26 +3683,36 @@ function renderReportPanel(el,d){
     // Effort bars — always works from discipline_breakdown
     const effortSection=discRows.some(r=>r.estimate||r.spent)?`<div class="rpt-section">
       <div class="rpt-h3">Estimated vs logged hours · by discipline</div>
-      ${buildEffortSVG(discRows)}
-    </div>`:'' ;
+      <div style="max-width:680px">${buildEffortSVG(discRows)}</div>
+    </div>`:'';
 
-    // Timeline — needs all_issues with created/resolved dates (after Edge Function update)
-    const hasDateData=allIssues.some(i=>i.created||i.resolved);
+    // Timeline — show whenever all_issues has any issue data (partial dates OK)
+    const hasDateData=allIssues.length>0;
     const timelineSection=hasDateData
       ?`<div class="rpt-section">
           <div class="rpt-h3">Delivery timeline · by discipline</div>
-          <p class="rpt-note" style="margin-bottom:8px">Bars span from first to last logged-work date. Dots = individual issue closures — hover for key + summary.</p>
-          ${buildTimelineSVG(discRows)}
+          <p class="rpt-note" style="margin-bottom:8px">Bars: first to last date per discipline. Dots = individual issue closures.</p>
+          <div style="max-width:680px">${buildTimelineSVG(discRows)}</div>
         </div>`
       :`<div class="rpt-section">
           <div class="rpt-h3">Delivery timeline · by discipline</div>
-          <div style="padding:18px 20px;background:var(--surface,#f8f9ff);border:1px dashed var(--border,#e0e4ef);border-radius:12px;font-size:12px;color:var(--muted,#7a80a0);line-height:1.8">
-            Timeline requires per-issue date data. To enable it:<br>
-            1. Run the <strong>add-epic-breakdown-column.sql</strong> migration in Supabase (adds the <code>all_issues</code> column)<br>
-            2. Deploy the updated <strong>sync-jira.ts</strong> Edge Function<br>
-            3. Click <strong>Sync</strong> on this project — dates will populate on the next sync
+          <div style="padding:14px 18px;background:var(--surface,#f8f9ff);border:1px dashed var(--border,#e0e4ef);border-radius:10px;font-size:12px;color:var(--muted,#7a80a0);line-height:1.8">
+            Sync required — deploy the updated <strong>sync-jira.ts</strong> and click Sync.
           </div>
         </div>`;
+
+    // Cumulative chart + monthly table (needs date data)
+    const cumulativeHTML=buildCumulativeChart(allIssues);
+    const monthlyHTML=buildMonthlyTable(allIssues);
+    const cumulativeSection=cumulativeHTML?`<div class="rpt-section">
+      <div class="rpt-h3">Cumulative created and closed · direct work items</div>
+      <p class="rpt-note" style="margin-bottom:8px">Dashed = cumulative items created. Solid = cumulative items closed.</p>
+      <div style="max-width:680px">${cumulativeHTML}</div>
+    </div>`:'';
+    const monthlySection=monthlyHTML?`<div class="rpt-section">
+      <div class="rpt-h3">Items per month</div>
+      <div style="max-width:380px">${monthlyHTML}</div>
+    </div>`:'';
 
     // Issues table: use all_issues if available (has discipline), fall back to open_issues
     const displayIssues=allIssues.length?allIssues:openIssues;
@@ -3624,7 +3731,7 @@ function renderReportPanel(el,d){
       ${buildTeamTable(allIssues)}
     </div>`:'';
 
-    el.innerHTML=`<div class="jira-report">${hdr}${kpisQ3}${effortSection}${timelineSection}${issueSection}${teamSection}</div>`;
+    el.innerHTML=`<div class="jira-report">${hdr}${kpisQ3}${effortSection}${timelineSection}${cumulativeSection}${monthlySection}${issueSection}${teamSection}</div>`;
   } else {
     // ── Q4 initiative: Design / Algorithm / Dev ────────────────────────────────
     const design=buildEpicReportSection(eb.design,'design','Design','#B0A6FF',['Illustrations','UI','Animation','Graphics'],jiraBase);
