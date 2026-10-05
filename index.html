@@ -1700,13 +1700,14 @@ function _navHover(key,on){
   const d=document.getElementById('navDelQ-'+key);if(d)d.style.opacity=on?'1':'0';
 }
 function toggleSection(key){
-  if(openSections.has(key)){
-    openSections.delete(key);
-  } else {
-    openSections.clear(); // accordion: collapse all others
+  const alreadyOpen=openSections.has(key);
+  openSections.clear();
+  if(!alreadyOpen||activeSection!==key){
+    // expand + navigate
     openSections.add(key);
     showHome(key);
   }
+  // if already open AND we're already on that section home, just collapse
   renderSidebarSections();
 }
 function openAddQuarterModal(){
@@ -1875,7 +1876,9 @@ function showHome(section){
   setNav(null);curItem=null;activeFilter=null;refreshHome();
 }
 function showItem(id,tab){
-  curItem=items.find(i=>i.id===id);tab=tab||'overview';
+  curItem=items.find(i=>i.id===id);
+  if(!curItem){console.warn('showItem: item not found',id);return;}
+  tab=tab||'overview';
   document.body.classList.toggle('q4-theme',curItem.section==='q4');
   if(window.q4Chrome)window.q4Chrome();
   activePhaseCat='algorithm';
@@ -3618,6 +3621,11 @@ function renderReportPanel(el,d){
   const isStale=d&&(Date.now()-new Date(d.fetched_at).getTime())>JIRA_SYNC_TTL_MS;
   const canSync=_currentRole==='editor';
   const syncBtnId=`jira-sync-btn-${epicKey.replace(/[^a-z0-9]/gi,'_')}`;
+  const isDark=document.body.classList.contains('q4-theme');
+  const panelBg=isDark?'var(--surface)':'#fff';
+  const panelBorder=isDark?'var(--stroke)':'#e0e4ef';
+  const textCol=isDark?'var(--text)':'#16231C';
+  const mutedCol=isDark?'var(--muted)':'#566559';
 
   if(!d){
     el.innerHTML=`<div class="jira-report"><div class="jira-no-epic">
@@ -3633,114 +3641,163 @@ function renderReportPanel(el,d){
   const pct=est>0?Math.round((spt/est)*100):null;
   const isOver=pct!==null&&pct>100;
 
-  const hdr=`<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border,#e0e4ef)">
-    <span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span>
-    <a href="${jiraBase}${epicKey}" target="_blank" class="epic-link" style="font-size:13px;font-weight:600">${epicKey} ↗</a>
-    ${isStale?'<span style="font-size:11px;color:var(--gold,#f6a623)">⚠ Data may be stale</span>':''}
-    <span style="margin-left:auto;font-size:11px;color:var(--muted)">Synced ${timeSince(d.fetched_at)}</span>
-    ${canSync?`<button class="jira-sync-btn" id="${syncBtnId}" onclick="triggerJiraSync('${epicKey}',this)">↻ Sync</button>`:''}
-  </div>`;
+  // ── Shared header ───────────────────────────────────────────────────────────
+  function reportHdr(epicK,totalIssues,doneIssues,estH,sptH,assignee,isInit){
+    const overPct=estH>0?Math.round((sptH/estH)*100):null;
+    const over=overPct>100;
+    const barW=overPct!==null?Math.min(overPct,100):0;
+    const barCol=over?'#e74c3c':overPct>75?'#f6a623':'#27ae60';
+    return`<div style="background:${panelBg};border:1px solid ${panelBorder};border-radius:14px;padding:20px 24px;margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+        <span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span>
+        <a href="${jiraBase}${epicK}" target="_blank" class="epic-link" style="font-weight:600">${epicK} ↗</a>
+        ${isStale?`<span style="font-size:11px;color:var(--gold,#f6a623)">⚠ Stale</span>`:''}
+        ${assignee?`<span style="font-size:12px;color:${mutedCol}">· ${assignee}</span>`:''}
+        <span style="margin-left:auto;font-size:11px;color:${mutedCol}">Synced ${timeSince(d.fetched_at)}</span>
+        ${canSync?`<button class="jira-sync-btn" id="${syncBtnId}" onclick="triggerJiraSync('${epicKey}',this)">↻ Sync</button>`:''}
+      </div>
+      <div class="rpt-kpis" style="margin-bottom:14px">
+        <div><div class="rpt-kpi-lbl">Issues</div><div class="rpt-kpi-val">${totalIssues}<small>${doneIssues} done · ${totalIssues>0?Math.round(doneIssues/totalIssues*100):0}%</small></div></div>
+        <div><div class="rpt-kpi-lbl">Estimated</div><div class="rpt-kpi-val">${fmtRH(estH)}</div></div>
+        <div><div class="rpt-kpi-lbl">Logged</div><div class="rpt-kpi-val${over?' rpt-over':''}">${fmtRH(sptH)}<small>${overPct!==null?overPct+'%':''}</small></div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:${mutedCol};margin-bottom:4px">
+        <span>Budget</span><span style="color:${barCol};font-weight:600">${overPct!==null?overPct+'%':'—'}</span>
+      </div>
+      <div style="height:6px;background:${isDark?'rgba(255,255,255,.08)':'#f0f2ff'};border-radius:4px;overflow:hidden">
+        <div style="width:${barW}%;height:100%;background:${barCol};border-radius:4px"></div>
+      </div>
+    </div>`;
+  }
 
-  const totalKpis=`<div class="rpt-kpis">
-    <div><div class="rpt-kpi-lbl">${hasEB?'Initiative':'Epic'} issues</div><div class="rpt-kpi-val">${d.total_issues}<small>${d.done_issues} done</small></div></div>
-    <div><div class="rpt-kpi-lbl">Estimated</div><div class="rpt-kpi-val">${fmtRH(est)}</div></div>
-    <div><div class="rpt-kpi-lbl">Logged</div><div class="rpt-kpi-val${isOver?' rpt-over':''}">${fmtRH(spt)}<small>${pct!==null?pct+'%':''}</small></div></div>
-    <div><div class="rpt-kpi-lbl">Assignee</div><div class="rpt-kpi-val" style="font-size:14px">${d.assignee||'—'}</div></div>
-  </div>`;
+  // ── Effort 2-column (chart + summary text) ──────────────────────────────────
+  function effortPanel(discRows){
+    if(!discRows.some(r=>r.estimate||r.spent))return'';
+    const overDiscs=discRows.filter(r=>r.spent>r.estimate&&r.estimate>0);
+    const underDiscs=discRows.filter(r=>r.estimate>0&&r.spent<r.estimate);
+    const summary=`<div style="background:${panelBg};border:1px solid ${panelBorder};border-radius:12px;padding:18px 20px;font-size:13px;color:${textCol};line-height:1.7">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:${mutedCol};margin-bottom:10px">Reading the numbers</div>
+      ${discRows.map(r=>{
+        const pct2=r.estimate>0?Math.round((r.spent/r.estimate)*100):null;
+        const ov=pct2>100;
+        return`<p style="margin:0 0 8px"><strong style="color:${r.color}">${r.label}</strong> — ${fmtRH(r.estimate)} est · <span style="${ov?'color:#e74c3c;font-weight:600':''}${!ov&&pct2<80?'color:#27ae60;':''}">
+          ${fmtRH(r.spent)} logged${pct2!==null?` (${pct2}%)`:''}
+        </span>. ${r.done||0}/${r.total||r.issues.length} items done.</p>`;
+      }).join('')}
+      ${overDiscs.length?`<p style="margin:8px 0 0;font-size:11px;color:${isDark?'var(--coral)':'#e74c3c'}">⚠ Over budget: ${overDiscs.map(r=>r.label).join(', ')}</p>`:''}
+    </div>`;
+    return`<div class="rpt-section">
+      <div class="rpt-h3">Effort · estimated vs logged by discipline</div>
+      <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:start">
+        <div style="background:${panelBg};border:1px solid ${panelBorder};border-radius:12px;padding:18px 20px">
+          ${buildEffortSVG(discRows)}
+        </div>
+        ${summary}
+      </div>
+    </div>`;
+  }
 
+  // ── Timeline section ────────────────────────────────────────────────────────
+  function timelinePanel(discRows,allIss){
+    const svgHtml=buildTimelineSVG(discRows);
+    const isMsg=svgHtml.startsWith('<p');
+    if(isMsg&&!allIss.length)return''; // no data at all, skip
+    return`<div class="rpt-section">
+      <div class="rpt-h3">Delivery timeline · by discipline</div>
+      ${isMsg
+        ?`<div style="padding:12px 16px;background:${panelBg};border:1px dashed ${panelBorder};border-radius:10px;font-size:12px;color:${mutedCol}">
+            Timeline needs per-issue dates. Deploy updated <strong>sync-jira.ts</strong> then Sync.
+          </div>`
+        :`<div style="background:${panelBg};border:1px solid ${panelBorder};border-radius:12px;padding:16px 20px">${svgHtml}</div>`}
+    </div>`;
+  }
+
+  // ── Issues appendix (full filterable table) ─────────────────────────────────
+  function issuesAppendix(allIss,openIss,jBase){
+    const display=allIss.length?allIss:openIss;
+    if(!display.length)return'';
+    const DISCS=['FE','BE','UI','QA','AQA','Other','Illustrations','Animation','Graphics','Math'];
+    const byDisc={};
+    display.forEach(i=>{const d=i.discipline||'Other';if(!byDisc[d])byDisc[d]=[];byDisc[d].push(i);});
+    const discSections=DISCS.filter(d=>byDisc[d]&&byDisc[d].length);
+    return`<div class="rpt-section">
+      <div class="rpt-h3">Work items appendix (${display.length} items)</div>
+      ${discSections.map(disc=>buildDiscIssues(byDisc[disc],RPT_DISC_LABELS[disc]||disc,RPT_DISC_COLORS[disc]||'#aab0c6',jBase)).join('')}
+      ${!discSections.length?buildDiscIssues(display,'All Issues','#aab0c6',jBase):''}
+    </div>`;
+  }
+
+  // ── Q3 plain epic ────────────────────────────────────────────────────────────
   if(!hasEB){
-    // ── Q3 plain epic ──────────────────────────────────────────────────────────
-    // discipline_breakdown is always available after any sync → use for effort bars
     const db2=d.discipline_breakdown||{};
     const allIssues=d.all_issues||[];
     const openIssues=d.open_issues||[];
     const DISCS=['FE','BE','UI','QA','AQA','Other'];
-
-    // Build discRows from discipline_breakdown (est/spent always correct)
-    // Attach all_issues per discipline for timeline dots when available
     const discRows=DISCS.filter(disc=>{const dd=db2[disc];return dd&&(dd.issues>0||dd.estimate>0);}).map(disc=>{
       const dd=db2[disc]||{issues:0,done:0,estimate:0,spent:0};
-      return{
-        label:RPT_DISC_LABELS[disc]||disc,
-        color:RPT_DISC_COLORS[disc],
-        issues:allIssues.filter(i=>i.discipline===disc),  // has dates when all_issues populated
-        estimate:dd.estimate, spent:dd.spent, done:dd.done, total:dd.issues,
-      };
+      return{label:RPT_DISC_LABELS[disc]||disc,color:RPT_DISC_COLORS[disc],
+             issues:allIssues.filter(i=>i.discipline===disc),
+             estimate:dd.estimate,spent:dd.spent,done:dd.done,total:dd.issues};
     });
-
-    // KPI span: compute from all_issues dates if available
-    const datesAll=allIssues.flatMap(i=>[i.created,i.resolved].filter(Boolean));
-    const spanDays=datesAll.length>=2?Math.round((new Date(datesAll.reduce((a,b)=>a>b?a:b))-new Date(datesAll.reduce((a,b)=>a<b?a:b)))/86400000):null;
-    const spanKpi=spanDays!==null?`<div><div class="rpt-kpi-lbl">Span</div><div class="rpt-kpi-val">${spanDays}d</div></div>`:'';
-
-    const kpisQ3=`<div class="rpt-kpis">
-      <div><div class="rpt-kpi-lbl">Issues</div><div class="rpt-kpi-val">${d.total_issues}<small>${d.done_issues} done</small></div></div>
-      <div><div class="rpt-kpi-lbl">Estimated</div><div class="rpt-kpi-val">${fmtRH(est)}</div></div>
-      <div><div class="rpt-kpi-lbl">Logged</div><div class="rpt-kpi-val${isOver?' rpt-over':''}">${fmtRH(spt)}<small>${pct!==null?pct+'%':''}</small></div></div>
-      ${spanKpi}
-    </div>`;
-
-    // Effort bars — always works from discipline_breakdown
-    const effortSection=discRows.some(r=>r.estimate||r.spent)?`<div class="rpt-section">
-      <div class="rpt-h3">Estimated vs logged hours · by discipline</div>
-      <div style="max-width:680px">${buildEffortSVG(discRows)}</div>
-    </div>`:'';
-
-    // Timeline — show whenever all_issues has any issue data (partial dates OK)
-    const hasDateData=allIssues.length>0;
-    const timelineSection=hasDateData
-      ?`<div class="rpt-section">
-          <div class="rpt-h3">Delivery timeline · by discipline</div>
-          <p class="rpt-note" style="margin-bottom:8px">Bars: first to last date per discipline. Dots = individual issue closures.</p>
-          <div style="max-width:680px">${buildTimelineSVG(discRows)}</div>
-        </div>`
-      :`<div class="rpt-section">
-          <div class="rpt-h3">Delivery timeline · by discipline</div>
-          <div style="padding:14px 18px;background:var(--surface,#f8f9ff);border:1px dashed var(--border,#e0e4ef);border-radius:10px;font-size:12px;color:var(--muted,#7a80a0);line-height:1.8">
-            Sync required — deploy the updated <strong>sync-jira.ts</strong> and click Sync.
-          </div>
-        </div>`;
-
-    // Cumulative chart + monthly table (needs date data)
-    const cumulativeHTML=buildCumulativeChart(allIssues);
-    const monthlyHTML=buildMonthlyTable(allIssues);
-    const cumulativeSection=cumulativeHTML?`<div class="rpt-section">
-      <div class="rpt-h3">Cumulative created and closed · direct work items</div>
-      <p class="rpt-note" style="margin-bottom:8px">Dashed = cumulative items created. Solid = cumulative items closed.</p>
-      <div style="max-width:680px">${cumulativeHTML}</div>
-    </div>`:'';
-    const monthlySection=monthlyHTML?`<div class="rpt-section">
-      <div class="rpt-h3">Items per month</div>
-      <div style="max-width:380px">${monthlyHTML}</div>
-    </div>`:'';
-
-    // Issues table: use all_issues if available (has discipline), fall back to open_issues
-    const displayIssues=allIssues.length?allIssues:openIssues;
-    const byDisc={};DISCS.forEach(disc=>byDisc[disc]=[]);
-    displayIssues.forEach(i=>{const disc=i.discipline||'Other';if(!byDisc[disc])byDisc[disc]=[];byDisc[disc].push(i);});
-    const issueDiscRows=DISCS.filter(disc=>byDisc[disc].length);
-    const issueSection=`<div class="rpt-section">
-      <div class="rpt-h3">Work items by discipline</div>
-      ${issueDiscRows.length
-        ? issueDiscRows.map(disc=>buildDiscIssues(byDisc[disc],RPT_DISC_LABELS[disc]||disc,RPT_DISC_COLORS[disc]||'#aab0c6',jiraBase)).join('')
-        : `<p class="rpt-note">No issue detail yet — sync to populate.</p>`}
-    </div>`;
-
-    const teamSection=allIssues.length?`<div class="rpt-section">
-      <div class="rpt-h3">Team contribution</div>
-      ${buildTeamTable(allIssues)}
-    </div>`:'';
-
-    el.innerHTML=`<div class="jira-report">${hdr}${kpisQ3}${effortSection}${timelineSection}${cumulativeSection}${monthlySection}${issueSection}${teamSection}</div>`;
-  } else {
-    // ── Q4 initiative: Design / Algorithm / Dev ────────────────────────────────
-    const design=buildEpicReportSection(eb.design,'design','Design','#B0A6FF',['Illustrations','UI','Animation','Graphics'],jiraBase);
-    const algo=buildEpicReportSection(eb.algorithm,'algorithm','Algorithm','#2DD4A8',null,jiraBase);
-    const dev=buildEpicReportSection(eb.development,'development','Dev.','#F5B544',['FE','BE','QA','AQA','Other'],jiraBase);
-
-    el.innerHTML=`<div class="jira-report">${hdr}${totalKpis}${design}${algo}${dev}</div>`;
+    const hdr=reportHdr(epicKey,d.total_issues,d.done_issues,est,spt,d.assignee,false);
+    const effort=effortPanel(discRows);
+    const tl=timelinePanel(discRows,allIssues);
+    const team=allIssues.length?`<div class="rpt-section"><div class="rpt-h3">Team contribution</div>${buildTeamTable(allIssues)}</div>`:'';
+    const appendix=issuesAppendix(allIssues,openIssues,jiraBase);
+    const cumul=buildCumulativeChart(allIssues);
+    const cumulSection=cumul?`<div class="rpt-section"><div class="rpt-h3">Cumulative created and closed · direct work items</div><div style="background:${panelBg};border:1px solid ${panelBorder};border-radius:12px;padding:16px 20px;max-width:680px">${cumul}</div></div>`:'';
+    const monthly=buildMonthlyTable(allIssues);
+    const monthlySection=monthly?`<div class="rpt-section"><div class="rpt-h3">Items per month</div><div style="max-width:380px">${monthly}</div></div>`:'';
+    el.innerHTML=`<div class="jira-report">${hdr}${effort}${tl}${cumulSection}${monthlySection}${team}${appendix}</div>`;
+    return;
   }
+
+  // ── Q4 initiative: Design / Algorithm / Dev. ────────────────────────────────
+  function epicSection(eData,type,label,color,discList){
+    if(!eData)return`<div class="rpt-section"><div class="rpt-h3" style="color:${color}">${label}</div><p class="rpt-note">No ${label} epic found in sync data.</p></div>`;
+    const ck=eData.epic_key||'';
+    const eEst=eData.original_estimate||0,eSpt=eData.time_spent||0;
+    const ePct=eEst>0?Math.round((eSpt/eEst)*100):null;
+    const eOver=ePct!==null&&ePct>100;
+    const eDone=eData.total_issues>0?Math.round((eData.done_issues/eData.total_issues)*100):0;
+    const allIss=eData.all_issues||[];
+    const eDiscRows=discList&&eData.disciplines?discList.map(disc=>{
+      const dd=(eData.disciplines||{})[disc]||{issues:0,done:0,estimate:0,spent:0};
+      return{label:RPT_DISC_LABELS[disc]||disc,color:EPIC_DISC_COLORS[disc]||'#aab0c6',
+             issues:allIss.filter(i=>i.discipline===disc),
+             estimate:dd.estimate,spent:dd.spent,done:dd.done,total:dd.issues};
+    }).filter(r=>r.estimate||r.spent||r.issues.length):[{
+      label:'Algorithm',color,issues:allIss,estimate:eEst,spent:eSpt,done:eData.done_issues,total:eData.total_issues
+    }];
+
+    const epicHdr=`<div style="background:${panelBg};border:2px solid ${color};border-radius:14px;padding:16px 22px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:${color}">${label}</span>
+        <a href="${jiraBase}${ck}" target="_blank" class="epic-link" style="font-size:11px">${ck} ↗</a>
+        <span style="margin-left:auto;font-size:11px;color:${mutedCol}">${eData.done_issues}/${eData.total_issues} done (${eDone}%)</span>
+      </div>
+      <div class="rpt-kpis">
+        <div><div class="rpt-kpi-lbl">Issues</div><div class="rpt-kpi-val">${eData.total_issues}<small>${eData.done_issues} done</small></div></div>
+        <div><div class="rpt-kpi-lbl">Estimated</div><div class="rpt-kpi-val">${fmtRH(eEst)}</div></div>
+        <div><div class="rpt-kpi-lbl">Logged</div><div class="rpt-kpi-val${eOver?' rpt-over':''}">${fmtRH(eSpt)}<small>${ePct!==null?ePct+'%':''}</small></div></div>
+        <div><div class="rpt-kpi-lbl">In progress</div><div class="rpt-kpi-val">${eData.inprogress_issues||0}</div></div>
+      </div>
+    </div>`;
+
+    const eEffort=discList?effortPanel(eDiscRows):'';
+    const eTl=timelinePanel(eDiscRows,allIss);
+    const eAppendix=issuesAppendix(allIss,[],jiraBase);
+    return`<div style="margin-bottom:28px">${epicHdr}${eEffort}${eTl}${eAppendix}</div>`;
+  }
+
+  const EPIC_DISC_COLORS={Illustrations:'#B0A6FF',UI:'#0077b6',Animation:'#14b8a6',Graphics:'#e91e8c',FE:'#7b68ee',BE:'#27ae60',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
+  const hdr=reportHdr(epicKey,d.total_issues,d.done_issues,est,spt,d.assignee,true);
+  const design=epicSection(eb.design,'design','Design','#B0A6FF',['Illustrations','UI','Animation','Graphics']);
+  const algo=epicSection(eb.algorithm,'algorithm','Algorithm','#2DD4A8',null);
+  const dev=epicSection(eb.development,'development','Dev.','#F5B544',['FE','BE','QA','AQA','Other']);
+  el.innerHTML=`<div class="jira-report">${hdr}${design}${algo}${dev}</div>`;
 }
+
 
 
 function toggleDiscRow(rowId,btnId,parentRowId){
@@ -3945,7 +4002,11 @@ function validActualStart(pi,val,el){
 
 // ── DISCIPLINE ISSUES VIEWER ─────────────────────────────────────────────────
 
-function goBack(){showHome(curItem?curItem.section:activeSection);}
+function goBack(){
+  const sec=curItem?curItem.section:activeSection;
+  curItem=null; // clear before showHome sets it null again
+  showHome(sec);
+}
 
 // ── Q4 CHROME: strip leading emoji from UI text when Q4 theme is active ───────
 // Mirrors the q4Chrome / MutationObserver pattern from index028.html exactly.
