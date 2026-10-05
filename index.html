@@ -3030,6 +3030,72 @@ function dismissLiveUpdate(){
 
 // ── JIRA INTEGRATION ─────────────────────────────────────────────────────────
 let JIRA_SYNC_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours — update as needed
+const DISC_COLORS={FE:'#7b68ee',BE:'#27ae60',UI:'#0077b6',QA:'#f6a623',AQA:'#14b8a6',Other:'#aab0c6'};
+const DISC_LABELS={FE:'FE',BE:'BE',UI:'UI',QA:'QA/Test',AQA:'AQA',Other:'Other'};
+
+async function renderJiraHomeSection(){
+  const el=document.getElementById('jira-home-section');
+  if(!el||!_sb)return;
+  const sectionItems=items.filter(i=>i.section===activeSection&&i.epicId);
+  if(!sectionItems.length){el.style.display='none';return;}
+  el.style.display='block';
+  const keys=sectionItems.map(i=>i.epicId);
+  const{data}=await _sb.from('jira_sync')
+    .select('epic_key,fetched_at,epic_status,epic_status_cat,total_issues,done_issues,inprogress_issues,original_estimate,time_spent,discipline_breakdown,epic_breakdown,assignee,open_issues')
+    .in('epic_key',keys);
+  const byKey=Object.fromEntries((data||[]).map(r=>[r.epic_key,r]));
+  const canSync=_currentRole==='editor';
+  const jiraBase='https://dg-group.atlassian.net/browse/';
+
+  function mainRow(item,d){
+    const url=item.epicUrl||`${jiraBase}${item.epicId}`;
+    const btnId=`hs-sync-${item.epicId.replace(/[^a-z0-9]/gi,'_')}`;
+    const rowId=`row-${item.epicId.replace(/[^a-z0-9]/gi,'_')}`;
+    const discRowId=`disc-row-${item.epicId.replace(/[^a-z0-9]/gi,'_')}`;
+    const expandId=`expand-${item.epicId.replace(/[^a-z0-9]/gi,'_')}`;
+    const itemIcon=(gameIcon&&gameIcon(item,22))||item.icon||'';
+    if(!d)return`<tr>
+      <td style="font-weight:600"><span style="display:flex;align-items:center;gap:7px">${itemIcon} ${item.name}</span></td>
+      <td><a href="${url}" target="_blank" class="epic-link">${item.epicId}</a></td>
+      <td colspan="5" style="color:#aab0c6;font-size:11px">Not synced</td>
+      <td style="text-align:right">${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)">↻ Sync</button>`:'—'}</td>
+    </tr>`;
+    const est=d.original_estimate||0,spent=d.time_spent||0;
+    const pct=est>0?Math.round((spent/est)*100):null;
+    const isOver=pct!==null&&pct>100;
+    const barColor=isOver?'#e74c3c':pct>75?'#f6a623':'#27ae60';
+    const donePct=d.total_issues>0?Math.round((d.done_issues/d.total_issues)*100):0;
+    const isStale=Date.now()-new Date(d.fetched_at).getTime()>JIRA_SYNC_TTL_MS;
+    const eb=d.epic_breakdown;const db=d.discipline_breakdown;
+    const hasEB=eb&&(eb.design||eb.algorithm||eb.development);
+    const hasDisc=hasEB||(db&&Object.values(db).some(v=>v.issues>0||v.estimate>0));
+    return`<tr class="jira-row-clickable${isOver?' jira-over-budget':''}" id="${rowId}" onclick="if(event.target.tagName!=='BUTTON'&&event.target.tagName!=='A')toggleDiscRow('${discRowId}','${expandId}','${rowId}')">
+      <td style="font-weight:600"><span style="display:flex;align-items:center;gap:7px">${itemIcon} ${item.name}</span></td>
+      <td><a href="${url}" target="_blank" class="epic-link" onclick="event.stopPropagation()">${item.epicId}</a></td>
+      <td><span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span></td>
+      <td>${fmtHours(est)}</td>
+      <td>${isOver?`<span class="over-badge">⚠ ${fmtHours(spent)}</span>`:fmtHours(spent)}</td>
+      <td>${pct!==null?`<div class="jira-mini-bar-wrap"><div class="jira-mini-bar"><div style="width:${Math.min(pct,100)}%;background:${barColor}"></div></div><span class="jira-pct${isOver?' over':''}">${pct}%</span></div>`:'—'}</td>
+      <td>${d.done_issues}/${d.total_issues} <span style="color:#aab0c6">(${donePct}%)</span></td>
+      <td style="text-align:right;white-space:nowrap">
+        <span class="jira-staleness${isStale?' stale':''}" style="margin-right:4px">${timeSince(d.fetched_at)}</span>
+        ${canSync?`<button class="jira-sync-btn" onclick="event.stopPropagation();triggerJiraSync('${item.epicId}',this)" style="width:28px;padding:3px 0">↻</button>`:''}
+        ${hasDisc?`<button class="jira-expand-btn" id="${expandId}" onclick="event.stopPropagation();toggleDiscRow('${discRowId}','${expandId}','${rowId}')">▶</button>`:''}
+      </td>
+    </tr>
+    ${hasDisc?discSubRow(item.epicId,d,item.name,jiraBase):''}`;
+  }
+
+  el.innerHTML=`<div class="jira-home-wrap">
+    <div class="jira-home-title">JIRA PROGRESS
+      ${canSync?`<button class="jira-sync-btn" id="jira-sync-all-btn" onclick="syncAllJira(this)">↻ Sync all</button>`:''}
+    </div>
+    <div class="jira-table-wrap"><table>
+      <thead><tr><th>PROJECT</th><th>EPIC</th><th>STATUS</th><th>ORIG. ESTIMATE</th><th>LOGGED</th><th>BUDGET</th><th>ISSUES</th><th>LAST SYNCED</th></tr></thead>
+      <tbody>${sectionItems.map(item=>mainRow(item,byKey[item.epicId])).join('')}</tbody>
+    </table></div>
+  </div>`;
+}
 
 function fmtHours(seconds){
   if(!seconds||seconds<=0)return '—';
