@@ -2778,7 +2778,16 @@ async function submitAuth(){
   const email=document.getElementById('loginEmail').value.trim();
   const password=document.getElementById('loginPassword').value;
   if(!email||!password){showLoginError('Please enter both email and password.');return;}
-  if(!_sb){showLoginError('Supabase is not initialised. Make sure SUPABASE_URL and SUPABASE_ANON_KEY are set correctly in the HTML file, then reload.');return;}
+  if(!_sb){
+    // Supabase may still be initialising — wait up to 5 s then retry
+    const btn=document.getElementById('loginBtn');
+    const orig=btn.textContent;
+    btn.disabled=true;btn.textContent='Connecting…';
+    let waited=0;
+    while(!_sb&&waited<5000){await new Promise(r=>setTimeout(r,200));waited+=200;}
+    btn.disabled=false;btn.textContent=orig;
+    if(!_sb){showLoginError('Could not connect to the backend. Check your internet connection and reload the page.');return;}
+  }
   const remaining=Math.ceil((_authCooldownEnd-Date.now())/1000);
   if(remaining>0){showLoginError(`Please wait ${remaining} more second${remaining!==1?'s':''} before trying again.`);return;}
 
@@ -2903,6 +2912,16 @@ async function initSupabase(){
     document.getElementById('loginToEditBtn').title='Supabase library failed to load (check ad-blocker)';
     return;
   }
+  // Clear any corrupt auth tokens from localStorage before creating the client
+  // (prevents the "works only after clearing site data" issue when tokens become stale)
+  try{
+    const storagePrefix=`sb-${SUPABASE_URL.replace('https://','').split('.')[0]}-auth-token`;
+    const raw=localStorage.getItem(storagePrefix);
+    if(raw){JSON.parse(raw);}  // will throw if the stored value is corrupt
+  }catch(e){
+    console.warn('Corrupt Supabase auth token in localStorage — clearing.');
+    Object.keys(localStorage).filter(k=>k.startsWith('sb-')||k.includes('supabase')).forEach(k=>localStorage.removeItem(k));
+  }
   try{_sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}
   catch(e){console.error('Supabase init:',e);return;}
   // Load latest published data for all visitors (requires RLS: for select using (true))
@@ -2917,7 +2936,12 @@ async function initSupabase(){
   try{
     const{data:{session}}=await _sb.auth.getSession();
     if(session)await handleAuthSession(session);
-  }catch(e){console.warn('Session check:',e.message);}
+  }catch(e){
+    console.warn('Session restore failed — clearing auth storage and starting fresh:',e.message);
+    Object.keys(localStorage).filter(k=>k.startsWith('sb-')||k.includes('supabase')).forEach(k=>localStorage.removeItem(k));
+    // Re-create the client with a clean slate
+    try{_sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}catch(_){}
+  }
   // Subscribe to live changes — pushes Publish events to every open session
   subscribeRealtime();
 }
