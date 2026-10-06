@@ -1215,6 +1215,63 @@ body.light-theme .rpt-disc-hdr:hover{background:rgba(0,0,0,.03)!important}
 /* Theme toggle button adapts to light bg */
 body.light-theme #themeToggleBtn{border-color:rgba(0,0,0,.2)!important;color:#1a1a2e!important}
 
+
+/* ── Light mode targeted overrides ──────────────────────────────────── */
+/* Tab bar: 028 overrode active tab to rgba(.1) which is invisible in light */
+body.light-theme .tab-bar{background:#f0f2ff!important;border-color:#d8d4f5!important}
+body.light-theme .tab{color:var(--muted)!important}
+body.light-theme .tab:hover{color:var(--text)!important;background:rgba(0,0,0,.04)!important}
+body.light-theme .tab.active{background:linear-gradient(135deg,#7b68ee,#a78bfa)!important;color:#fff!important;box-shadow:0 2px 8px rgba(123,104,238,.3)!important}
+/* Gantt: 028 hardcoded #0E111A/#10131C backgrounds */
+body.light-theme .gantt-table td.td-label{background:#f8f9ff!important;border-right-color:#d0d4e8!important}
+body.light-theme .gantt-table th.th-label{background:linear-gradient(135deg,#fafbff,#f5f3ff)!important;border-right-color:#d0d4e8!important}
+body.light-theme .gantt-table th{background:#f0f2ff!important;color:var(--muted)!important;border-color:#e0e4ef!important}
+body.light-theme .gantt-wrap{background:#fff!important;border-color:#e0e4ef!important}
+body.light-theme .gantt-top,.gantt-controls{background:#f0f2ff!important}
+body.light-theme .gantt-top{border-bottom-color:#e0e4ef!important}
+body.light-theme .gantt-window-label{background:#fff!important;color:var(--text)!important}
+body.light-theme .add-row-btn{background:#fafbff!important;border-top-color:#e0e4ef!important;color:var(--accent)!important}
+body.light-theme .lbl-sub{color:var(--muted)!important}
+/* Sidebar: nav item text too faint (var(--muted-2) = #aab0c6 on light bg) */
+body.light-theme .sidebar-section{color:var(--muted)!important;font-weight:700}
+body.light-theme .nav-parent{color:var(--text)!important}
+body.light-theme .nav-parent:hover,.nav-parent.open:not(.active){color:var(--accent)!important}
+body.light-theme .nav-parent.active{color:var(--accent)!important;background:rgba(123,104,238,.08)!important}
+body.light-theme .nav-item,body.light-theme .nav-item.modern{color:var(--text)!important}
+body.light-theme .nav-item:hover,body.light-theme .nav-item.modern:hover{color:var(--accent)!important;background:rgba(123,104,238,.06)!important}
+body.light-theme .nav-item.active,body.light-theme .nav-item.modern.active{color:var(--accent)!important;background:rgba(123,104,238,.1)!important;font-weight:600!important}
+body.light-theme .nav-children{border-left-color:#d8d4f5!important}
+body.light-theme .nav-add,body.light-theme .nav-add.modern{color:var(--accent)!important}
+body.light-theme .nav-add-quarter{color:var(--accent)!important;border-top-color:#e0e4ef!important}
+/* Phase card */
+body.light-theme .phase-card{background:#fff!important;border-color:#e0e4ef!important}
+body.light-theme .phase-card-header{background:#fff!important}
+body.light-theme .phase-card-header:hover{background:rgba(0,0,0,.02)!important}
+body.light-theme .phase-card-body{background:#fafbff!important;border-top-color:#e0e4ef!important}
+body.light-theme .ph-num{background:#f0f2ff!important;color:var(--muted)!important}
+body.light-theme .ph-num.done{background:#f0fff4!important;color:#27ae60!important}
+body.light-theme .ph-num.inprogress{background:#fff7e6!important;color:#d48806!important}
+body.light-theme .ph-num.blocked{background:#fff0f0!important;color:#e74c3c!important}
+body.light-theme .phase-toggle-arrow{border-color:#e0e4ef!important;color:var(--muted)!important}
+body.light-theme .phases-legend{background:#fff!important;border-color:#e0e4ef!important}
+/* Phase date fields */
+body.light-theme .ph-dates-row{background:rgba(0,0,0,.02)!important;border-color:#e0e4ef!important}
+/* Stat/summary cards */
+body.light-theme .stat{background:#fff!important;border-color:#e0e4ef!important;box-shadow:0 2px 6px rgba(0,0,0,.04)!important}
+body.light-theme .stat::before{display:none}
+/* Panels and info cards */
+body.light-theme .panel{background:#fff!important;border-color:#e0e4ef!important}
+body.light-theme .panel-title{color:var(--text)!important;border-bottom-color:#e0e4ef!important}
+body.light-theme .info-card{background:#fff!important;border-color:#e0e4ef!important}
+body.light-theme .ic-label{color:var(--muted)!important}
+body.light-theme .ic-val,.ic-edit{color:var(--text)!important}
+body.light-theme .placeholder-panel{background:#f8f9ff!important;border-color:#e0e4ef!important}
+/* Card items on home page */
+body.light-theme .card{background:#fff!important;border-color:#e0e4ef!important;box-shadow:0 2px 8px rgba(0,0,0,.04)!important}
+body.light-theme .card:hover{background:#f8f9ff!important;box-shadow:0 6px 20px rgba(0,0,0,.1)!important}
+/* Add project/quarter buttons */
+body.light-theme .nav-parent .dot{background:var(--surface-2)!important}
+
 </style>
 </head>
 <body>
@@ -1790,6 +1847,7 @@ function undoDelete(){
 // ── NAV / HOME ────────────────────────────────────────────────────────────────
 let curItem=null,navOpen=true,navTechOpen=false,activeSection='roadmap';
 let _hiddenIds=new Set(),_deleteItemId=null; // delete state — in-memory only, cleared on refresh
+let _jiraHomeData={}; // epic_key → {done,total} — populated by renderJiraHomeSection for card completion
 // Ensure every item has a section tag (default to 'roadmap')
 items.forEach(it=>{if(!it.section)it.section='roadmap';});
 function buildNavList(containerId, sectionKey){
@@ -1918,7 +1976,9 @@ function renderCards(){
     try{
     const c=document.createElement('div');c.className='card';c.onclick=()=>showItem(item.id);
     const rb=item.released?`<span class="card-released">✓ Released${item.releaseDate?' '+fmtDate(item.releaseDate):''}</span>`:'';
-    const pct=overallPct(item);
+    // Use Jira done/total if synced, otherwise fall back to phase progress
+    const _jd=item.epicId?_jiraHomeData[item.epicId]:null;
+    const pct=(_jd&&_jd.total>0)?Math.round(_jd.done/_jd.total*100):overallPct(item);
     // Null-safe phases access: some items from Supabase may have phases:null
     const _phases=item.phases||[];
     const fs=_phases.find(p=>p.startVal)?.startVal||'';
@@ -3309,6 +3369,9 @@ async function renderJiraHomeSection(){
     .select('epic_key,fetched_at,epic_status,epic_status_cat,total_issues,done_issues,inprogress_issues,original_estimate,time_spent,discipline_breakdown,epic_breakdown,assignee,open_issues')
     .in('epic_key',keys);
   const byKey=Object.fromEntries((data||[]).map(r=>[r.epic_key,r]));
+  // Cache for card completion
+  (data||[]).forEach(r=>{if(r.total_issues>0)_jiraHomeData[r.epic_key]={done:r.done_issues,total:r.total_issues};});
+  renderCards(); // refresh cards with Jira completion
   const canSync=_currentRole==='editor';
   const jiraBase='https://dg-group.atlassian.net/browse/';
 
