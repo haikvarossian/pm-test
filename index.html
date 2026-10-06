@@ -23,30 +23,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-height:100vh}
-:root{
-  --bg:#0A0C13;
-  --surface:rgba(255,255,255,.035);
-  --surface-2:rgba(255,255,255,.065);
-  --stroke:rgba(255,255,255,.08);
-  --stroke-2:rgba(255,255,255,.16);
-  --text:#F4F5F9;
-  --muted:#9DA3B8;
-  --muted-2:#6C7289;
-  --accent:#7C6CFF;
-  --accent-text:#B0A6FF;
-  --teal:#2DD4A8;
-  --gold:#F5B544;
-  --coral:#FF6B6B;
-  --slate:#7A8196;
-  --card:var(--surface);
-  --border:var(--stroke);
-  --light:var(--surface-2);
-  --purple:var(--accent-text);
-  --green:var(--teal);
-  --red:var(--coral);
-  --orange:var(--gold);
-  --blue:var(--accent-text);
-  --purple:#7b68ee;--green:#27ae60;--orange:#f6a623;--red:#e74c3c;--blue:#0077b6;--teal:#16a085;--card:#fff;--border:#e0e4ef;--text:#1a1a2e;--muted:#7a80a0;--light:#f8f9ff}
+:root{}
 .topbar{background:linear-gradient(135deg,#1a1a2e 0%,#2d2b6b 100%);color:#fff;padding:0 28px;height:56px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3)}
 .logo{font-size:18px;font-weight:800;letter-spacing:1px;color:#a78bfa}
 .divider{width:1px;height:22px;background:#ffffff25;margin:0 4px}
@@ -1118,7 +1095,32 @@ body{
   color-scheme:dark;
   letter-spacing:-.003em
 }
-</style>
+
+/* ── Q4 dark vars — declared last so they win the cascade ── */
+:root{
+  --bg:#0A0C13;
+  --surface:rgba(255,255,255,.035);
+  --surface-2:rgba(255,255,255,.065);
+  --stroke:rgba(255,255,255,.08);
+  --stroke-2:rgba(255,255,255,.16);
+  --text:#F4F5F9;
+  --muted:#9DA3B8;
+  --muted-2:#6C7289;
+  --accent:#7C6CFF;
+  --accent-text:#B0A6FF;
+  --teal:#2DD4A8;
+  --gold:#F5B544;
+  --coral:#FF6B6B;
+  --slate:#7A8196;
+  --card:rgba(255,255,255,.035);
+  --border:rgba(255,255,255,.08);
+  --light:rgba(255,255,255,.065);
+  --purple:#B0A6FF;
+  --green:#2DD4A8;
+  --red:#FF6B6B;
+  --orange:#F5B544;
+  --blue:#B0A6FF
+}</style>
 </head>
 <body>
 <div class="login-overlay" id="loginOverlay" style="display:none;opacity:0" onclick="if(event.target===this)closeLoginModal()">
@@ -1666,7 +1668,7 @@ function sortedPhaseOrder(){
     return da!==db?da-db:a-b;
   });
 }
-function fmtDate(s){if(!s)return'–';const[y,m,d]=s.split('-');return`${d}.${m}.${y}`;}
+function fmtDate(s){if(!s)return'–';if(/^\d{2}\.\d{2}\.\d{4}$/.test(s))return s;const[y,m,d]=s.split('-');return d&&m&&y?`${d}.${m}.${y}`:s;}
 function typeBadge(t){return t==='Slot Game'?'badge-slot':t==='Fast Game'?'badge-fastgame':t==='BO'?'badge-bo':t==='Promo Tool'?'badge-promo':'badge-slot';}
 function phasePct(phase){if(!phase.subtasks.length)return phase.statusKey==='done'?100:0;const done=phase.subtasks.filter(s=>s.done).length;return Math.round(done/phase.subtasks.length*100);}
 function overallPct(item){if(!item.phases.length)return 0;return Math.round(item.phases.reduce((a,p)=>a+phasePct(p),0)/item.phases.length);}
