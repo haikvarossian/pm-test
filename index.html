@@ -1120,7 +1120,32 @@ body{
   --red:#FF6B6B;
   --orange:#F5B544;
   --blue:#B0A6FF
-}</style>
+}
+/* ── Fixed column layout shared by all report tables ── */
+.rpt-table{table-layout:fixed}
+.rpt-table col.rt-key{width:108px}
+.rpt-table col.rt-sum{} /* fills remaining */
+.rpt-table col.rt-sta{width:92px}
+.rpt-table col.rt-est{width:62px}
+.rpt-table col.rt-log{width:78px}
+.rpt-table col.rt-asg{width:138px}
+.rpt-table td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Jira progress table — same fixed widths */
+.jira-table-wrap table{table-layout:fixed}
+.jira-table-wrap col.jt-prj{width:220px}
+.jira-table-wrap col.jt-epc{width:88px}
+.jira-table-wrap col.jt-sta{width:88px}
+.jira-table-wrap col.jt-est{width:100px}
+.jira-table-wrap col.jt-log{width:110px}
+.jira-table-wrap col.jt-bud{width:116px}
+.jira-table-wrap col.jt-iss{width:90px}
+.jira-table-wrap col.jt-syn{width:110px}
+/* Q3 expanded disc cells — more visible contrast */
+.jira-disc-cell{background:var(--surface-2)!important}
+.jira-disc-grid{background:var(--stroke-2,rgba(255,255,255,.16))!important}
+tr.jira-disc-row>td{background:rgba(255,255,255,.03)!important}
+
+</style>
 </head>
 <body>
 <div class="login-overlay" id="loginOverlay" style="display:none;opacity:0" onclick="if(event.target===this)closeLoginModal()">
@@ -3241,7 +3266,7 @@ async function renderJiraHomeSection(){
     const expandId=`expand-${item.epicId.replace(/[^a-z0-9]/gi,'_')}`;
     const itemIcon=(gameIcon&&gameIcon(item,22))||item.icon||'';
     if(!d)return`<tr>
-      <td style="font-weight:600"><span style="display:flex;align-items:center;gap:7px">${itemIcon} ${item.name}</span></td>
+      <td style="font-weight:600;overflow:hidden;text-overflow:ellipsis"><span style="display:flex;align-items:center;gap:7px;min-width:0"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${item.name}</span></span></td>
       <td><a href="${url}" target="_blank" class="epic-link">${item.epicId}</a></td>
       <td colspan="5" style="color:#aab0c6;font-size:11px">Not synced</td>
       <td style="text-align:right">${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)">↻ Sync</button>`:'—'}</td>
@@ -3256,7 +3281,7 @@ async function renderJiraHomeSection(){
     const hasEB=eb&&(eb.design||eb.algorithm||eb.development);
     const hasDisc=hasEB||(db&&Object.values(db).some(v=>v.issues>0||v.estimate>0));
     return`<tr class="jira-row-clickable${isOver?' jira-over-budget':''}" id="${rowId}" onclick="if(event.target.tagName!=='BUTTON'&&event.target.tagName!=='A')toggleDiscRow('${discRowId}','${expandId}','${rowId}')">
-      <td style="font-weight:600"><span style="display:flex;align-items:center;gap:7px">${itemIcon} ${item.name}</span></td>
+      <td style="font-weight:600;overflow:hidden;text-overflow:ellipsis"><span style="display:flex;align-items:center;gap:7px;min-width:0"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${item.name}</span></span></td>
       <td><a href="${url}" target="_blank" class="epic-link" onclick="event.stopPropagation()">${item.epicId}</a></td>
       <td><span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span></td>
       <td>${fmtHours(est)}</td>
@@ -3277,6 +3302,7 @@ async function renderJiraHomeSection(){
       ${canSync?`<button class="jira-sync-btn" id="jira-sync-all-btn" onclick="syncAllJira(this)">↻ Sync all</button>`:''}
     </div>
     <div class="jira-table-wrap"><table>
+      <colgroup><col class="jt-prj"><col class="jt-epc"><col class="jt-sta"><col class="jt-est"><col class="jt-log"><col class="jt-bud"><col class="jt-iss"><col class="jt-syn"></colgroup>
       <thead><tr><th>PROJECT</th><th>EPIC</th><th>STATUS</th><th>ORIG. ESTIMATE</th><th>LOGGED</th><th>BUDGET</th><th>ISSUES</th><th>LAST SYNCED</th></tr></thead>
       <tbody>${sectionItems.map(item=>mainRow(item,byKey[item.epicId])).join('')}</tbody>
     </table></div>
@@ -3646,11 +3672,11 @@ function buildDiscIssues(issues,discLabel,color,jiraBase){
       <span style="font-size:10px;color:var(--muted,#aab0c6);margin-left:auto">▾</span>
     </div>
     <div>
-    <table class="rpt-table">
+    <table class="rpt-table"><colgroup><col class="rt-key"><col class="rt-sum"><col class="rt-sta"><col class="rt-est"><col class="rt-log"><col class="rt-asg"></colgroup>
       <thead><tr><th>Key</th><th>Summary</th><th>Status</th><th class="num">Est</th><th class="num">Logged</th><th>Assignee</th></tr></thead>
       <tbody>${sorted.map(i=>{const ov=i.estimate>0&&i.spent>i.estimate;return`<tr>
         <td><a href="${jiraBase}${i.key}" target="_blank" class="epic-link" style="font-size:11px;white-space:nowrap">${i.key}</a></td>
-        <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${(i.summary||'').replace(/"/g,'&quot;')}">${(i.summary||'').replace(/</g,'&lt;')}</td>
+        <td title="${(i.summary||'').replace(/"/g,'&quot;')}">${(i.summary||'').replace(/</g,'&lt;')}</td>
         <td><span class="jira-status-pill ${jiraStatusClass(i.statusCat)}" style="font-size:9px">${i.status||'—'}</span></td>
         <td class="num">${fmtRH(i.estimate)}</td>
         <td class="num${ov?' rpt-over':''}">${fmtRH(i.spent)}</td>
