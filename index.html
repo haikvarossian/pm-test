@@ -4059,10 +4059,26 @@ function renderReportPanel(el,d){
   // Aggregate all_issues across all three epics for initiative-level KPI strip
   const initAllIss=[...(eb.design?.all_issues||[]),...(eb.algorithm?.all_issues||[]),...(eb.development?.all_issues||[])];
   const kpis=buildKPIStrip(initAllIss,d.total_issues,d.done_issues,est,spt);
+  // ── Delivery timeline · by phase (Design / Algorithm / Dev.) ──────────────
+  const _phaseRows=[
+    {label:'Design',    color:'#B0A6FF', issues:(eb.design?.all_issues||[]),     estimate:eb.design?.original_estimate||0,    spent:eb.design?.time_spent||0},
+    {label:'Algorithm', color:'#2DD4A8', issues:(eb.algorithm?.all_issues||[]),  estimate:eb.algorithm?.original_estimate||0,  spent:eb.algorithm?.time_spent||0},
+    {label:'Dev.',      color:'#F5B544', issues:(eb.development?.all_issues||[]),estimate:eb.development?.original_estimate||0,spent:eb.development?.time_spent||0},
+  ].filter(r=>r.issues.length>0);
+  const _phaseTlSvg=_phaseRows.length?buildTimelineSVG(_phaseRows):'';
+  const phaseTimelineSection=(_phaseTlSvg&&!_phaseTlSvg.startsWith('<p'))
+    ?`<div class="rpt-section">
+        <div class="rpt-h3">Delivery timeline · by phase</div>
+        <p class="rpt-note" style="margin-bottom:8px">Each bar spans the logged-work date range for that phase. Dots = individual issue closures.</p>
+        <div style="background:var(--surface);border:1px solid var(--stroke);border-radius:12px;padding:16px 20px;overflow:hidden">
+          <div style="max-width:640px">${_phaseTlSvg}</div>
+        </div>
+      </div>`
+    :'';
   const design=epicSection(eb.design,'design','Design','#B0A6FF',['Illustrations','UI','Animation','Graphics']);
   const algo=epicSection(eb.algorithm,'algorithm','Algorithm','#2DD4A8',null);
   const dev=epicSection(eb.development,'development','Dev.','#F5B544',['FE','BE','QA','AQA','Other']);
-  el.innerHTML=`<div class="jira-report">${hdr}${kpis}${design}${algo}${dev}</div>`;
+  el.innerHTML=`<div class="jira-report">${hdr}${kpis}${phaseTimelineSection}${design}${algo}${dev}</div>`;
 }
 
 
