@@ -441,8 +441,8 @@ body:not(.editor-mode) .page [contenteditable]{pointer-events:none!important;cur
 .im-muted{color:#7a80a0}.im-pri-high{color:#f6a623;font-weight:700}.im-pri-highest,.im-pri-critical{color:#e74c3c;font-weight:700}.im-pri-low{color:#aab0c6}
 .im-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:#aab0c6;font-size:13px}
 .im-empty{text-align:center;padding:60px;color:#aab0c6;font-size:13px}
-.jira-table-wrap tr.jira-row-expanded>td{background:#f0f2ff!important}
-.jira-table-wrap tr.jira-row-expanded:hover>td{background:#eceeff!important}
+.jira-table-wrap tr.jira-row-expanded>td{background:#f0f2ff}
+.jira-table-wrap tr.jira-row-expanded:hover>td{background:#eceeff}
 .jira-table-wrap tr.jira-row-clickable{cursor:pointer}
 .jira-disc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:#e8eaf0;border-top:1px solid #e8eaf0}
 .jira-disc-cell{background:#fff;padding:10px 14px}
@@ -785,7 +785,6 @@ tr.jira-disc-row>td{background:var(--surface-2)!important}
 /* Disc breakdown row dark background */
 .jira-table-wrap tr.jira-disc-row>td{background:var(--surface-2)!important;padding:0}
 /* Expanded main row */
-.jira-row-expanded>td{background:rgba(255,255,255,.07)!important;color:var(--text)!important;font-weight:normal}
 .jira-row-expanded:hover>td{background:rgba(255,255,255,.1)!important}
 .over-badge{background:rgba(255,107,107,.18)!important;border-color:rgba(255,107,107,.55)!important;color:var(--coral)!important}
 .td-over{background:rgba(255,107,107,.1)!important;color:var(--coral)!important}
@@ -922,8 +921,8 @@ tr.jira-disc-row>td{background:var(--surface-2)!important}
 .jira-disc-bar div{height:100%;border-radius:2px}
 .jira-expand-btn{display:inline-flex;align-items:center;justify-content:center;background:none;border:1px solid #e0e4ef;border-radius:6px;width:24px;height:24px;font-size:9px;color:#aab0c6;transition:all .2s;flex-shrink:0;user-select:none}
 .jira-row-clickable:hover .jira-expand-btn,.jira-expand-btn.open{border-color:#7b68ee;color:#7b68ee;background:#f0f2ff}
-.jira-row-expanded>td{background:#f0f2ff!important}
-.jira-row-expanded:hover>td{background:#eceeff!important}
+.jira-row-expanded>td{background:#f0f2ff}
+.jira-row-expanded:hover>td{background:#eceeff}
 .jira-row-clickable{cursor:pointer}
 .jira-over-budget>td{border-top:1px solid #fecdd3}
 .jira-over-budget>td:first-child{border-left:3px solid #e74c3c}
@@ -1273,8 +1272,37 @@ body.light-theme .card:hover{background:#f8f9ff!important;box-shadow:0 6px 20px 
 body.light-theme .nav-parent .dot{background:var(--surface-2)!important}
 
 
-body:not(.light-theme) .jira-row-expanded>td{color:var(--text)!important}
-body.light-theme .jira-row-expanded>td{color:var(--text)!important}
+/* ── Expanded row — dark mode: matches specificity of original + comes last ── */
+body:not(.light-theme) .jira-table-wrap tr.jira-row-expanded>td,
+body:not(.light-theme) .jira-row-expanded>td{
+  background:rgba(255,255,255,.07)!important;
+  color:var(--text)!important
+}
+body:not(.light-theme) .jira-table-wrap tr.jira-row-expanded:hover>td,
+body:not(.light-theme) .jira-row-expanded:hover>td{
+  background:rgba(255,255,255,.11)!important;
+  color:var(--text)!important
+}
+body.light-theme .jira-table-wrap tr.jira-row-expanded>td,
+body.light-theme .jira-row-expanded>td{
+  background:rgba(123,104,238,.08)!important;
+  color:var(--text)!important
+}
+
+
+/* Prevent disc sub-row from expanding table width */
+.jira-disc-row>td{
+  overflow:hidden !important;
+  padding:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+}
+.jira-disc-grid,.jira-epic-panels{
+  width:100%;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+
 </style>
 </head>
 <body>
