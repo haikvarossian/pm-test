@@ -785,7 +785,7 @@ tr.jira-disc-row>td{background:var(--surface-2)!important}
 /* Disc breakdown row dark background */
 .jira-table-wrap tr.jira-disc-row>td{background:var(--surface-2)!important;padding:0}
 /* Expanded main row */
-.jira-row-expanded>td{background:rgba(255,255,255,.07)!important;color:var(--text)!important}
+.jira-row-expanded>td{background:rgba(255,255,255,.07)!important;color:var(--text)!important;font-weight:normal}
 .jira-row-expanded:hover>td{background:rgba(255,255,255,.1)!important}
 .over-badge{background:rgba(255,107,107,.18)!important;border-color:rgba(255,107,107,.55)!important;color:var(--coral)!important}
 .td-over{background:rgba(255,107,107,.1)!important;color:var(--coral)!important}
@@ -1272,6 +1272,9 @@ body.light-theme .card:hover{background:#f8f9ff!important;box-shadow:0 6px 20px 
 /* Add project/quarter buttons */
 body.light-theme .nav-parent .dot{background:var(--surface-2)!important}
 
+
+body:not(.light-theme) .jira-row-expanded>td{color:var(--text)!important}
+body.light-theme .jira-row-expanded>td{color:var(--text)!important}
 </style>
 </head>
 <body>
@@ -3383,7 +3386,7 @@ async function renderJiraHomeSection(){
     const expandId=`expand-${item.epicId.replace(/[^a-z0-9]/gi,'_')}`;
     const itemIcon=(gameIcon&&gameIcon(item,22))||item.icon||'';
     if(!d)return`<tr>
-      <td style="font-weight:600;overflow:hidden;text-overflow:ellipsis"><span style="display:flex;align-items:center;gap:7px;min-width:0"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${item.name}</span></span></td>
+      <td style="font-weight:600;overflow:hidden"><div style="display:flex;align-items:center;gap:7px;overflow:hidden">${itemIcon}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0">${item.name}</span></div></td>
       <td><a href="${url}" target="_blank" class="epic-link">${item.epicId}</a></td>
       <td colspan="5" style="color:#aab0c6;font-size:11px">Not synced</td>
       <td style="text-align:right">${canSync?`<button class="jira-sync-btn" id="${btnId}" onclick="triggerJiraSync('${item.epicId}',this)">↻ Sync</button>`:'—'}</td>
@@ -3398,7 +3401,7 @@ async function renderJiraHomeSection(){
     const hasEB=eb&&(eb.design||eb.algorithm||eb.development);
     const hasDisc=hasEB||(db&&Object.values(db).some(v=>v.issues>0||v.estimate>0));
     return`<tr class="jira-row-clickable${isOver?' jira-over-budget':''}" id="${rowId}" onclick="if(event.target.tagName!=='BUTTON'&&event.target.tagName!=='A')toggleDiscRow('${discRowId}','${expandId}','${rowId}')">
-      <td style="font-weight:600;overflow:hidden;text-overflow:ellipsis"><span style="display:flex;align-items:center;gap:7px;min-width:0"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${item.name}</span></span></td>
+      <td style="font-weight:600;overflow:hidden"><div style="display:flex;align-items:center;gap:7px;overflow:hidden">${itemIcon}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0">${item.name}</span></div></td>
       <td><a href="${url}" target="_blank" class="epic-link" onclick="event.stopPropagation()">${item.epicId}</a></td>
       <td><span class="jira-status-pill ${jiraStatusClass(d.epic_status_cat)}">${d.epic_status||'—'}</span></td>
       <td>${fmtHours(est)}</td>
