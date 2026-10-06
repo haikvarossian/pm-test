@@ -3454,7 +3454,7 @@ function buildMonthlyTable(issues){
   </table>`;
 }
 
-function buildTimelineSVG(discRows,cW=640){
+function buildTimelineSVG(discRows,cW=600){
   const isDark=true; // unified dark theme
   const gridC=isDark?'rgba(255,255,255,.1)':'#e0e4ef';
   const axisC=isDark?'#9DA3B8':'#566559';
@@ -3472,7 +3472,7 @@ function buildTimelineSVG(discRows,cW=640){
   const maxD=new Date(allD.reduce((a,b)=>a>b?a:b));
   const totalMs=(maxD-minD)||86400000;
 
-  const PL=92,PR=16,PT=26,RH=48,BH=14,DR=3.5;
+  const PL=88,PR=16,PT=24,RH=36,BH=10,DR=3;
   const CW=cW-PL-PR;
   const svgH=PT+rows.length*RH+16;
   const toX=d=>PL+(new Date(d)-minD)/totalMs*CW;
@@ -3850,10 +3850,22 @@ function renderReportPanel(el,d){
     const team=allIssues.length?`<div class="rpt-section"><div class="rpt-h3">Team contribution</div>${buildTeamTable(allIssues)}</div>`:'';
     const appendix=issuesAppendix(allIssues,openIssues,jiraBase);
     const cumul=buildCumulativeChart(allIssues);
-    const cumulSection=cumul?`<div class="rpt-section"><div class="rpt-h3">Cumulative created and closed · direct work items</div><div style="background:${panelBg};border:1px solid ${panelBorder};border-radius:12px;padding:16px 20px;max-width:680px">${cumul}</div></div>`:'';
     const monthly=buildMonthlyTable(allIssues);
-    const monthlySection=monthly?`<div class="rpt-section"><div class="rpt-h3">Items per month</div><div style="max-width:380px">${monthly}</div></div>`:'';
-    el.innerHTML=`<div class="jira-report">${hdr}${kpis}${effort}${tl}${cumulSection}${monthlySection}${team}${appendix}</div>`;
+    // Side-by-side: cumulative chart (left 60%) + monthly table (right 40%)
+    const chartsSection=(cumul||monthly)?`<div class="rpt-section">
+      <div class="rpt-h3">Activity over time</div>
+      <div style="display:grid;grid-template-columns:${cumul&&monthly?'1.5fr 1fr':'1fr'};gap:16px;align-items:start">
+        ${cumul?`<div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Cumulative created and closed</div>
+          <div style="background:var(--surface);border:1px solid var(--stroke);border-radius:12px;padding:14px 16px">${cumul}</div>
+        </div>`:''}
+        ${monthly?`<div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Items per month</div>
+          ${monthly}
+        </div>`:''}
+      </div>
+    </div>`:'';
+    el.innerHTML=`<div class="jira-report">${hdr}${kpis}${effort}${tl}${chartsSection}${team}${appendix}</div>`;
     return;
   }
 
