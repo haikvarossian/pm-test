@@ -184,10 +184,10 @@ body{font-family:'Segoe UI',sans-serif;background:#ede9f8;color:#1a1a2e;min-heig
 .ph-leg{display:flex;align-items:center;gap:6px;font-size:12px;color:#4a4f6a;font-weight:500}
 .ph-leg-dot{width:12px;height:12px;border-radius:50%}
 .phase-card{background:#fff;border:1px solid var(--border);border-radius:16px;margin-bottom:14px;overflow:hidden;border-left:5px solid #e0e4ef;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-.phase-card.s-done{border-left-color:#27ae60}
-.phase-card.s-inprogress{border-left-color:#f6a623}
-.phase-card.s-blocked{border-left-color:#e74c3c}
-.phase-card.s-notstarted{border-left-color:#aab0c6}
+
+
+
+
 .phase-card-header{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;background:linear-gradient(135deg,#fafbff,#fff)}
 .ph-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;border:2px solid var(--border);color:var(--muted);background:#f8f9ff}
 .ph-num.done{background:#f0fff4;border-color:#27ae60;color:#27ae60}
@@ -612,6 +612,7 @@ select option{background:#161926;color:var(--text)}
 .phases-legend{padding:11px 16px;border-radius:12px}
 .ph-leg{color:var(--muted);font-size:12px}
 .ph-leg-dot{width:8px;height:8px}
+.phase-card.s-done,.phase-card.s-inprogress,.phase-card.s-blocked,.phase-card.s-notstarted{border-left-color:var(--stroke)}
 .phase-card{background:var(--surface);border:1px solid var(--stroke);border-left:1px solid var(--stroke);border-radius:16px;box-shadow:inset 3px 0 0 var(--slate);margin-bottom:12px;transition:border-color .15s}
 .phase-card:hover{border-color:var(--stroke-2)}
 .phase-card.s-done{box-shadow:inset 3px 0 0 var(--teal)}.phase-card.s-inprogress{box-shadow:inset 3px 0 0 var(--gold)}
@@ -1145,6 +1146,75 @@ body{
 .jira-disc-grid{background:var(--stroke-2,rgba(255,255,255,.16))!important}
 tr.jira-disc-row>td{background:rgba(255,255,255,.03)!important}
 
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LIGHT THEME — overrides CSS variables and hard-coded element colors
+   Toggle: body.light-theme class
+   ══════════════════════════════════════════════════════════════════════════ */
+body.light-theme{
+  --bg:#ede9f8;
+  --surface:#ffffff;
+  --surface-2:#f5f3ff;
+  --stroke:#e0e4ef;
+  --stroke-2:rgba(0,0,0,.12);
+  --text:#1a1a2e;
+  --muted:#7a80a0;
+  --muted-2:#aab0c6;
+  --accent:#7b68ee;
+  --accent-text:#7b68ee;
+  --teal:#16a085;
+  --gold:#d48806;
+  --coral:#e74c3c;
+  --slate:#aab0c6;
+  --card:#ffffff;
+  --border:#e0e4ef;
+  --light:#f0f2ff;
+  --purple:#7b68ee;
+  --green:#27ae60;
+  --red:#e74c3c;
+  --orange:#f6a623;
+  --blue:#0077b6;
+  background-color:#ede9f8!important;
+  background-image:none!important;
+  color:#1a1a2e;
+  color-scheme:light;
+}
+body.light-theme ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.2)!important}
+/* Modals — hardcoded backgrounds that don't use CSS vars */
+body.light-theme #issuesModal>div{background:#fff!important;border-color:#e0e4ef!important}
+body.light-theme .im-stats{background:#fafbff!important;border-bottom-color:#e0e4ef!important}
+body.light-theme .im-stat{background:transparent!important;border-right-color:#e0e4ef!important}
+body.light-theme .im-sl{color:#aab0c6!important}
+body.light-theme .im-sv{color:#1a1a2e!important}
+body.light-theme .im-table th{background:#fafbff!important;color:#7a80a0!important;border-bottom-color:#e0e4ef!important}
+body.light-theme .im-table td{background:transparent!important;color:#1a1a2e!important;border-bottom-color:#f0f2ff!important}
+body.light-theme .im-table tr:hover td{background:#f5f3ff!important}
+body.light-theme .im-kl{color:#7b68ee!important}
+body.light-theme .im-close{color:#aab0c6!important}
+body.light-theme .im-loading,.light-theme .im-empty{background:#fafbff!important;color:#7a80a0!important}
+/* Disc breakdown expanded row */
+body.light-theme .jira-disc-cell{background:#fff!important}
+body.light-theme .jira-disc-grid{background:#e0e4ef!important}
+body.light-theme tr.jira-disc-row>td{background:#f5f6ff!important}
+body.light-theme .jira-row-expanded>td{background:rgba(123,104,238,.06)!important;color:#1a1a2e!important}
+/* Jira 3-panel epic panels */
+body.light-theme .jira-epic-panel{background:#fff!important;border-color:#e0e4ef!important}
+body.light-theme .jira-epic-panel-hdr{border-bottom-color:#e0e4ef!important}
+body.light-theme .jira-epic-times{color:#1a1a2e!important}
+body.light-theme .jira-edr-bar{background:#e0e4ef!important}
+body.light-theme .jira-alg-stat .jav{color:#1a1a2e!important}
+/* Over-badge — stays red-tinted in light */
+body.light-theme .over-badge{background:#fff0f0!important;border-color:#f5b8b8!important;color:#e74c3c!important}
+body.light-theme .td-over{background:#fff5f5!important;color:#e74c3c!important}
+/* Report report tables */
+body.light-theme .rpt-table{background:#fff!important;border-color:#e0e4ef!important}
+body.light-theme .rpt-table th{background:#fafbff!important;border-bottom-color:#e0e4ef!important}
+body.light-theme .rpt-table td{border-bottom-color:#f0f2ff!important;color:#1a1a2e!important}
+body.light-theme .rpt-table tr:hover td{background:#f5f3ff!important}
+body.light-theme .rpt-disc-hdr:hover{background:rgba(0,0,0,.03)!important}
+/* Theme toggle button adapts to light bg */
+body.light-theme #themeToggleBtn{border-color:rgba(0,0,0,.2)!important;color:#1a1a2e!important}
+
 </style>
 </head>
 <body>
@@ -1216,6 +1286,7 @@ tr.jira-disc-row>td{background:rgba(255,255,255,.03)!important}
     <span id="userRoleBadge"></span>
     <button class="signout-btn" onclick="signOut()">Sign out</button>
   </div>
+  <button id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light / dark theme" style="background:none;border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 10px;cursor:pointer;font-size:14px;line-height:1;color:#fff;margin-right:2px;transition:all .2s">☀️</button>
   <div class="back-btn" id="backBtn" style="display:none" onclick="goBack()">← Back</div>
 </div>
 <div class="live-update-banner" id="liveUpdateBanner">
@@ -3140,7 +3211,7 @@ function discSubRow(epicId,syncRow,projectName,jiraBase){
   const hasEB=eb&&(eb.design||eb.algorithm||eb.development);
   const db=syncRow&&syncRow.discipline_breakdown;
   const rowId=`disc-row-${epicId.replace(/[^a-z0-9]/gi,'_')}`;
-  const isDark=true; // unified dark theme
+  const isDark=!document.body.classList.contains('light-theme');
 
   if(!hasEB){
     // ── 6-column discipline grid (Q3 plain epics) ─────────────────────────────
@@ -3369,7 +3440,7 @@ function fmtRH(s){return s>0?parseFloat((s/3600).toFixed(1))+'h':'—';}
 
 // ── Cumulative created vs closed chart ──────────────────────────────────────
 function buildCumulativeChart(issues,cW=640){
-  const isDark=true; // unified dark theme
+  const isDark=!document.body.classList.contains('light-theme');
   const bgC=isDark?'rgba(255,255,255,.05)':'#f8f9ff';
   const gridC=isDark?'rgba(255,255,255,.08)':'#e0e4ef';
   const axisC=isDark?'#9DA3B8':'#566559';
@@ -3452,7 +3523,7 @@ function buildMonthlyTable(issues){
   }).filter(r=>r.opened||r.closed);
 
   if(!rows.length)return'';
-  const isDark=true; // unified dark theme
+  const isDark=!document.body.classList.contains('light-theme');
   return`<table class="rpt-table">
     <thead><tr><th>Month</th><th class="num">Opened</th><th class="num">Closed</th></tr></thead>
     <tbody>${rows.map(r=>`<tr>
@@ -3464,7 +3535,7 @@ function buildMonthlyTable(issues){
 }
 
 function buildTimelineSVG(discRows,cW=600){
-  const isDark=true; // unified dark theme
+  const isDark=!document.body.classList.contains('light-theme');
   const gridC=isDark?'rgba(255,255,255,.1)':'#e0e4ef';
   const axisC=isDark?'#9DA3B8':'#566559';
   const lblC=isDark?'#F4F5F9':'#16231C';
@@ -3533,7 +3604,7 @@ function buildTimelineSVG(discRows,cW=600){
 }
 
 function buildEffortSVG(discRows,cW=640){
-  const isDark=true; // unified dark theme
+  const isDark=!document.body.classList.contains('light-theme');
   const axisC=isDark?'#9DA3B8':'#566559';
   const lblC=isDark?'#F4F5F9':'#16231C';
   const rows=discRows.filter(r=>r.estimate>0||r.spent>0);
@@ -3561,7 +3632,7 @@ function buildEffortSVG(discRows,cW=640){
 
 // ── KPI strip (matches Wonder Forest layout) ─────────────────────────────────
 function buildKPIStrip(allIssues,totalIssues,doneIssues,estSec,sptSec){
-  const isDark=true; // unified dark theme
+  const isDark=!document.body.classList.contains('light-theme');
   const bg=isDark?'var(--surface)':'#fff';
   const bd=isDark?'var(--stroke)':'#e0e4ef';
   const tc=isDark?'var(--text)':'#16231C';
@@ -3750,7 +3821,7 @@ function renderReportPanel(el,d){
   const isStale=d&&(Date.now()-new Date(d.fetched_at).getTime())>JIRA_SYNC_TTL_MS;
   const canSync=_currentRole==='editor';
   const syncBtnId=`jira-sync-btn-${epicKey.replace(/[^a-z0-9]/gi,'_')}`;
-  const isDark=true; // unified dark theme
+  const isDark=!document.body.classList.contains('light-theme');
   const panelBg=isDark?'var(--surface)':'#fff';
   const panelBorder=isDark?'var(--stroke)':'#e0e4ef';
   const textCol=isDark?'var(--text)':'#16231C';
@@ -4179,6 +4250,26 @@ function goBack(){
   startObserver();
 })();
 document.addEventListener('click',function(e){const p=document.getElementById('iconPopover');if(p&&p.classList.contains('open')&&!p.contains(e.target)&&e.target.id!=='iconTrigger')p.classList.remove('open');});
+
+// ── Light / Dark theme toggle ──────────────────────────────────────────────
+function toggleTheme(){
+  const isLight=document.body.classList.toggle('light-theme');
+  const btn=document.getElementById('themeToggleBtn');
+  if(btn)btn.textContent=isLight?'🌙':'☀️';
+  localStorage.setItem('pm-theme',isLight?'light':'dark');
+}
+// Restore saved theme on load
+(function(){
+  if(localStorage.getItem('pm-theme')==='light'){
+    document.body.classList.add('light-theme');
+    // Icon updated once DOM ready
+    document.addEventListener('DOMContentLoaded',function(){
+      const btn=document.getElementById('themeToggleBtn');
+      if(btn)btn.textContent='🌙';
+    });
+  }
+})();
+
 // Kick off auth initialisation
 initSupabase();
 </script>
