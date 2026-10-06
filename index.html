@@ -3811,20 +3811,24 @@ function renderReportPanel(el,d){
         ?`<div style="padding:12px 16px;background:${panelBg};border:1px dashed ${panelBorder};border-radius:10px;font-size:12px;color:${mutedCol}">
             Timeline needs per-issue dates. Deploy updated <strong>sync-jira.ts</strong> then Sync.
           </div>`
-        :`<div style="background:${panelBg};border:1px solid ${panelBorder};border-radius:12px;padding:16px 20px">${svgHtml}</div>`}
+        /* constrain width + explicit height so it matches the effort chart's visual footprint */
+        :`<div style="background:${panelBg};border:1px solid ${panelBorder};border-radius:12px;padding:16px 20px;overflow:hidden">
+            <div style="max-width:640px">${svgHtml}</div>
+          </div>`}
     </div>`;
   }
 
   // ── Issues appendix (full filterable table) ─────────────────────────────────
-  function issuesAppendix(allIss,openIss,jBase){
+  function issuesAppendix(allIss,openIss,jBase,title){
     const display=allIss.length?allIss:openIss;
     if(!display.length)return'';
     const DISCS=['FE','BE','UI','QA','AQA','Other','Illustrations','Animation','Graphics','Math'];
     const byDisc={};
     display.forEach(i=>{const d=i.discipline||'Other';if(!byDisc[d])byDisc[d]=[];byDisc[d].push(i);});
     const discSections=DISCS.filter(d=>byDisc[d]&&byDisc[d].length);
+    const heading=title||`Work Items (${display.length})`;
     return`<div class="rpt-section">
-      <div class="rpt-h3">Work items appendix (${display.length} items)</div>
+      <div class="rpt-h3">${heading}</div>
       ${discSections.map(disc=>buildDiscIssues(byDisc[disc],RPT_DISC_LABELS[disc]||disc,RPT_DISC_COLORS[disc]||'#aab0c6',jBase)).join('')}
       ${!discSections.length?buildDiscIssues(display,'All Issues','#aab0c6',jBase):''}
     </div>`;
@@ -3848,7 +3852,7 @@ function renderReportPanel(el,d){
     const effort=effortPanel(discRows);
     const tl=timelinePanel(discRows,allIssues);
     const team=allIssues.length?`<div class="rpt-section"><div class="rpt-h3">Team contribution</div>${buildTeamTable(allIssues)}</div>`:'';
-    const appendix=issuesAppendix(allIssues,openIssues,jiraBase);
+    const appendix=issuesAppendix(allIssues,openIssues,jiraBase,`Development Work Items (${(allIssues.length||openIssues.length)} items)`);
     const cumul=buildCumulativeChart(allIssues);
     const monthly=buildMonthlyTable(allIssues);
     // Side-by-side: cumulative chart (left 60%) + monthly table (right 40%)
