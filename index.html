@@ -1294,13 +1294,23 @@ body.light-theme .jira-row-expanded>td{
 .jira-disc-row>td{
   overflow:hidden !important;
   padding:0 !important;
-  width:100% !important;
-  max-width:100% !important;
+  /* min/max-width constraints prevent colspan from forcing table reflow */
+  min-width:0 !important;
+  max-width:0 !important;
+  white-space:nowrap !important;
+}
+.jira-disc-row>td>*{
+  width:100%;
+  box-sizing:border-box;
+  overflow:hidden;
+  min-width:0;
+  max-width:100%;
 }
 .jira-disc-grid,.jira-epic-panels{
   width:100%;
   box-sizing:border-box;
   overflow:hidden;
+  white-space:normal;
 }
 
 </style>
@@ -3322,7 +3332,7 @@ function discSubRow(epicId,syncRow,projectName,jiraBase){
         <div class="jira-disc-bar"><div style="width:${pct}%;background:${DISC_COLORS[disc]}"></div></div>
       </div>`;
     }).join('');
-    return`<tr class="jira-disc-row" id="${rowId}" style="display:none"><td colspan="9"><div class="jira-disc-grid">${cells}</div></td></tr>`;
+    return`<tr class="jira-disc-row" id="${rowId}" style="display:none"><td colspan="8"><div class="jira-disc-grid">${cells}</div></td></tr>`;
   }
 
   // ── 3-panel epic breakdown (Q4 initiatives) ────────────────────────────────
@@ -3378,8 +3388,7 @@ function discSubRow(epicId,syncRow,projectName,jiraBase){
       </div>
     </div>`;
   }
-  return`<tr class="jira-disc-row" id="${rowId}" style="display:none">
-    <td colspan="9">
+  return`<tr class="jira-disc-row" id="${rowId}" style="display:none"><td colspan="8">
       <div class="jira-epic-panels">
         ${epicPanel(eb.design,    'design',      'Design',    '#B0A6FF',['Illustrations','UI','Animation','Graphics'])}
         ${epicPanel(eb.algorithm, 'algorithm',   'Algorithm', '#2DD4A8', null)}
