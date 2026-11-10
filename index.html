@@ -1313,9 +1313,16 @@ body.light-theme .jira-row-expanded>td{
   white-space:normal;
 }
 
+body.data-loading .top-title{visibility:hidden}
 </style>
 </head>
-<body>
+<body class="data-loading">
+<div id="dataOverlay" style="position:fixed;left:0;right:0;bottom:0;top:57px;z-index:60;display:flex;align-items:center;justify-content:center;background:var(--bg)">
+  <div id="dataOverlayBox" style="text-align:center;max-width:440px;padding:24px;color:var(--text);font-size:14px;line-height:1.6">
+    <div style="width:30px;height:30px;border:3px solid var(--stroke);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px"></div>
+    Loading roadmap…
+  </div>
+</div>
 <div class="login-overlay" id="loginOverlay" style="display:none;opacity:0" onclick="if(event.target===this)closeLoginModal()">
   <div class="login-card">
     <div style="position:relative"><button onclick="closeLoginModal()" style="position:absolute;top:-8px;right:-8px;background:none;border:none;font-size:18px;color:#bbb;cursor:pointer;line-height:1;transition:color .15s;z-index:1" onmouseover="this.style.color='#555'" onmouseout="this.style.color='#bbb'">✕</button>
@@ -1665,16 +1672,7 @@ function defPhases(){return[
   {label:'Infosec',sub:'',startVal:'',endVal:'',actualEndVal:'',color:'#f6a623',icon:'🚀',statusKey:'notstarted',comments:'',subtasks:[]},
 ];}
 
-/* BAKED_AT_START */
-const BAKED_AT=0;
-/* BAKED_AT_END */
-
-/* ITEMS_DATA_START */
-let items=[
-  {id:0,name:'Multihand Black Jack',type:'Fast Game',color:'#e74c3c',icon:'🃏',status:'Committed',size:'XL',epicId:'GX-13746',epicUrl:'https://dg-group.atlassian.net/browse/GX-13746',desc:'Multi-hand blackjack fast game.',scope:'Deliver a complete multi-hand blackjack game.',kickoff:{date:'',facilitator:'',attendees:'',notes:''},released:false,releaseDate:'',team:[],risks:[{desc:'BE delivery delay',impact:'high',status:'open',owner:'Tech Lead',mitigation:'Escalate by Sprint 4'},{desc:'Scope creep',impact:'medium',status:'mitigated',owner:'Design Lead',mitigation:'Scope locked v1.2'}],phases:mkPhases(),actions:null},
-  ...[{id:1,name:'Tower Rush 2',type:'Slot Game',color:'#7b68ee',icon:'🗼',size:'XL'},{id:2,name:'Fruity Lines',type:'Slot Game',color:'#f6a623',icon:'🍓',size:'L'},{id:3,name:'Wonder Forest',type:'Slot Game',color:'#27ae60',icon:'🌲',size:'XL'},{id:4,name:'Wingo',type:'Fast Game',color:'#0077b6',icon:'🎯',size:'L'},{id:5,name:'Ice Fish',type:'Slot Game',color:'#16a085',icon:'🐟',size:'L'},{id:6,name:'Gift Box',type:'Promo Tool',color:'#c0392b',icon:'🎁',size:'M'},{id:7,name:'Double Approval',type:'BO',color:'#8e44ad',icon:'✅',size:'M'},{id:8,name:'Related Changes',type:'BO',color:'#2980b9',icon:'🔗',size:'M'}].map(x=>({...x,status:'Committed',epicId:'',epicUrl:'',desc:'',scope:'',kickoff:{date:'',facilitator:'',attendees:'',notes:''},released:false,releaseDate:'',team:[],risks:[],phases:defPhases(),actions:null}))
-];
-/* ITEMS_DATA_END */
+let items=[]; // populated from Supabase — the single source of truth (no baked-in or localStorage copy)
 items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
 
 // ── SUPABASE CLIENT ───────────────────────────────────────────────────────────
@@ -1687,14 +1685,10 @@ let _currentUser = null;
 let _currentRole = null; // 'editor' | 'viewer'
 
 // ── PERSISTENCE ───────────────────────────────────────────────────────────────
-function saveItems(){
-  if(_currentRole!=='editor')return; // viewers & guests: no saves
-  try{localStorage.setItem('gx_roadmap_v1',JSON.stringify({items,savedAt:Date.now()}));}catch(e){}
-}
-let _saveTimer=null;
+// One-time cleanup: earlier versions kept a localStorage copy of the roadmap. Supabase is the only source of truth now.
+try{localStorage.removeItem('gx_roadmap_v1');localStorage.removeItem('gx_roadmap_meta_v1');}catch(e){}
 function schedSave(){
-  if(curItem)markItemDirty(curItem.id); // covers phases/team/actions/risk/gantt/overview edits
-  clearTimeout(_saveTimer);_saveTimer=setTimeout(saveItems,600);
+  if(curItem)markItemDirty(curItem.id); // covers phases/team/actions/risk/gantt/overview edits — auto-saved to Supabase after 2s
 }
 
 // ── GRANULAR SUPABASE SYNC ────────────────────────────────────────────────────
@@ -1747,8 +1741,36 @@ async function deleteItemRemote(id){
   catch(e){console.warn('Remote delete failed:',e.message);}
 }
 
+// ── DATA LOAD STATE (loading / error / empty overlay) ─────────────────────────
+let _firstLoadDone=false;
+function showDataOverlay(kind,msg){
+  const ov=document.getElementById('dataOverlay'),box=document.getElementById('dataOverlayBox');
+  if(!ov||!box)return;
+  const tb=document.querySelector('.topbar');
+  ov.style.top=(tb?tb.offsetHeight:57)+'px';
+  const esc=s=>String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const spinner=`<div style="width:30px;height:30px;border:3px solid var(--stroke);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px"></div>`;
+  if(kind==='loading')box.innerHTML=spinner+'Loading roadmap…';
+  else if(kind==='empty')box.innerHTML=`<div style="font-size:15px;font-weight:600;margin-bottom:6px">Nothing to show yet</div>${esc(msg||'Nothing has been published yet.')}`;
+  else box.innerHTML=`<div style="font-size:15px;font-weight:600;margin-bottom:6px;color:var(--coral)">Couldn't load the roadmap</div>${esc(msg)}<div style="margin-top:14px"><button class="btn-save" onclick="retryDataLoad()">Retry</button></div>`;
+  ov.style.display='flex';
+  document.body.classList.add('data-loading');
+}
+function hideDataOverlay(){
+  const ov=document.getElementById('dataOverlay');
+  if(ov)ov.style.display='none';
+  document.body.classList.remove('data-loading');
+}
+function retryDataLoad(){
+  if(!_sb){location.reload();return;}
+  showDataOverlay('loading');
+  loadFromSupabase();
+}
+
+// Supabase is the single source of truth. A failed query is shown to the user — it never silently
+// falls back to older data (editing stale data could overwrite newer rows on the server).
 async function loadFromSupabase(){
-  if(!_sb)return;
+  if(!_sb)return false;
   try{
     const isEditor=_currentRole==='editor';
     // Editors work against the live draft tables (their own + other editors' unpublished
@@ -1760,51 +1782,57 @@ async function loadFromSupabase(){
       _sb.from(itemsTable).select('id,section,data'),
       _sb.from(metaTable).select('section,data')
     ]);
-    if(!e1&&itemRows&&itemRows.length){
-      items=itemRows.map(r=>({...r.data,id:r.id,section:r.section}));
-      items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
+    if(e1||e2||!Array.isArray(itemRows)||!Array.isArray(metaRows)){
+      throw new Error((e1&&e1.message)||(e2&&e2.message)||'No response from the data service');
     }
-    if(!e2&&metaRows){
-      metaRows.forEach(r=>{roadmapMeta[r.section]=roadmapMeta[r.section]?{...roadmapMeta[r.section],...r.data}:r.data;});
+    // Items: replace wholesale (an empty result is a valid result).
+    items=itemRows.map(r=>({...r.data,id:r.id,section:r.section}));
+    items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
+    // Sections: the set of sections comes from Supabase only. META_DEFAULTS just fills in
+    // fields (colour/order) that a legacy row may lack.
+    if(metaRows.length){
+      const fresh={};
+      metaRows.forEach(r=>{const d=r.data||{};fresh[r.section]=META_DEFAULTS[r.section]?{...META_DEFAULTS[r.section],...d}:d;});
+      roadmapMeta=fresh;
     }
-    // Auto-select the last (highest order = most recent) section on first load
+    // Pick the starting section on the first load only (or if the active one no longer exists).
     const _lastSec=sectionKeys().at(-1)||'roadmap';
-    if(_lastSec!==activeSection){
-      openSections.clear();openSections.add(_lastSec);activeSection=_lastSec;
-      document.body.classList.toggle('q4-theme',(roadmapMeta[_lastSec]||{}).theme==='q4');
-    } else { openSections.add(activeSection); }
-    renderSidebarSections();
-    refreshHome();
-    if(curItem){const found=items.find(i=>i.id===curItem.id);if(found){curItem=found;syncActions();renderItemHeader();buildOverview();}}
-  }catch(e){console.warn('Supabase load:',e.message);}
+    if(!_firstLoadDone||!roadmapMeta[activeSection]){
+      if(_lastSec!==activeSection){
+        openSections.clear();openSections.add(_lastSec);activeSection=_lastSec;
+        document.body.classList.toggle('q4-theme',(roadmapMeta[_lastSec]||{}).theme==='q4');
+      } else { openSections.add(activeSection); }
+    }
+    _firstLoadDone=true;
+    if(!items.length&&!metaRows.length&&_currentRole!=='editor')showDataOverlay('empty','Nothing has been published yet.');
+    else hideDataOverlay();
+    try{
+      renderSidebarSections();
+      refreshHome();
+      if(curItem){const found=items.find(i=>i.id===curItem.id);if(found){curItem=found;syncActions();renderItemHeader();buildOverview();}}
+    }catch(re){console.error('Render after load failed:',re);}
+    return true;
+  }catch(e){
+    console.warn('Supabase load:',e.message);
+    // Block on the first load, and always for editors. Viewers who already have data keep it.
+    if(!_firstLoadDone||_currentRole==='editor')showDataOverlay('error',e.message);
+    return false;
+  }
 }
 
-(function loadSaved(){
-  try{
-    const raw=localStorage.getItem('gx_roadmap_v1');
-    if(!raw)return;
-    const parsed=JSON.parse(raw);
-    const savedAt=parsed.savedAt||0;
-    const savedItems=Array.isArray(parsed)?parsed:(parsed.items||[]);
-    if(BAKED_AT>0&&savedAt<=BAKED_AT)return;
-    if(!savedItems.length)return;
-    items=savedItems;
-    items.forEach(it=>{if(!it.actions)it.actions=mkActions(it.phases);});
-  }catch(e){}
-})();
 
 // ── ROADMAP META (editable titles) ───────────────────────────────────────────
-/* META_DATA_START */
-let roadmapMeta={
+const META_DEFAULTS={
   roadmap:{navName:'Q3/26 Roadmap',heading:'✦ Galaxsys Q3/26 Roadmap',subtitle:'May 2026 – Feb 2027 · All committed projects',sectionTitle:'All Projects',color:'#a78bfa',order:0},
   tech:{navName:'Q3/26 Technical Roadmap',heading:'⚙ Galaxsys Q3/26 Technical Roadmap',subtitle:'Technical projects & infrastructure',sectionTitle:'All Projects',color:'#f6a623',order:1},
   q4:{navName:'Q4/26 Roadmap',heading:'Q4/26 Product Roadmap',subtitle:'Oct 2026 – Jan 2027 · Slot & Fast Game pipeline',sectionTitle:'All Projects',color:'#16a085',order:2,theme:'q4'}
 };
+// Replaced by the section rows from Supabase on load (defaults only fill in missing fields).
+let roadmapMeta=JSON.parse(JSON.stringify(META_DEFAULTS));
 const QUARTER_PALETTE=['#3BA2E7','#EA8A1E','#27ae60','#e74c3c','#9b59b6','#16a085','#0068FF','#c0392b'];
 let openSections=new Set(['roadmap']);
 function sectionKeys(){return Object.keys(roadmapMeta).filter(k=>!k.startsWith('_')).sort((a,b)=>(roadmapMeta[a].order||0)-(roadmapMeta[b].order||0));}
-/* META_DATA_END */
-function saveRoadmapData(section){try{localStorage.setItem('gx_roadmap_meta_v1',JSON.stringify({...roadmapMeta,_savedAt:Date.now()}));}catch(e){}if(section)markMetaDirty(section);}
+function saveRoadmapData(section){if(section)markMetaDirty(section);}
 function saveRoadmapMeta(section,field,val){if(!val||!roadmapMeta[section]||_currentRole!=='editor')return;roadmapMeta[section][field]=val;if(section===activeSection&&field==='navName'){document.getElementById('topTitle').textContent=val;document.getElementById('homeBCText').textContent=val;}saveRoadmapData(section);}
 function renameRoadmapNav(section){
   if(_currentRole!=='editor')return;
@@ -1844,7 +1872,6 @@ function renameRoadmapNav(section){
   el.addEventListener('blur',commit,{once:true});
   el.addEventListener('keydown',onKey);
 }
-(function loadRoadmapMeta(){try{const raw=localStorage.getItem('gx_roadmap_meta_v1');if(!raw)return;const p=JSON.parse(raw);const savedAt=p._savedAt||0;if(BAKED_AT>0&&savedAt<=BAKED_AT)return;Object.keys(p).forEach(k=>{if(k.startsWith('_'))return;roadmapMeta[k]=roadmapMeta[k]?{...roadmapMeta[k],...p[k]}:p[k];});}catch(e){}})();
 // Supabase load is triggered after successful auth in initSupabase()
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
@@ -2012,7 +2039,7 @@ function renderCards(){
     if(['Fast Game','BO','Promo Tool'].includes(activeFilter))return item.type===activeFilter;
     return item.status===activeFilter;
   });
-  if(!filtered.length){g.innerHTML='<div style="color:#aab0c6;font-size:14px;padding:32px;grid-column:1/-1;text-align:center">No projects match this filter.</div>';return;}
+  if(!filtered.length){g.innerHTML='<div style="color:#aab0c6;font-size:14px;padding:32px;grid-column:1/-1;text-align:center">'+(sectionItems.length?'No projects match this filter.':'No projects in this quarter yet.')+'</div>';return;}
   filtered.forEach(item=>{
     try{
     const c=document.createElement('div');c.className='card';c.onclick=()=>showItem(item.id);
@@ -2066,7 +2093,7 @@ function renameItem(id){
     if(val&&val!==item.name){
       item.name=val;
       if(curItem&&curItem.id===id){renderItemHeader();document.getElementById('topTitle').textContent=val;}
-      markItemDirty(id);saveItems();
+      markItemDirty(id);
     } else {
       el.textContent=item.name;
     }
@@ -2931,7 +2958,7 @@ function saveNewItem(){
   const newId=Date.now();
   items.push({id:newId,name,type:document.getElementById('m-type').value,color:document.getElementById('m-color').value,icon:document.getElementById('m-icon').value||'🎮',status:'Committed',size:document.getElementById('m-size').value,epicId:eid,epicUrl:eid?`https://dg-group.atlassian.net/browse/${eid}`:'',desc:document.getElementById('m-desc').value,scope:'',kickoff:{date:'',facilitator:'',attendees:'',notes:''},released:false,releaseDate:'',team:[],risks:[],phases,actions:mkActions(phases),section:_sec});
   closeModal();refreshHome();['m-name','m-epic','m-desc'].forEach(id=>document.getElementById(id).value='');resetIconPicker();
-  markItemDirty(newId);saveItems();
+  markItemDirty(newId);
 }
 // ── DELETE PROJECT ────────────────────────────────────────────────────────────
 function openDeleteModal(id){
@@ -2951,7 +2978,7 @@ function confirmDelete(){
   closeDeleteModal();
   curItem=null;
   showHome(section); // always navigate home — project must disappear from view
-  saveItems();deleteItemRemote(id); // remote delete is immediate, not debounced
+  deleteItemRemote(id); // remote delete is immediate, not debounced
 }
 // ── USER MODAL ───────────────────────────────────────────────────────────────
 function openUserModal(){
@@ -3194,6 +3221,7 @@ async function initSupabase(){
   if(!SUPABASE_URL||SUPABASE_URL==='YOUR_SUPABASE_URL'){
     // Not configured — hide login button since there's nowhere to log in to
     document.getElementById('loginToEditBtn').style.display='none';
+    showDataOverlay('error','The data service is not configured.');
     return;
   }
   // Wait up to 8 s for the library (primary or fallback CDN) to load
@@ -3206,6 +3234,7 @@ async function initSupabase(){
   if(typeof supabase==='undefined'||typeof supabase.createClient!=='function'){
     console.warn('Supabase library failed to load from both CDNs');
     document.getElementById('loginToEditBtn').title='Supabase library failed to load — check firewall or ad-blocker';
+    showDataOverlay('error','The data service could not be loaded. Check your connection, firewall or ad-blocker, then retry.');
     return;
   }
   // Clear any corrupt auth tokens from localStorage before creating the client
@@ -3219,7 +3248,7 @@ async function initSupabase(){
     Object.keys(localStorage).filter(k=>k.startsWith('sb-')||k.includes('supabase')).forEach(k=>localStorage.removeItem(k));
   }
   try{_sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}
-  catch(e){console.error('Supabase init:',e);return;}
+  catch(e){console.error('Supabase init:',e);showDataOverlay('error','Could not start the data service ('+e.message+').');return;}
   // Load latest published data for all visitors (requires RLS: for select using (true))
   await loadFromSupabase();
   refreshHome();
